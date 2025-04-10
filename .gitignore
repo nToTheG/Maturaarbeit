@@ -1,0 +1,14 @@
+# Temporary files
+*.aux
+*.bcf
+*.lof
+*.log
+*.run.xml
+*.synctex.gz
+*.toc
+
+# PDF output
+Main.pdf
+
+# macOS junk
+.DS_Store
