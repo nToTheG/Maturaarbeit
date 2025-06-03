@@ -1,5 +1,5 @@
 # Temporary files
-*.aut
+*.out
 *.aux
 *.bcf
 *.lof
@@ -13,3 +13,6 @@ Main.pdf
 
 # macOS junk
 .DS_Store
+
+# Other Stuff
+venv/
