@@ -7,6 +7,8 @@
 *.run.xml
 *.synctex.gz
 *.toc
+*.blg
+*.bbl
 
 # PDF output
 Main.pdf
@@ -15,6 +17,6 @@ Main.pdf
 .DS_Store
 
 # Other Stuff
-venv/
+.venv/
 POC/Markers
 POC/Bildverarbeitung/test.py

@@ -16,30 +16,37 @@ Abteilung GH}
 
 % selbst definierte Kopf- und Fusszeile
 \lohead{Maturaarbeit}
+
 %\rohead{\theauthor}
 \cofoot{\thepage}
 
 % Zeilenabstand festlegen
-\singlespacing
-%\onehalfspacing
-%\doublespacing
+\singlespacing %\onehalfspacing, \doublespacing
 
 % Trennlinie für Kopfzeile
-\KOMAoption{headsepline}{off} % oder on
+\KOMAoption{headsepline}{off}
 
 % Trennlinie für Fusszeile
-\KOMAoption{footsepline}{on} % oder on
+\KOMAoption{footsepline}{on}
 
+% ANFANG DOKUMENT
 \begin{document}
 
+% erstelle Titel
 \maketitle
 
+% erstelle Inhaltsverzeichnis
 \tableofcontents
 
+% erstelle alle Kapitel
 \input{1-einleitung.tex}
 \input{2-hauptteil.tex}
 
+% erstelle Abbildungsverzeichnis
 \listoffigures
+
+% erstelle Literaturverzeichnis
 \printbibliography
 
 \end{document}
+% ENDE DOKUMENT
