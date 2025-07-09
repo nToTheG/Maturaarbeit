@@ -6,6 +6,7 @@
 *.log
 *.run.xml
 *.synctex.gz
+*.synctex(busy)
 *.toc
 *.blg
 *.bbl

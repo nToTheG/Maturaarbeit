@@ -4,8 +4,8 @@
 % Paket um Schriftarten festzulegen (für XeLaTeX)
 \usepackage{fontspec}
 
-% serifenfreie Schriftart Arial festlegen
-\setsansfont{Arial}
+% Schriftart festlegen
+\setsansfont{Times New Roman}
 
 % serifenfreie Schriftvariante verwenden
 \renewcommand{\familydefault}{\sfdefault}
@@ -17,7 +17,12 @@
 \usepackage{setspace}
 
 % Paket für Hyperlinks
-\usepackage[hidelinks]{hyperref}
+\usepackage[
+  colorlinks=true,
+  linkcolor=black,      % For internal links (like table of contents)
+  citecolor=black,      % For citations
+  urlcolor=blue         % For URLs
+]{hyperref}
 
 % Paket für korrekte Anführungszeichen
 \usepackage{csquotes}
@@ -26,8 +31,8 @@
 \usepackage{scrlayer-scrpage}
 
 % Pakte für Zitate und Bibliografie
-\usepackage{biblatex}
-\addbibresource{literatur.bib}
+\usepackage[style=ieee, citestyle=numeric-comp]{biblatex}
+\addbibresource{literature.bib}
 
 % Paket zum Erzeugen von Platzhaltertext
-\usepackage{lipsum}
+\usepackage{blindtext}

@@ -1,12 +1,20 @@
 \documentclass[parskip=full]{scrreprt}
-\input{konfiguration}
+\input{config.tex}
 
 % Schmale Seitenränder festlegen
 \KOMAoption{DIV}{15}
 
+% Variablen
+\newcommand{\maTitle}{Autonom durch die Lüfte: Die Integration von Gestenerkennung in die Navigation eines Mini-Hubschraubers}
+\newcommand{\chapOne}{Einleitung}
+\newcommand{\chapTwo}{Theorie}
+\newcommand{\chapThree}{Methode}
+\newcommand{\chapFour}{Ergebnisse}
+\newcommand{\chapFive}{Diskussion und Fazit}
+
 % Text auf Titelseite festlegen
 \subject{Maturaarbeit}
-\title{Autonom durch die Lüfte: Ein Mini-Hubschrauber mit Infrarot-Tracking und Hinderniserkennung}
+\title{\maTitle}
 \author{Nelio Gautschi\vspace{1cm}\\
 Betreut durch \\
 Stefan Rothe}
@@ -21,7 +29,7 @@ Abteilung GH}
 \cofoot{\thepage}
 
 % Zeilenabstand festlegen
-\singlespacing %\onehalfspacing, \doublespacing
+\singlespacing %\doublespacing \onehalfspacing
 
 % Trennlinie für Kopfzeile
 \KOMAoption{headsepline}{off}
@@ -29,7 +37,7 @@ Abteilung GH}
 % Trennlinie für Fusszeile
 \KOMAoption{footsepline}{on}
 
-% ANFANG DOKUMENT
+% ANFANG DOKUMENT -----------------------------------
 \begin{document}
 
 % erstelle Titel
@@ -39,8 +47,11 @@ Abteilung GH}
 \tableofcontents
 
 % erstelle alle Kapitel
-\input{1-einleitung.tex}
-\input{2-hauptteil.tex}
+\input{1-chap.tex}
+\input{2-chap.tex}
+\input{3-chap.tex}
+\input{4-chap.tex}
+\input{5-chap.tex}
 
 % erstelle Abbildungsverzeichnis
 \listoffigures
@@ -49,4 +60,4 @@ Abteilung GH}
 \printbibliography
 
 \end{document}
-% ENDE DOKUMENT
+% ENDE DOKUMENT -----------------------------------
