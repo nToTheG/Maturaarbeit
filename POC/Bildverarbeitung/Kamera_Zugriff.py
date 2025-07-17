@@ -1,5 +1,6 @@
 """
 Date: 02.06.2025
+Autor: Nelio Gautschi
 Purpose:
     - Use OpenCV to capture camera feed
     - Convert feed to grayscale

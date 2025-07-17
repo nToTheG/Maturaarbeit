@@ -1,3 +1,10 @@
+"""
+Date: 16.07.2025
+Author: Nelio
+Purpose:
+    - Find ArUco Tag in a picture
+"""
+
 import cv2 as ocv
 
 # Load predefined ArUco dictionary
