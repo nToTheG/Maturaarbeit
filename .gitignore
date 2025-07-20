@@ -18,6 +18,7 @@ Main.pdf
 .DS_Store
 
 # Other Stuff
-.venv/
+.venv
 POC/Markers
 cache
+test.py
