@@ -19,66 +19,91 @@ mode = 0
 SLEEP_TIME = 0.1
 stop = False
 
-HOVER_VALUE = 36000
-UP_VALUE = 39000
-DOWN_VALUE = 31000
+HOVER_VALUE = 37000
+UP_VALUE = HOVER_VALUE + 2000
+DOWN_VALUE = HOVER_VALUE - 2000
+TILT_VALUE = 5
+TURN_VALUE = 90
 
-def wait_for_param_download(cf):
-    while not cf.param.is_updated:
-        time.sleep(SLEEP_TIME)
+pressed_keys = set()
+SPECIAL_KEYS = {
+    keyboard.Key.esc: "esc",
+    keyboard.Key.up: "forward",
+    keyboard.Key.down: "backward",
+    keyboard.Key.left: "turn left",
+    keyboard.Key.right: "turn right"
+}
+
+CHAR_KEYS = {
+    "w": "up",
+    "s": "down"
+}
 
 def control(cf):
-    if mode == 0:
-        cf.commander.send_setpoint(0, 0, 0, HOVER_VALUE)
-    elif mode == 1:
-        for _ in range(10):
-            cf.commander.send_setpoint(0, 0, 0, UP_VALUE)
-            time.sleep(SLEEP_TIME)
-    elif mode == 2:
-        cf.commander.send_setpoint(0, 0, 0, DOWN_VALUE)
-    elif mode == 3:
-        cf.commander.send_setpoint(-5, 0, 0, HOVER_VALUE)
-    elif mode == 4:
-        cf.commander.send_setpoint(5, 0, 0, HOVER_VALUE)
+    roll = 0.0
+    pitch = tilt()
+    yawrate = turn()
+    thrust = power()
+    cf.commander.send_setpoint(roll, pitch, yawrate, thrust)
+
+def tilt():
+    if "forward" in pressed_keys:
+        return TILT_VALUE
+    elif "backward" in pressed_keys:
+        return -TILT_VALUE
     else:
-        pass
+        return 0.0
+
+def turn():
+    if "turn right" in pressed_keys:
+        return TURN_VALUE
+    elif "turn left" in pressed_keys:
+        return -TURN_VALUE
+    else:
+        return 0.0
+
+def power():
+    if "up" in pressed_keys:
+        return UP_VALUE
+    elif "down" in pressed_keys:
+        return DOWN_VALUE
+    else:
+        return HOVER_VALUE
 
 def landing(cf):
     print("Landing process initiated...")
-    for _ in range(10):
-        cf.commander.send_setpoint(0, 0, 0, HOVER_VALUE)
+    for _ in range(30):
+        cf.commander.send_setpoint(0, 0, 0, 0)
         time.sleep(SLEEP_TIME)
-    
-    cf.commander.send_stop_setpoint()
     print("Landed.")
 
 def on_press(key):
-    global mode, stop
+    global stop
     try:
-        if key == keyboard.Key.esc:
-            print("Exc pressed")
-            stop = True
-        elif key == keyboard.Key.up:
-            mode = 1
-        elif key == keyboard.Key.down:
-            mode = 2
-        elif key == keyboard.Key.left:
-            mode = 3
-        elif key == keyboard.Key.right:
-            mode = 4
+        if hasattr(key, "char") and key.char in CHAR_KEYS:
+            pressed_keys.add(CHAR_KEYS[key.char])
+
+        elif key in SPECIAL_KEYS:
+            pressed_keys.add(SPECIAL_KEYS[key])
+            if SPECIAL_KEYS[key] == "esc":
+                stop = True
+
+        else:
+            pass
     except Exception as e:
         print(f"Error: {e}")
-        sys.exit()
 
 def on_release(key):
-    global mode
-    mode = 0
+    if hasattr(key, "char") and key.char in CHAR_KEYS:
+        pressed_keys.discard(CHAR_KEYS[key.char])
+
+    elif key in SPECIAL_KEYS:
+        pressed_keys.discard(SPECIAL_KEYS[key])
 
 def main():
     cflib.crtp.init_drivers()
     try:
         with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='cache')) as scf:
-            wait_for_param_download(scf.cf)
             scf.cf.commander.send_setpoint(0, 0, 0, 0)
             while not stop:
                 control(scf.cf)
@@ -88,7 +113,6 @@ def main():
     except Exception as e:
         print("❌ Exception:", e)
         sys.exit()
-        
 
 if __name__ == '__main__':
     listener = keyboard.Listener(on_press=on_press, on_release=on_release)
