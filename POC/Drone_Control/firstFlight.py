@@ -2,15 +2,17 @@
 Date: 16.07.2025
 Author: Nelio Gautschi
 Purpose:
-    - First flight test (drone goes up about 50 centimetres and lands)
+    - First flight test (drone goes up about 50 centimeters and lands)
 """
+import my_config
+import my_debug
 
 import time
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
-URI = 'radio://0/80/2M/E7E7E7E7E7'
+URI = my_config.my_uri
 
 hover_value = 37000
 up_value = 39000
@@ -44,7 +46,7 @@ def main():
         with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='cache')) as scf:
             simple_connect(scf.cf)
     except Exception as e:
-        print("❌ Exception:", e)
+        my_debug.error_handling(e)
 
 if __name__ == '__main__':
     main()

@@ -4,6 +4,8 @@ Author: Nelio Gautschi
 Purpose:
     - Implement keyboard arrows to move the drone
 """
+import my_debug
+import my_config
 
 import sys
 import time
@@ -13,7 +15,7 @@ import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
-URI = 'radio://0/80/2M/E7E7E7E7E7'
+URI = my_config.my_uri
 
 mode = 0
 SLEEP_TIME = 0.1
@@ -111,8 +113,7 @@ def main():
             landing(scf.cf)
 
     except Exception as e:
-        print("❌ Exception:", e)
-        sys.exit()
+        my_debug.error_handling(e)
 
 if __name__ == '__main__':
     listener = keyboard.Listener(on_press=on_press, on_release=on_release)

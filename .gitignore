@@ -17,8 +17,12 @@ Main.pdf
 # macOS junk
 .DS_Store
 
-# Other Stuff
+# Python junk
 .venv
-POC/Markers
 cache
+__pycache__
+
+# Other Stuff
+POC/Markers
+my_config.py
 test.py
