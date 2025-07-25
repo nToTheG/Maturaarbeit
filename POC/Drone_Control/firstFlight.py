@@ -46,7 +46,7 @@ def main():
         with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='cache')) as scf:
             simple_connect(scf.cf)
     except Exception as e:
-        my_debug.error_handling(e)
+        my_debug.main("error", e)
 
 if __name__ == '__main__':
     main()

@@ -3,8 +3,9 @@ Date: 16.07.2025
 Author: Nelio Gautschi
 Purpose:
     - Debug script that can be used (manually or as import) for multiple things: 
-    - Mode = "uri": Scans for all available interfaces, prints the URIs that can be used to connect
-    - Mode = "deck": Scans for decks
+    - MODE = "uri": Scans for all available interfaces, prints the URIs that can be used to connect
+    - MODE = "deck": Scans for decks
+    - 
 """
 import my_config
 
@@ -17,7 +18,7 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.crazyflie import Crazyflie
 
 # START OF "uri"
-def GET_URI():
+def get_uri(_):
     print("🔍 Scanning interfaces for Crazyflies...")
     available = cflib.crtp.scan_interfaces()
 
@@ -30,7 +31,7 @@ def GET_URI():
 # END OF "uri"
 
 # START OF "deck"
-def DETECT_DECK():
+def detect_deck(_):
     print("🔍 Scanning interfaces for Decks...")
     URI = my_config.my_uri
     try:
@@ -42,14 +43,7 @@ def DETECT_DECK():
             time.sleep(1)
 
     except Exception as e:
-        error_handling(e)
-
-def error_handling(e):
-    for error_message in EXCEPTIONS:
-        if error_message in str(e):
-            print(EXCEPTIONS[error_message])
-            print(ERROR_END)
-            sys.exit(1)
+        handle_error(e)
 
 def param_deck_flow(_, value_str):
     deck_attached_event = Event()
@@ -63,9 +57,17 @@ def param_deck_flow(_, value_str):
         sys.exit(1)
 # END OF "deck"
 
+def handle_error(e):
+    for error_message in EXCEPTIONS:
+        if error_message in str(e):
+            print(EXCEPTIONS[error_message])
+            print(ERROR_END)
+            sys.exit(1)
+
 MODES = {
-    "uri": GET_URI, 
-    "deck": DETECT_DECK
+    "uri": get_uri, 
+    "deck": detect_deck, 
+    "error": handle_error
 }
 
 MODE = "deck" # change for manual use!
@@ -74,9 +76,9 @@ EXCEPTIONS = my_config.my_exceptions
 
 ERROR_END = "-----------------------------------------------------"
 
-def main(mode):
+def main(mode, optional):
     cflib.crtp.init_drivers()
-    MODES[mode]()
+    MODES[mode](optional)
 
 if __name__ == '__main__':
     main(MODE)

@@ -17,7 +17,6 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
 URI = my_config.my_uri
 
-mode = 0
 SLEEP_TIME = 0.1
 stop = False
 
@@ -89,7 +88,6 @@ def on_press(key):
             pressed_keys.add(SPECIAL_KEYS[key])
             if SPECIAL_KEYS[key] == "esc":
                 stop = True
-
         else:
             pass
     except Exception as e:
@@ -113,7 +111,7 @@ def main():
             landing(scf.cf)
 
     except Exception as e:
-        my_debug.error_handling(e)
+        my_debug.main("error", e)
 
 if __name__ == '__main__':
     listener = keyboard.Listener(on_press=on_press, on_release=on_release)
