@@ -7,7 +7,6 @@ Purpose:
 import my_debug
 import my_config
 
-import sys
 import time
 from pynput import keyboard
 
@@ -20,7 +19,7 @@ URI = my_config.my_uri
 SLEEP_TIME = 0.1
 stop = False
 
-HOVER_VALUE = 37000
+HOVER_VALUE = 39000
 UP_VALUE = HOVER_VALUE + 2000
 DOWN_VALUE = HOVER_VALUE - 2000
 TILT_VALUE = 5

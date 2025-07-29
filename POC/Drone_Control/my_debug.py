@@ -18,7 +18,7 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.crazyflie import Crazyflie
 
 # START OF "uri"
-def get_uri(_):
+def get_uri():
     print("🔍 Scanning interfaces for Crazyflies...")
     available = cflib.crtp.scan_interfaces()
 
@@ -31,7 +31,7 @@ def get_uri(_):
 # END OF "uri"
 
 # START OF "deck"
-def detect_deck(_):
+def detect_deck():
     print("🔍 Scanning interfaces for Decks...")
     URI = my_config.my_uri
     try:
@@ -76,9 +76,11 @@ EXCEPTIONS = my_config.my_exceptions
 
 ERROR_END = "-----------------------------------------------------"
 
-def main(mode, optional):
+def main(*mode):
     cflib.crtp.init_drivers()
-    MODES[mode](optional)
+    func = MODES[mode[0]]
+    args = mode[1:]
+    func(*args)
 
 if __name__ == '__main__':
     main(MODE)
