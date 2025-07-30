@@ -47,11 +47,14 @@ def main():
     cflib.crtp.init_drivers()
     my_debug.main("deck", None)
 
-    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='cache')) as scf:
-        scf.cf.platform.send_arming_request(True)
-        time.sleep(1.0)
+    try:
+        with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='cache')) as scf:
+            scf.cf.platform.send_arming_request(True)
+            time.sleep(1.0)
+            send_instructions(scf)
 
-        send_instructions(scf)
+    except Exception as e:
+        my_debug.main("error", e)
 
 if __name__ == '__main__':
     main()
