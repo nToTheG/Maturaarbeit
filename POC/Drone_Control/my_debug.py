@@ -1,13 +1,16 @@
 """
 Date: 16.07.2025
+
 Author: Nelio Gautschi
+
 Purpose:
-    - Debug script that can be used (manually or as import) for multiple things: 
-    - MODE = "uri": Scans for all available interfaces, prints the URIs that can be used to connect
-    - MODE = "deck": Scans for decks
-    - 
+This module serves two main purposes:
+    - Checks if the Flowdeck V2 is attached to the Crazyflie
+    - Maps know error messages to user-friendly output
+
+If executed directly, it will:
+    - Return all available Crazyflie URIs
 """
-import my_config
 
 import sys
 import time
@@ -17,37 +20,58 @@ import cflib.crtp
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.crazyflie import Crazyflie
 
-# START OF "uri"
+import my_config
+
+
+URI = my_config.MY_URI
+EXCEPTIONS = my_config.my_exceptions
+ERROR_END = "-----------------------------------------------------"
+
+
 def get_uri():
+    """
+    Scans for all available interfaces.
+    Prints the URIs that can be used to connect.
+    """
+
     print("🔍 Scanning interfaces for Crazyflies...")
     available = cflib.crtp.scan_interfaces()
 
     if not available:
         print("❌ No Crazyflies found.")
     else:
-        print("✅ Available Crazyflies:")
-        for uri, desc in available:
-            print(f"    {uri} - {desc}")
-# END OF "uri"
+        print("✅ Available Crazyflie URIs:")
+        for uri, _ in available:
+            print(f"    - {uri} -")
 
-# START OF "deck"
+
 def detect_deck():
+    """
+    Checks if the Flowdeck V2 is attached to the Crazyflie.
+    """
+
     print("🔍 Scanning interfaces for Decks...")
-    URI = my_config.my_uri
+
     try:
-        with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='cache')) as scf:
+        with SyncCrazyflie(URI, cf=Crazyflie(rw_cache="cache")) as scf:
             scf.cf.param.add_update_callback(
-                group="deck", 
-                name="bcFlow2", 
+                group="deck",
+                name="bcFlow2",
                 cb=param_deck_flow)
             time.sleep(1)
 
     except Exception as e:
         handle_error(e)
 
+
 def param_deck_flow(_, value_str):
+    """
+    Callback to handle the deck detection result based on parameter value.
+    """
+
     deck_attached_event = Event()
     value = int(value_str)
+
     if value:
         deck_attached_event.set()
         print("✅ Deck is attached!")
@@ -55,32 +79,39 @@ def param_deck_flow(_, value_str):
         print("❌ Deck is NOT attached!")
         print(ERROR_END)
         sys.exit(1)
-# END OF "deck"
+
 
 def handle_error(e):
-    for error_message in EXCEPTIONS:
+    """
+    Handles known exceptions by replacing know error messages with user-friendly ones.
+    """
+
+    for error_message, user_friendly_message in EXCEPTIONS.items():
         if error_message in str(e):
-            print(EXCEPTIONS[error_message])
+            print(user_friendly_message)
             print(ERROR_END)
             sys.exit(1)
 
+
+def main(*mode):
+    """
+    Initializes Crazyflie drivers.
+    Runs the selected mode with optional arguments.
+    """
+
+    cflib.crtp.init_drivers()
+
+    func = MODES[mode[0]]
+    args = mode[1:]
+    func(*args)
+
+
+# Constant defined after functions to avoid NameError
 MODES = {
     "uri": get_uri, 
     "deck": detect_deck, 
     "error": handle_error
 }
 
-MODE = "deck" # change for manual use!
-
-EXCEPTIONS = my_config.my_exceptions
-
-ERROR_END = "-----------------------------------------------------"
-
-def main(*mode):
-    cflib.crtp.init_drivers()
-    func = MODES[mode[0]]
-    args = mode[1:]
-    func(*args)
-
-if __name__ == '__main__':
-    main(MODE)
+if __name__ == "__main__":
+    main("uri")
