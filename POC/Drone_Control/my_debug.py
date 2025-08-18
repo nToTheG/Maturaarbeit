@@ -105,8 +105,6 @@ def main(*mode):
     args = mode[1:]
     func(*args)
 
-
-# Constant defined after functions to avoid NameError
 MODES = {
     "uri": get_uri, 
     "deck": detect_deck, 

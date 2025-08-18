@@ -45,7 +45,7 @@ def main():
     """
 
     cflib.crtp.init_drivers()
-    my_debug.main("deck", None)
+    my_debug.main("deck")
 
     try:
         with SyncCrazyflie(URI, cf=Crazyflie(rw_cache='cache')) as scf:
