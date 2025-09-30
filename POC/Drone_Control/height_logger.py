@@ -14,6 +14,7 @@ from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.crazyflie.log import LogConfig
 
+import my_debug
 import my_config
 
 URI = my_config.MY_URI
@@ -62,7 +63,7 @@ def main():
                 time.sleep(1.0)
 
     except Exception as e:
-        print(f"Error: {e}")
+        my_debug.main("error", e)
 
 if __name__ == "__main__":
     main()
