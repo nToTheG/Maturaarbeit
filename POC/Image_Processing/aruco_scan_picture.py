@@ -47,7 +47,7 @@ def print_detected_markers(corners, ids):
     Prints detected markers in a readable format
     """
 
-    labels = ["Top-right", "Top-left", "Bottom-left", "Bottom-right"]
+    labels = ["Top-left", "Top-right", "Bottom-right", "Bottom-left"]
     if ids is None or len(ids) == 0:
         print("❌ No markers detected.")
     else:
