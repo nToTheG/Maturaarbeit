@@ -9,7 +9,7 @@ Purpose:
     - Draw the corners as red circles on the displayed feed
     - Look for ArUco tag 0 in feed
     - If found: live control, if not: autonomous flight
-    - ArUco tag 0 has to be gone for more than Clock.timeout to count as gone
+    - ArUco tag 0 has to be gone for more than sw.timeout to count as gone
     - Show the current control mode on screen
 """
 
@@ -22,46 +22,38 @@ from my_config2 import MY_ARUCO_DICT
 
 
 aliases = {
-    "active": "### AUTONOMOUS FLIGHT ###",
-    "inactive": "### LIVE CONTROL ###",
+    "auto": "### AUTONOMOUS FLIGHT ###",
+    "live": "### LIVE CONTROL ###",
 }
 
-class Clock:
+
+class Stopwatch:
     """
     Tracks control mode and tag 0 timeout.
     """
 
     def __init__(self):
-        self.now = time.time()
-        self.steady_mode = "active"
-        self.last_seen = time.time()
+        self.start_time = time.perf_counter()
         self.timeout = 1.5
+        self.mode = "auto"
 
-    def check_timeout(self):
+    def reset(self):
         """
-        Check if ArUco tag has been gone for more than timeout
-        """
-
-        if self.steady_mode == "inactive":
-            if self.now - self.last_seen >= self.timeout:
-                self.steady_mode = "active"
-
-    def main(self, tag_found):
-        """
-        Update current time.
-        Determine if timeout checks must happen.
+        Reset the timer.
         """
 
-        self.now = time.time()
+        self.start_time = time.perf_counter()
+        self.mode = "live"
 
-        if tag_found:
-            self.last_seen = self.now
-            if self.steady_mode == "active":
-                self.steady_mode = "inactive"
-        else:
-            self.check_timeout()
+    def switch_mode(self):
+        """
+        Switch the flight control mode.
+        """
 
-def process_frame(cam, clock):
+        if time.perf_counter() - self.start_time >= self.timeout:
+            self.mode = "auto"
+
+def process_frame(cam, sw):
     """
     Reads camera feed.
     Determines flight mode.
@@ -79,13 +71,13 @@ def process_frame(cam, clock):
     if ids is not None:
         id_list = [x for row in ids for x in row]
         if 0 in id_list:
-            clock.main(True)
+            sw.reset()
         else:
-            clock.main(False)
+            sw.switch_mode()
     else:
-        clock.main(False)
+        sw.switch_mode()
 
-    draw_detected_markers(corners, ids, frame, clock)
+    draw_detected_markers(corners, ids, frame, sw)
 
     if cv2.waitKey(1) == ord("q"):
         sys.exit()
@@ -102,7 +94,7 @@ def detect_markers(aruco_frame):
     return detector.detectMarkers(aruco_frame)
 
 
-def draw_detected_markers(corners, ids, feed_frame, clock):
+def draw_detected_markers(corners, ids, feed_frame, sw):
     """
     Draws detected corners onto the frame.
     Draw current control mode onto the frame.
@@ -121,7 +113,7 @@ def draw_detected_markers(corners, ids, feed_frame, clock):
 
     flipped_frame = cv2.flip(feed_frame, 1)
 
-    text = str(aliases[clock.steady_mode])
+    text = str(aliases[sw.mode])
     (text_w, text_h), _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
     pos_x = (flipped_frame.shape[1] - text_w) // 2
     pos_y = text_h + 10
@@ -145,14 +137,14 @@ def main():
     Executes main loop.
     """
 
-    clock = Clock()
+    sw = Stopwatch()
     cam = cv2.VideoCapture(0)
     if not cam.isOpened():
         raise IOError("Cannot open camera.")
 
     try:
         while True:
-            process_frame(cam, clock)
+            process_frame(cam, sw)
     finally:
         cam.release()
         cv2.destroyAllWindows()
