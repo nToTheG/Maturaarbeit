@@ -66,10 +66,9 @@ class DroneController:
 
         if "forward" in self.pressed_keys:
             return TILT_VALUE
-        elif "backward" in self.pressed_keys:
+        if "backward" in self.pressed_keys:
             return -TILT_VALUE
-        else:
-            return 0.0
+        return 0.0
 
     def get_yawrate(self):
         """
@@ -78,10 +77,9 @@ class DroneController:
 
         if "turn right" in self.pressed_keys:
             return TURN_VALUE
-        elif "turn left" in self.pressed_keys:
+        if "turn left" in self.pressed_keys:
             return -TURN_VALUE
-        else:
-            return 0.0
+        return 0.0
 
     def get_thrust(self):
         """
@@ -90,10 +88,9 @@ class DroneController:
 
         if "up" in self.pressed_keys:
             return UP_VALUE
-        elif "down" in self.pressed_keys:
+        if "down" in self.pressed_keys:
             return DOWN_VALUE
-        else:
-            return HOVER_VALUE
+        return HOVER_VALUE
 
     def landing(self, cf):
         """
