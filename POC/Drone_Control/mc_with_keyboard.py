@@ -20,8 +20,11 @@ import my_config
 
 
 URI = my_config.MY_URI
-DEFAULT_HEIGHT = 1.0
-SLEEP_TIME = 0.1
+DEFAULT_HEIGHT = my_config.DEFAULT_HEIGHT
+V_ALT = my_config.V_ALT
+V_YAW = my_config.V_YAW
+V_HOR = my_config.V_HOR
+
 
 SPECIAL_KEYS = {
     keyboard.Key.esc: "esc",
@@ -30,13 +33,12 @@ SPECIAL_KEYS = {
     keyboard.Key.left: "left",
     keyboard.Key.right: "right"
 }
-SK_VALS = SPECIAL_KEYS.values()
 
 CHAR_KEYS = {
     "w": "up",
     "s": "down"
 }
-CK_VALS = CHAR_KEYS.values()
+
 
 class KeyboardListener:
     """
@@ -73,6 +75,7 @@ class KeyboardListener:
         elif key in SPECIAL_KEYS:
             self.pressed_key.discard(SPECIAL_KEYS[key])
 
+
 class DroneController:
     """
     Handles keyboard-based control for Crazyflie.
@@ -98,25 +101,37 @@ class DroneController:
             key = next(iter(self.listener.pressed_key))
 
             if key == "left":
-                mc.start_turn_left(30)
+                mc.start_turn_left(V_YAW)
 
             elif key == "right":
-                mc.start_turn_right(30)
+                mc.start_turn_right(V_YAW)
+
+            elif key == "down":
+                mc.start_down(V_ALT)
+
+            elif key == "up":
+                mc.start_up(V_ALT)
+
+            elif key == "backward":
+                mc.start_back(V_HOR)
+
+            elif key == "forward":
+                mc.start_forward(V_HOR)
 
         else:
             mc.start_linear_motion(0, 0, 0, rate_yaw=0.0)
 
         time.sleep(0.1)
 
-
     def main(self, scf):
         """
         Main function that initiates Motioncommander.
         """
 
-        with MotionCommander(scf, default_height=0.5) as mc:
+        with MotionCommander(scf, default_height=DEFAULT_HEIGHT) as mc:
             while self.running:
                 self.send_instructions(mc)
+
 
 def main():
     """
@@ -126,7 +141,8 @@ def main():
     """
 
     kb_listener = KeyboardListener()
-    listener = keyboard.Listener(on_press=kb_listener.on_press, on_release=kb_listener.on_release)
+    listener = keyboard.Listener(
+        on_press=kb_listener.on_press, on_release=kb_listener.on_release)
     listener.start()
 
     controller = DroneController(kb_listener)
