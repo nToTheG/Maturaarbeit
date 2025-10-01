@@ -53,6 +53,7 @@ class Stopwatch:
         if time.perf_counter() - self.start_time >= self.timeout:
             self.mode = "auto"
 
+
 def process_frame(cam, sw):
     """
     Reads camera feed.

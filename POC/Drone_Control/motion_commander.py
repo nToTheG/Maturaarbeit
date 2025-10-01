@@ -22,6 +22,7 @@ URI = my_config.MY_URI
 DEFAULT_HEIGHT = 1.0
 SLEEP_TIME = 1
 
+
 def send_instructions(scf):
     """
     Initializes MotionCommander.
@@ -37,6 +38,7 @@ def send_instructions(scf):
         time.sleep(2)
         mc.forward(1.5)
         mc.stop()
+
 
 def main():
     """
@@ -55,6 +57,7 @@ def main():
 
     except Exception as e:
         my_debug.main("error", e)
+
 
 if __name__ == '__main__':
     main()

@@ -105,9 +105,10 @@ def main(*mode):
     args = mode[1:]
     func(*args)
 
+
 MODES = {
-    "uri": get_uri, 
-    "deck": detect_deck, 
+    "uri": get_uri,
+    "deck": detect_deck,
     "error": handle_error
 }
 

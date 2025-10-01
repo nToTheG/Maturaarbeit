@@ -19,6 +19,7 @@ import my_config
 
 URI = my_config.MY_URI
 
+
 class Logger:
     """
     Logger class that logs the height of the crazyflie
@@ -45,6 +46,7 @@ class Logger:
         log_conf.data_received_cb.add_callback(self.log_callback)
         log_conf.start()
 
+
 def main():
     """
     Initializes Crazyflie connection.
@@ -64,6 +66,7 @@ def main():
 
     except Exception as e:
         my_debug.main("error", e)
+
 
 if __name__ == "__main__":
     main()
