@@ -4,7 +4,7 @@ Date: 30.09.2025
 Author: Nelio Gautschi
 
 Purpose:
-    - Implement keyboard to move the drone
+    - Implement keyboard to move the drone using MotionCommander
 """
 
 import time
