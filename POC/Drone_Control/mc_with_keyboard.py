@@ -41,7 +41,7 @@ CHAR_KEYS = {
 
 class KeyboardListener:
     """
-    haha
+    Handles keyboard input and saves the key currently pressed.
     """
 
     def __init__(self):
