@@ -11,9 +11,9 @@ MY_URI = "radio://0/80/2M/E7E7E7E7E7"
 
 DEFAULT_HEIGHT = 1.0
 
-V_ALT = 30
-V_YAW = 0.1
-V_HOR = 0.1
+V_ALT = 0.2
+V_HOR = 0.8
+V_YAW = 90
 
 my_exceptions = {
     f"No driver found or malformed URI: {MY_URI}": "❌ Crazyradio not plugged in.",

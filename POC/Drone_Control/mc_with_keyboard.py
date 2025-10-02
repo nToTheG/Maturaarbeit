@@ -22,9 +22,8 @@ import my_config
 URI = my_config.MY_URI
 DEFAULT_HEIGHT = my_config.DEFAULT_HEIGHT
 V_ALT = my_config.V_ALT
-V_YAW = my_config.V_YAW
 V_HOR = my_config.V_HOR
-
+V_YAW = my_config.V_YAW
 
 SPECIAL_KEYS = {
     keyboard.Key.esc: "esc",
