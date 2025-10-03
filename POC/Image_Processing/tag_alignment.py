@@ -26,8 +26,10 @@ import math
 
 import cv2
 
-from my_config2 import MY_ARUCO_DICT
+import my_config2
 
+
+USED_TAGS = my_config2.USED_TAGS
 
 aliases = {
     "auto": "### AUTONOMOUS FLIGHT ###",
@@ -38,68 +40,61 @@ aliases = {
 class TagEvaluater:
     def __init__(self):
         self.ids = None
+        self.ids_h = None
+        self.raw_tags = None
         self.tags = []
-        self.allignment = "neutral"
-
-    def get_allignment(self):
-
-        formatted_tags = self.get_side_length()
-        if len(formatted_tags) == 1:
-            formatted_tag = formatted_tags[0]
-
-            forward = formatted_tag[0] / formatted_tag[2]
-            backward = formatted_tag[2] / formatted_tag[0]
-            right = formatted_tag[1] / formatted_tag[3]
-            left = formatted_tag[3] / formatted_tag[1]
-            directions = {
-                forward: "forward",
-                backward: "backward",
-                right: "right",
-                left: "left"
-            }
-            most_tilt = max(forward, backward, right, left)
-            if most_tilt < 1.1:
-                self.allignment = "neutral"
-            else:
-                self.allignment = directions[most_tilt]
-        else:
-            self.allignment = "neutral"
+        self.tags_as_areas = []
+        self.tilt = "neutral"
 
 
-    def get_side_length(self):
+    def shoelace_area(self):
         """
-        Convert the 4 points of each tag in 4 sides going from each corner to the next.
+        Function that uses the Shoelace formula.
+        Shoelace formula: calculates the area of any quadrilateral.
         """
 
-        tags_as_sides = []
+        self.format_tags()
+        self.tags_as_areas = []
         for tag in self.tags:
-            tag_as_sides = []
-            for i in range(4):
-                tag_as_sides.append(math.dist(tag[i], tag[(i+1) % 4]))
-            tags_as_sides.append(tag_as_sides)
+            print(tag)
+            x1, y1 = tag[0]
+            x2, y2 = tag[1]
+            x3, y3 = tag[2]
+            x4, y4 = tag[3]
 
-        return tags_as_sides
+            area = 0.5 * abs(
+                (x1*y2 + x2*y3 + x3*y4 + x4*y1) -
+                (y1*x2 + y2*x3 + y3*x4 + y4*x1))
 
-    def format_tags(self, corners):
+            self.tags_as_areas.append(area)
+
+    def format_tags(self):
         """ 
-        Converts the given corners into a more readable format
+        Converts the given corners into a more readable format.
         """
 
-        self.tags = []
         tag_coords = []
-        if self.ids is not None:
-            for i, _ in enumerate(self.ids.flatten()):
-                for corner in corners[i][0]:
-                    x, y = corner
-                    tag_coords.append((x, y))
-                self.tags.append(tag_coords)
-                tag_coords = []
+
+        self.ids_h = [id[0] for id in self.ids]
+        for i in range(len(self.ids_h)):
+            for corner in self.raw_tags[i][0]:
+                x, y = corner
+                tag_coords.append((x, y))
+
+            self.tags.append(tag_coords)
+            tag_coords = []
+
+        return self.tags
 
     def main(self, ids, tags):
-        self.ids = ids
-        self.format_tags(tags)
-        self.get_allignment()
-        return self.tags
+        if ids is not None and all(_id in USED_TAGS for _id in ids):
+            self.ids_h = None
+            self.tags = []
+            self.ids = ids
+            self.raw_tags = tags
+            self.shoelace_area()
+            return True
+        return False
 
 
 
@@ -165,21 +160,22 @@ def detect_markers(aruco_frame):
     Detects ArUco markers.
     """
 
-    aruco_dict = cv2.aruco.getPredefinedDictionary(MY_ARUCO_DICT)
+    aruco_dict = cv2.aruco.getPredefinedDictionary(my_config2.MY_ARUCO_DICT)
     parameters = cv2.aruco.DetectorParameters()
     detector = cv2.aruco.ArucoDetector(aruco_dict, parameters)
     return detector.detectMarkers(aruco_frame)
 
 
-def modify_frame(feed_frame, corners, sw, te):
+def modify_frame(feed_frame, sw, te, tags_detecked):
     """
     Draws detected corners onto the frame.
     Draw current control mode onto the frame.
     """
 
-    if corners is not None:
-        for tag in corners:
-            for i, corner in enumerate(tag):
+    if tags_detecked:
+        tags = te.tags
+        for tag in tags:
+            for corner in tag:
                 x, y = corner
                 feed_frame = cv2.circle(
                     feed_frame,
@@ -205,7 +201,7 @@ def modify_frame(feed_frame, corners, sw, te):
         2
         )
 
-    direction_string = str(te.allignment)
+    direction_string = str(te.tilt)
     (text_w, text_h), _ = cv2.getTextSize(direction_string, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
     pos_x = (flipped_frame.shape[1] - text_w) // 2
     pos_y = flipped_frame.shape[0] - text_h - 10
@@ -237,11 +233,12 @@ def main():
     if not cam.isOpened():
         raise IOError("Cannot open camera.")
 
+    tags_detecked = False
     try:
         while True:
             frame, ids, raw_corners = process_frame(cam, sw)
-            tags = te.main(ids, raw_corners)
-            modify_frame(frame, tags, sw, te)
+            tags_detecked = te.main(ids, raw_corners)
+            modify_frame(frame, sw, te, tags_detecked)
     finally:
         cam.release()
         cv2.destroyAllWindows()
