@@ -22,7 +22,6 @@ Corner order in 'tag' list:
 
 import sys
 import time
-import math
 
 import cv2
 
@@ -38,6 +37,10 @@ aliases = {
 
 
 class TagEvaluater:
+    """
+    Takes the raw tag and id data as input and processes it.
+    """
+
     def __init__(self):
         self.ids = None
         self.ids_h = None
@@ -56,7 +59,6 @@ class TagEvaluater:
         self.format_tags()
         self.tags_as_areas = []
         for tag in self.tags:
-            print(tag)
             x1, y1 = tag[0]
             x2, y2 = tag[1]
             x3, y3 = tag[2]
@@ -86,13 +88,23 @@ class TagEvaluater:
 
         return self.tags
 
-    def main(self, ids, tags):
+    def update(self, ids, tags):
+        """
+        Ensures all the scanned tags are actually the ones that should have been detecked.
+        Reduces false-positives.
+        Updates variables and executes formattign and calculating functions.
+        """
+
         if ids is not None and all(_id in USED_TAGS for _id in ids):
             self.ids_h = None
             self.tags = []
             self.ids = ids
             self.raw_tags = tags
             self.shoelace_area()
+
+            print("-----------")
+            for i, _ in enumerate(self.ids_h):
+                print(f"{self.ids_h[i]}: {self.tags_as_areas[i]}")
             return True
         return False
 
@@ -173,8 +185,7 @@ def modify_frame(feed_frame, sw, te, tags_detecked):
     """
 
     if tags_detecked:
-        tags = te.tags
-        for tag in tags:
+        for tag in te.tags:
             for corner in tag:
                 x, y = corner
                 feed_frame = cv2.circle(
@@ -237,7 +248,7 @@ def main():
     try:
         while True:
             frame, ids, raw_corners = process_frame(cam, sw)
-            tags_detecked = te.main(ids, raw_corners)
+            tags_detecked = te.update(ids, raw_corners)
             modify_frame(frame, sw, te, tags_detecked)
     finally:
         cam.release()
