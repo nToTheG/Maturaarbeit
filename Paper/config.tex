@@ -5,13 +5,16 @@
 \usepackage{fontspec}
 
 % Schriftart festlegen
-\setsansfont{Times New Roman}
+\usepackage{lmodern}
+\renewcommand{\familydefault}{\sfdefault}
+%\setsansfont{Times New Roman}
 
 % serifenfreie Schriftvariante verwenden
 \renewcommand{\familydefault}{\sfdefault}
 
 % Paket um Grafiken (JPG, PNG, PDF) einzubinden
 \usepackage{graphicx}
+\graphicspath{{pictures/}}
 
 % Paket für Zeilenabstand
 \usepackage{setspace}
