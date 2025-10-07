@@ -23,6 +23,8 @@ cache
 __pycache__
 
 # Other Stuff
+_minted/
 POC/Markers
-Paper/pictures/
+
+
 test.py

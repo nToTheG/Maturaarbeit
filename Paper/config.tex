@@ -7,14 +7,31 @@
 % Schriftart festlegen
 \usepackage{lmodern}
 \renewcommand{\familydefault}{\sfdefault}
-%\setsansfont{Times New Roman}
 
-% serifenfreie Schriftvariante verwenden
-\renewcommand{\familydefault}{\sfdefault}
+\setmonofont[]{Hack}
 
 % Paket um Grafiken (JPG, PNG, PDF) einzubinden
 \usepackage{graphicx}
 \graphicspath{{pictures/}}
+
+% Paket für Tabellenlayout
+\usepackage{booktabs}
+
+% Paket für Syntaxhighlighting für inline code
+\usepackage[minted]{tcolorbox}
+\usemintedstyle{manni}
+\tcbuselibrary{listingsutf8}
+\newtcolorbox{codeblock}[1][]{%
+  colback=gray!5,       % Hintergrundfarbe
+  colframe=gray!60,     % Rahmenfarbe
+  boxrule=0.4pt,        % Rahmenstärke
+  arc=2mm,              % abgerundete Ecken
+  outer arc=2mm,
+  boxsep=2pt,           % Innenabstand
+  left=2pt, right=2pt, top=2pt, bottom=2pt,
+  listing only,
+  minted options={fontsize=\small, breaklines, #1}
+}
 
 % Paket für Zeilenabstand
 \usepackage{setspace}
