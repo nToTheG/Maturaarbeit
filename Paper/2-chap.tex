@@ -7,9 +7,10 @@
 
 \section{OpenCV}
 \label{sec:opencv} % Label for hyperlink
+\blindtext
 
-\section{ArUco Marker}
-Ein ArUco Marker ist ein quadratischer Referenzmarker, der in räumlichen Messungen zum Einsatz kommt. Referenzmarker (auch Passermarken) werden ursprünglich in automatisierten Fertigungsverfahren von elektronischen Bauelementen wie beispielsweise Hauptplatinen benutzt. Sie dienen als optische Referenzpunkte für die Maschinen, die im Anfertigungsprozess involviert sind, um Präzision zu erhöhen und Kurzschlüsse zu reduzieren \cite{Wiki:Passermarke}. 
+\section{ArUco-Marker}
+Ein ArUco-Marker wie der in \figurename~\ref{fig:marker0} ist ein quadratischer Referenzmarker, der in räumlichen Messungen zum Einsatz kommt. Referenzmarker (auch Passermarken) werden ursprünglich in automatisierten Fertigungsverfahren von elektronischen Bauelementen wie beispielsweise Hauptplatinen benutzt. Sie dienen als optische Referenzpunkte für die Maschinen, die im Anfertigungsprozess involviert sind, um Präzision zu erhöhen und Kurzschlüsse zu reduzieren \cite{Wiki:Passermarke}. 
 Es gibt Referenzmarker in verschiedenen Grössen, Farbschemen und Formen, abhängig von ihrem Einsatzgebiet. Für diese Arbeit werden aus folgenden Gründen quadratische benutzt:
 
 \begin{itemize}
@@ -20,12 +21,42 @@ Es gibt Referenzmarker in verschiedenen Grössen, Farbschemen und Formen, abhän
 
 ArUco-basierte Marker zählen zu den verlässlichsten, vorallem seit \hyperref[sec:opencv]{OpenCV} ein Submodul für deren Implementierung hinzugefügt hat \cite{IJ:fiducial}.
 
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.3\textwidth]{aruco.pdf}
-    \caption{ArUco-Marker mit ID 0. Übernommen von \cite{chev:arucogen}}
-    \label{fig:marker0}
+\begin{figure}[H]
+    \begin{center}
+        \includegraphics[width=0.3\textwidth]{aruco.pdf}
+    \end{center}
+    \caption{ArUco-Marker mit ID 0. Übernommen von \cite{chev:arucogen}}\label{fig:marker0}
 \end{figure}
+
+\subsection{Funktionsweise}
+Das Schwarz-weiss-Schema von ArUco-Markern erinnert an das eines QR-Codes. Während beide einem ähnlichen Zweck dienen, nämlich der visuellen Identifizierung von Objekten, ist ihr geometrischer Aufbau grundverschieden \cite{ten:qrcode}.
+Die Fabrikation von QR-Codes beruht auf drei Hauptbestandteilen:
+
+\begin{enumerate}
+    \item Menge der codierten Information.
+    \item Modus, in dem die Daten codiert wurden.
+    \item Stärke der Fehlerkorrekturfunktion.
+\end{enumerate}
+
+Der entscheidende Unterschiede zwischen dieser Funktionsweise und der von ArUco-Markern ist der Informationgehalt. Dieser existiert bei ArUco-Markern nicht, denn sie sind nicht eine binäre Übersetzung einer im Vorraus definierten Eingabe, sondern sind in nummerierten Bibliotheken angelegt und besitzen keine versteckte Botschaft. Es gibt keinen Algorithmus, der Klartext in einen ArUco-Marker übersetzt. Dieses Konzept hat seine Vor- und Nachteile. Einerseits erhöht es die Geschwindigkeit der Identifizierung, andererseits limitiert es die Gesamtmenge aller Marker. Diese Bedingungen sind jedoch ideal für dieses Projekt, da nur wenige verschiedene Marker benötigt werden und Effizients gefragt ist. 
+Um einen gesuchten Marker in den Bibliothek zu finden, braucht man den Namen der Bibliothek und die ID des Markers. Der Name der Bibliothek legt die Grösse der Matrix und somit Komplexität des Markers fest sowie die Anzahl möglicher Marker.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lcc}
+        \toprule
+        \textbf{Bibliothek} & \textbf{Datenbits} & \textbf{Markeranzahl} \\
+        \midrule
+        DICT\_4X4\_50 & 16 & 50 \\
+        DICT\_4X4\_100 & 16 & 100 \\
+        DICT\_5X5\_50 & 25 & 50 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Eigenschaften ausgewählter ArUco-Dictionaries.}
+    \label{tab:aruco_dicts}
+\end{table}
+
+In der Tabelle \ref{tab:aruco_dicts} sind drei Bibliotheken und deren Eigenschafften dargestellt. Wichtig dabei zu wissen ist, dass eine Bibliothek wie \bodyCode{DICT\_4x4\_50} eine Teilmenge von einer Bibliothek wie \bodyCode{DICT\_4x4\_100} ist.
 
 % End font-size
 \endgroup
