@@ -10,7 +10,7 @@
 \blindtext
 
 \section{ArUco-Marker}
-Ein ArUco-Marker wie der in \figurename~\ref{fig:marker0} ist ein quadratischer Referenzmarker, der in räumlichen Messungen zum Einsatz kommt. Referenzmarker (auch Passermarken) werden ursprünglich in automatisierten Fertigungsverfahren von elektronischen Bauelementen wie beispielsweise Hauptplatinen benutzt. Sie dienen als optische Referenzpunkte für die Maschinen, die im Anfertigungsprozess involviert sind, um Präzision zu erhöhen und Kurzschlüsse zu reduzieren \cite{Wiki:Passermarke}. 
+Ein ArUco-Marker wie der in \ref{fig:marker0} ist ein quadratischer Referenzmarker, der in räumlichen Messungen zum Einsatz kommt. Referenzmarker (auch Passermarken) werden ursprünglich in automatisierten Fertigungsverfahren von elektronischen Bauelementen wie beispielsweise Hauptplatinen benutzt. Sie dienen als optische Referenzpunkte für die Maschinen, die im Anfertigungsprozess involviert sind, um Präzision zu erhöhen und Kurzschlüsse zu reduzieren \cite{Wiki:Passermarke}. 
 Es gibt Referenzmarker in verschiedenen Grössen, Farbschemen und Formen, abhängig von ihrem Einsatzgebiet. Für diese Arbeit werden aus folgenden Gründen quadratische benutzt:
 
 \begin{itemize}
@@ -22,10 +22,10 @@ Es gibt Referenzmarker in verschiedenen Grössen, Farbschemen und Formen, abhän
 ArUco-basierte Marker zählen zu den verlässlichsten, vorallem seit \hyperref[sec:opencv]{OpenCV} ein Submodul für deren Implementierung hinzugefügt hat \cite{IJ:fiducial}.
 
 \begin{figure}[H]
-    \begin{center}
+    \centering
         \includegraphics[width=0.3\textwidth]{aruco.pdf}
-    \end{center}
-    \caption{ArUco-Marker mit ID 0. Übernommen von \cite{chev:arucogen}}\label{fig:marker0}
+    \caption{ArUco-Marker mit ID 0. Übernommen von \cite{chev:arucogen}}
+        \label{fig:marker0}
 \end{figure}
 
 \subsection{Funktionsweise}
