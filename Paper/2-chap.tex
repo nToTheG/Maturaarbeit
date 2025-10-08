@@ -7,12 +7,12 @@
 
 \section{OpenCV}
 \label{sec:ocv} % Label for hyperlink
-OpenCV steht für \enquote{Open Source Computer Vision Library} und ist eine der umfangreichsten Bibliotheken für die Echtzeit-Verarbeitung visueller Daten. Das \enquote{Open} im Namen weist darauf hin, dass es sich um ein Open-Source-Projekt handelt. Der Quelltext ist also öffentlich zugänglich und darf unter Einhaltung der Lizenzbedingungen verändert und kostenfrei verwendet werden. OpenCV stellt mehrere sogenannte \textit{Dictionaries} (im Folgenden als \enquote{Bibliotheken} bezeichnet) bereit, die über 2500 Algorithmen beinhalten.
+OpenCV steht für \enquote{Open Source Computer Vision Library} und ist eine der umfangreichsten Bibliotheken für die Echtzeit-Verarbeitung visueller Daten. Das \enquote{Open} im Namen weist darauf hin, dass es sich um ein Open-Source-Projekt handelt. Der Quelltext ist also öffentlich zugänglich und darf unter Einhaltung der Lizenzbedingungen verändert und kostenfrei verwendet werden. OpenCV stellt mehrere sogenannte \textit{Dictionaries} bereit, die im Folgenden als \enquote{Bibliotheken} bezeichnet werden.
 Die Bibliothek OpenCV wurde in C\texttt{++} implementiert, um eine hohe Rechenleistung, Plattformunabhängigkeit und eine modulare Struktur zu gewährleisten. Auf Basis des C\texttt{++}-Kerns sind später Schnittstellen für Python, Java und andere Sprachen entstanden, die die Nutzung der Bibliothek erleichtern \cite{ocv:org}\footnote{\url{opencv.org/about}}.
 
 \subsection{Einsatzbereiche}
 OpenCV findet Anwendung in vielen Bereichen der Bildverarbeitung. Die Bibliothek eignet sich insbesondere für Aufgaben, die eine effiziente Verarbeitung von Bildern und Videos in Echtzeit erfordern. 
-Im Folgenden sind einige typische Beispiele aufgelistet \cite{Wiki:ocv}
+Einige typische Beispiele sind in der folgenden Liste dargestellt \cite{Wiki:ocv}.
 
 \begin{minipage}{0.55\textwidth}
     \begin{enumerate}
@@ -32,11 +32,36 @@ Im Folgenden sind einige typische Beispiele aufgelistet \cite{Wiki:ocv}
     \end{figure}
 \end{minipage}
 
-Abgesehen von diesen klassischen Anwendungsfeldern wird OpenCV auch zunehmend in Forschungsprojekten genutzt, beispielsweise zur Gesten- oder Marker-basierten Steuerung von Robotiksystemen, wie sie im Rahmen dieser Arbeit zum Einsatz kommt. \cite{sse:foodDel}
+Abgesehen von diesen klassischen Anwendungsfeldern wird OpenCV auch zunehmend in Forschungsprojekten genutzt, beispielsweise zur Gesten- oder Marker-basierten Steuerung von Robotiksystemen, wie sie im Rahmen dieser Arbeit zum Einsatz kommt \cite{sse:foodDel}.
 
 \subsection{Module}
+OpenCV ist modular aufgebaut. Die Bibliothek besteht aus mehreren unabhängigen, aber miteinander kompatiblen Modulen, die jeweils bestimmte Aufgabenbereiche der Bildverarbeitung abdecken. 
+Durch diesen Aufbau können nur jene Module eingebunden werden, die für ein Projekt tatsächlich benötigt werden, was den Speicherbedarf reduziert und die Effizienz erhöht. In \autoref{tab:ocvModules} sind drei zentrale Module von OpenCV aufgeführt:
+
+\begin{table}[H]
+    \begin{tabularx}{\textwidth}{l X}
+
+        \toprule
+        \multicolumn{1}{c}{\textbf{Modul}} & \multicolumn{1}{c}{\textbf{Beschreibung}} \\
+        \midrule
+
+        \texttt{core} & Das core-Modul ist das Grundgerüst von OpenCV. Es stellt grundlegende Datenstrukturen, Matrizenoperationen und mathematische Funktionen bereit, die von anderen Modulen verwendet werden.\\
+        \addlinespace[3pt]
+
+        \texttt{imgproc} & Das imgproc-Modul bietet eine umfassende Reihe von Bildverarbeitungsfunktionen.\\
+        \addlinespace[3pt]
+
+        \texttt{aruco} & Das aruco-Modul ermöglicht die Erkennung und Verarbeitung von \hyperref[sec:aruco]{\textit{ArUco-Markern}}. Es kann die Position und Orientierung der Marker berechnen und ist das wichtigste Modul dieser Arbeit.\\
+        \bottomrule
+    \end{tabularx}
+    \caption{Wichtige Module der OpenCV-Bibliothek.}
+    \label{tab:ocvModules}
+\end{table}
+
+Die modulare Struktur erlaubt es, OpenCV sowohl in ressourcenbeschränkten Systemen, wie zum Beispiel bei Drohnen oder eingebetteten Geräten, als auch in komplexen Computer-Vision-Projekten effizient einzusetzen.
 
 \section{ArUco-Marker}
+\label{sec:aruco}
 Ein ArUco-Marker (wie in \autoref{fig:marker0} dargestellt) ist ein quadratischer Referenzmarker, der zur Positions- und Orientierungserkennung in Bildern bzw. Kamerasystemen zum Einsatz kommt. Referenzmarker (auch Passermarken) werden ursprünglich in automatisierten Fertigungsverfahren von elektronischen Bauelementen wie beispielsweise Hauptplatinen verwendet. Sie dienen als optische Referenzpunkte für die Maschinen, die am Fertigungsprozess beteiligt sind. Dadurch erhöhen sie die Präzision und reduzieren Kurzschlüsse \cite{Wiki:Passermarke}.
 Es gibt Referenzmarker in verschiedenen Grössen, Farbschemen und Formen, abhängig von ihrem Einsatzgebiet. Für diese Arbeit werden aus folgenden Gründen quadratische benutzt:
 
@@ -65,7 +90,7 @@ Die Fabrikation von QR-Codes beruht auf drei Hauptbestandteilen:
     \item Stärke der Fehlerkorrekturfunktion.
 \end{enumerate}
 
-Der entscheidende Unterschied zwischen dieser Funktionsweise und der von ArUco-Markern ist der Informationgehalt. Bei ArUco-Markern existiert dieser nicht. Sie sind nicht eine binäre Übersetzung einer vordefinierten Eingabe, sondern sind in nummerierten Bibliotheken angelegt und besitzen keine versteckte Botschaft. Es gibt keinen Algorithmus, der Klartext in einen ArUco-Marker übersetzt. Dieses Konzept hat seine Vor- und Nachteile. Einerseits erhöht es die Geschwindigkeit der Identifizierung, andererseits limitiert es die Gesamtmenge aller Marker. Diese Bedingungen sind jedoch ideal für dieses Projekt, da nur wenige verschiedene Marker benötigt werden und Effizienz gefragt ist. 
+Der entscheidende Unterschied zwischen dieser Funktionsweise und der von ArUco-Markern ist der Informationgehalt. Bei ArUco-Markern existiert dieser nicht. Sie sind nicht eine binäre Übersetzung einer vordefinierten Eingabe, sondern sind in nummerierten Bibliotheken angelegt und besitzen keine versteckte Botschaft. Es gibt keinen Algorithmus, der Klartext in einen ArUco-Marker übersetzt. Dieses Konzept hat seine Vor- und Nachteile. Einerseits erhöht es die Geschwindigkeit der Identifizierung, andererseits limitiert es die Gesamtmenge aller Marker. Diese Bedingungen sind jedoch ideal für dieses Projekt, da nur wenige verschiedene Marker benötigt werden und Effizienz gefragt ist.
 Um einen gesuchten Marker in den Bibliotheken zu finden, braucht man den Namen der Bibliothek und die ID des Markers. Der Name der Bibliothek legt die Grösse der Matrix und somit Komplexität des Markers fest sowie die Anzahl möglicher Marker.
 
 \begin{table}[H]
@@ -74,16 +99,21 @@ Um einen gesuchten Marker in den Bibliotheken zu finden, braucht man den Namen d
         \toprule
         \textbf{Bibliothek} & \textbf{Datenbits} & \textbf{Markeranzahl} \\
         \midrule
-        DICT\_4X4\_50 & 16 & 50 \\
-        DICT\_4X4\_100 & 16 & 100 \\
-        DICT\_5X5\_50 & 25 & 50 \\
+
+        \bodyCode{DICT\_4X4\_50} & 16 & 50 \\
+        \addlinespace[3pt]
+
+        \bodyCode{DICT\_4X4\_100} & 16 & 100 \\
+        \addlinespace[3pt]
+
+        \bodyCode{DICT\_5X5\_50} & 25 & 50 \\
         \bottomrule
     \end{tabular}
     \caption{Eigenschaften ausgewählter ArUco-Dictionaries.}
-        \label{tab:aruco_dicts}
+        \label{tab:arucoDicts}
 \end{table}
 
-In der Tabelle \autoref{tab:aruco_dicts} sind drei Bibliotheken und deren Eigenschaften dargestellt. Es ist zu beachten, dass alle Marker der Bibliothek \bodyCode{DICT\_4X4\_50} auch in \bodyCode{DICT\_4X4\_100} vorhanden sind, da die größere Bibliothek alle IDs der kleineren umfasst. Für dieses Projekt wird die Bibliothek \bodyCode{DICT\_4X4\_50} verwendet, weil es die geometrisch unkomplizierteste Bibliothek ist, die OpenCV unterstützt. Das ist insofern wichtig, weil die Markern letztendlich unter Winkeln bis zu 45° erkennbar sein sollen. Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_50} Bibliothek aus.
+In der Tabelle \autoref{tab:arucoDicts} sind drei Bibliotheken und deren Eigenschaften dargestellt. Es ist zu beachten, dass alle Marker der Bibliothek \bodyCode{DICT\_4X4\_50} auch in \bodyCode{DICT\_4X4\_100} vorhanden sind, da die größere Bibliothek alle IDs der kleineren umfasst. Für dieses Projekt wird die Bibliothek \bodyCode{DICT\_4X4\_50} verwendet, weil es die geometrisch unkomplizierteste Bibliothek ist, die OpenCV unterstützt. Das ist insofern wichtig, weil die Markern letztendlich unter Winkeln bis zu 45° erkennbar sein sollen. Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_50} Bibliothek aus.
 
 \section{Mathematische Grundlagen}
 
