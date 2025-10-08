@@ -1,5 +1,5 @@
 \chapter{\chapOne}
-\label{sec:kapitel1} % Label for hyperlink
+\label{cha:chapter1} % Label for hyperlink
 
 % Start font-size
 \begingroup
@@ -9,29 +9,30 @@
 Das Paper \textit{\maTitle} ist in fünf Kapitel gegliedert.
 Im Folgenden wird ein Überblick über die Inhalte der einzelnen Kapitel gegeben.
 
-\hyperref[sec:kapitel1]{Kapitel~1} bildet die Einleitung dieser Arbeit.
+\TeLi{cha:chapter1}{Kapitel~1} bildet die Einleitung dieser Arbeit.
 Zunächst wird der Aufbau des Papers erläutert.
 Anschliessend erfolgt eine thematische Hinführung: Das Projekt wird in seinen inhaltlichen Kontext eingeordnet und es wird auf die Relevanz der behandelten Thematik eingegangen.
 Darauf folgen die Zielsetzung der Arbeit sowie die zentrale Fragestellung und Hypothese.
 
-\hyperref[sec:kapitel2]{Kapitel~2} vermittelt die theoretischen Grundlagen, die für das Verständnis des Projekts erforderlich sind.
+\TeLi{cha:chapter2}{Kapitel~2} vermittelt die theoretischen Grundlagen, die für das Verständnis des Projekts erforderlich sind.
 Zunächst werden zentrale Begriffe definiert und erläutert.
 Daraufhin folgen Abschnitte zur Gestenerkennung, zur Funktionsweise und Erstellung der verwendeten ArUco-Marker, eine Einführung in die Python-Bibliothek OpenCV sowie eine Übersicht über die eingesetzten Hardware-Komponenten.
 Zudem wird der aktuelle Stand der Forschung dargestellt und auf vergleichbare Projekte eingegangen.
 
-\hyperref[sec:kapitel3]{Kapitel~3} widmet sich der praktischen Umsetzung des Projekts.
+\TeLi{cha:chapter3}{Kapitel~3} widmet sich der praktischen Umsetzung des Projekts.
 Es enthält eine detaillierte Beschreibung des entwickelten Systems sowie der methodischen Vorgehensweise.
 Behandelt werden unter anderem die Softwarearchitektur und deren Integration in die verwendeten Hardware-Komponenten.
 Darüber hinaus werden durchgeführte Tests dokumentiert, die zur Beantwortung der aufgestellten Fragestellung beitragen.
 Abschliessend werden aufgetretene Herausforderungen sowie deren Lösungsansätze beschrieben.
 
-\hyperref[sec:kapitel4]{Kapitel~4} präsentiert die Ergebnisse der praktischen Umsetzung.
+\TeLi{cha:chapter4}{Kapitel~4} präsentiert die Ergebnisse der praktischen Umsetzung.
 Im Mittelpunkt steht die Analyse der Funktionalität des entwickelten Systems.
-Zur Veranschaulichung werden zudem Diagramme und Auswertungen der in \hyperref[sec:kapitel3]{Kapitel~3} beschriebenen Tests dargestellt.
+Zur Veranschaulichung werden zudem Diagramme und Auswertungen der in \TeLi{cha:chapter3}{Kapitel~3} beschriebenen Tests dargestellt.
 
-\hyperref[sec:kapitel5]{Kapitel~5} vergleicht die eingangs formulierte Fragestellung mit der aufgestellten Hypothese.
+\TeLi{cha:chapter5}{Kapitel~5} vergleicht die eingangs formulierte Fragestellung mit der aufgestellten Hypothese.
 Dabei werden sowohl technische Limitationen als auch persönliche Herausforderungen thematisiert, die sich auf die Qualität der Umsetzung ausgewirkt haben.
-Darauf aufbauend folgen konkrete Verbesserungsvorschläge sowie Ideen zur möglichen Weiterentwicklung des Systems.\\[2pt]
+Darauf aufbauend folgen konkrete Verbesserungsvorschläge sowie Ideen zur möglichen Weiterentwicklung des Systems.
+
 Den Abschluss des Kapitels bildet ein Fazit: Die wichtigsten Erkenntnisse werden zusammengefasst, die Zielerreichung reflektiert und die Forschungsfrage abschliessend beantwortet.
 Zudem beinhaltet das Fazit eine persönliche Reflexion über den Projektverlauf und den eigenen Lernprozess.
 
@@ -41,13 +42,15 @@ Ihre Wurzeln liegen teilweise in der Analyse der Gebärdensprache~\cite{Wiki:Ges
 
 \section{Relevanz des Themas}
 Im Bereich der virtuellen Umgebungen wie Augmented Reality (AR) und Virtual Reality (VR) werden grosse Fortschritte gemacht~\cite{SD:VR}.
-Interaktionen mit Software werden somit immer effizienter, intuitiver und vorallem präziser.\\[2pt]
+Interaktionen mit Software werden somit immer effizienter, intuitiver und vorallem präziser.
+
 Auch in der Robotik eröffnen Gestensteuerungstechnologien neue Perspektiven: Sie ermöglichen eine fast natürliche Interaktion mit semi-autonomen und autonomen Systemen, etwa bei der Navigation und Steuerung von Luft-, Land- und Wasserfahrzeugen.
 So können beispielweise Bergungsaktionen und Minenentschärfung in Zukunft aus der ferne duchgeführt werden, ohne dabei weitere Personen in Gefahr zu bringen.
 
 \section{Zielsetzung der Arbeit}
 Das Ziel dieser Arbeit ist es, die Konzepte der Gestenerkennung sowie deren Einsatzmöglichkeiten zur Steuerung virtueller Systeme zu veranschaulichen.
-Als Grundlage dient dabei ein ähnliches Projekt, das in~\cite{arxiv:OmniRace} vorgestellt wird.\\[2pt]
+Als Grundlage dient dabei ein ähnliches Projekt, das in~\cite{arxiv:OmniRace} vorgestellt wird.
+
 Um den Aufwand in einem realistischen Rahmen zu halten, wird in dieser Arbeit nicht auf eine direkte Erkennung der Fingerpositionen gesetzt.
 Stattdessen kommen ArUco-Marker zum Einsatz, die an den Fingern befestigt werden und eine präzise Erkennung der Fingerbewegungen ermöglichen.
 

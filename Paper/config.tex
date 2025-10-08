@@ -10,6 +10,8 @@
 
 \setmonofont[]{Hack}
 
+\usepackage{xcolor}
+\definecolor{TeLicolor}{RGB}{90, 95, 110}
 
 \usepackage{caption}
 
@@ -35,6 +37,21 @@
   left=2pt, right=2pt, top=2pt, bottom=2pt,
   listing only,
   minted options={fontsize=\small, breaklines, #1}
+}
+
+% Befehl für einzelne, farbige interne Links
+\newcommand{\TeLi}[2]{%
+  \begingroup
+    \hypersetup{linkcolor=TeLicolor}%
+    \hyperref[#1]{#2}%
+  \endgroup
+}
+
+\newcommand{\aTeLi}[1]{%
+  \begingroup
+    \hypersetup{linkcolor=TeLicolor}%
+    \autoref{#1}%
+  \endgroup
 }
 
 % Paket für Zeilenabstand
