@@ -6,11 +6,38 @@
 \fontsize{12pt}{14pt}\selectfont
 
 \section{OpenCV}
-\label{sec:opencv} % Label for hyperlink
-\blindtext
+\label{sec:ocv} % Label for hyperlink
+OpenCV steht für \enquote{Open Source Computer Vision Library} und ist eine der umfangreichsten Bibliotheken für die Echtzeit-Verarbeitung visueller Daten. Das \enquote{Open} im Namen weist darauf hin, dass es sich um ein Open-Source-Projekt handelt. Der Quelltext ist also öffentlich zugänglich und darf unter Einhaltung der Lizenzbedingungen verändert und kostenfrei verwendet werden. OpenCV stellt mehrere sogenannte \textit{Dictionaries} (im Folgenden als \enquote{Bibliotheken} bezeichnet) bereit, die über 2500 Algorithmen beinhalten.
+Die Bibliothek OpenCV wurde in C\texttt{++} implementiert, um eine hohe Rechenleistung, Plattformunabhängigkeit und eine modulare Struktur zu gewährleisten. Auf Basis des C\texttt{++}-Kerns sind später Schnittstellen für Python, Java und andere Sprachen entstanden, die die Nutzung der Bibliothek erleichtern \cite{ocv:org}\footnote{\url{opencv.org/about}}.
+
+\subsection{Einsatzbereiche}
+OpenCV findet Anwendung in vielen Bereichen der Bildverarbeitung. Die Bibliothek eignet sich insbesondere für Aufgaben, die eine effiziente Verarbeitung von Bildern und Videos in Echtzeit erfordern. 
+Im Folgenden sind einige typische Beispiele aufgelistet \cite{Wiki:ocv}
+
+\begin{minipage}{0.55\textwidth}
+    \begin{enumerate}
+        \item Automatisierte Gesichtserkennung
+        \item Gestenerkennung
+        \item Bewegungsanalyse
+        \item Objektidentifizierung
+    \end{enumerate}
+\end{minipage}
+\hfill
+\begin{minipage}{0.4\textwidth}
+    \begin{figure}[H]
+        \centering
+            \includegraphics[width=0.5\textwidth]{ocv_logo.pdf}
+        \caption{Logo von OpenCV \cite{ocv:org}.}
+            \label{fig:ocv_logo}
+    \end{figure}
+\end{minipage}
+
+Abgesehen von diesen klassischen Anwendungsfeldern wird OpenCV auch zunehmend in Forschungsprojekten genutzt, beispielsweise zur Gesten- oder Marker-basierten Steuerung von Robotiksystemen, wie sie im Rahmen dieser Arbeit zum Einsatz kommt. \cite{sse:foodDel}
+
+\subsection{Module}
 
 \section{ArUco-Marker}
-Ein ArUco-Marker wie in \autoref{fig:marker0} dargestellt ist ein quadratischer Referenzmarker, der zur Positions- und Orientierungserkennung in Bildern bzw. Kamerasystemen zum Einsatz kommt. Referenzmarker (auch Passermarken) werden ursprünglich in automatisierten Fertigungsverfahren von elektronischen Bauelementen wie beispielsweise Hauptplatinen verwendet. Sie dienen als optische Referenzpunkte für die Maschinen, die am Fertigungsprozess beteiligt sind. Dadurch erhöhen sie die Präzision und reduzieren Kurzschlüsse \cite{Wiki:Passermarke}.
+Ein ArUco-Marker (wie in \autoref{fig:marker0} dargestellt) ist ein quadratischer Referenzmarker, der zur Positions- und Orientierungserkennung in Bildern bzw. Kamerasystemen zum Einsatz kommt. Referenzmarker (auch Passermarken) werden ursprünglich in automatisierten Fertigungsverfahren von elektronischen Bauelementen wie beispielsweise Hauptplatinen verwendet. Sie dienen als optische Referenzpunkte für die Maschinen, die am Fertigungsprozess beteiligt sind. Dadurch erhöhen sie die Präzision und reduzieren Kurzschlüsse \cite{Wiki:Passermarke}.
 Es gibt Referenzmarker in verschiedenen Grössen, Farbschemen und Formen, abhängig von ihrem Einsatzgebiet. Für diese Arbeit werden aus folgenden Gründen quadratische benutzt:
 
 \begin{itemize}
@@ -19,12 +46,12 @@ Es gibt Referenzmarker in verschiedenen Grössen, Farbschemen und Formen, abhän
     \item Sie sind relativ einfach einzusetzen.
 \end{itemize}
 
-ArUco-basierte Marker zählen zu den verlässlichsten, vor allem seit \hyperref[sec:opencv]{OpenCV} ein Submodul zur Implementierung dieser Marker hinzugefügt hat \cite{IJ:fiducial}.
+ArUco-basierte Marker zählen zu den verlässlichsten, vor allem seit \hyperref[sec:ocv]{OpenCV} ein Submodul zur Implementierung dieser Marker hinzugefügt hat \cite{IJ:fiducial}.
 
 \begin{figure}[H]
     \centering
         \includegraphics[width=0.3\textwidth]{aruco.pdf}
-    \caption{ArUco-Marker mit ID 0. Übernommen von \cite{chev:arucogen}}
+    \caption{ArUco-Marker mit ID 0. Generiert von \cite{chev:arucogen}}.
         \label{fig:marker0}
 \end{figure}
 
@@ -56,7 +83,17 @@ Um einen gesuchten Marker in den Bibliotheken zu finden, braucht man den Namen d
         \label{tab:aruco_dicts}
 \end{table}
 
-In der Tabelle \autoref{tab:aruco_dicts} sind drei Bibliotheken und deren Eigenschaften dargestellt. Es ist zu beachten, dass alle Marker der Bibliothek \bodyCode{DICT\_4x4\_50} auch in \bodyCode{DICT\_4x4\_100} vorhanden sind, da die größere Bibliothek alle IDs der kleineren umfasst. Für dieses Projekt wird die Bibliothek \bodyCode{DICT\_4x4\_50} verwendet, weil es die geometrisch unkomplizierteste Bibliothek ist, die OpenCV unterstützt. Das ist insofern wichtig, weil die Markern letztendlich unter Winkeln bis zu 45° erkennbar sein sollen. Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_50} Bibliothek aus.
+In der Tabelle \autoref{tab:aruco_dicts} sind drei Bibliotheken und deren Eigenschaften dargestellt. Es ist zu beachten, dass alle Marker der Bibliothek \bodyCode{DICT\_4X4\_50} auch in \bodyCode{DICT\_4X4\_100} vorhanden sind, da die größere Bibliothek alle IDs der kleineren umfasst. Für dieses Projekt wird die Bibliothek \bodyCode{DICT\_4X4\_50} verwendet, weil es die geometrisch unkomplizierteste Bibliothek ist, die OpenCV unterstützt. Das ist insofern wichtig, weil die Markern letztendlich unter Winkeln bis zu 45° erkennbar sein sollen. Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_50} Bibliothek aus.
+
+\section{Mathematische Grundlagen}
+
+\subsection{Flächenberechnung mit gaussschen Trapezformel}
+
+\section{Crazyflie 2.0}
+
+\subsection{cflib}
+
+\section{Crazyradio PA}
 
 % End font-size
 \endgroup
