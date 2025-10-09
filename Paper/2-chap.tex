@@ -146,8 +146,117 @@ Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_
 \section{Mathematische Grundlagen}
 \blindtext
 
-\subsection{Flächenberechnung mit gaussschen Trapezformel}
+\subsection{Flächenberechnung mit Gausschen Trapezformel}
+Die Gaussche Trapezformel wird zur Berechnung der Fläche \inlinemath{A} von ebenen, unregelmässigen Polygonen verwendet.
+Sie lautet folgendermassen:
+
+\[
+2A = \left|\sum_{i=1}^{n} (x_i - x_{i+1}) \cdot (y_i + y_{i+1})\right|
+\quad \Longrightarrow \quad
+A = \frac{1}{2} \left|\sum_{i=1}^{n} (x_i - x_{i+1}) \cdot (y_i + y_{i+1})\right|
+\]
+
+Wobei \inlinemath{n} die Anzahl Eckpunkte des Polygons darstellt, sowie \inlinemath{x_i} und \inlinemath{y_i} die Koordinaten des \inlinemath{i}-ten Punktes im zweidimensionalen Raum.
+
+Die Trapezformel ist mathematisch äquivalent zur sogenannten \textit{Shoelace formula} („Schnürsenkel-Formel“), die insbesondere in der Informatik und Bildverarbeitung verwendet wird.
+Die \textit{Shoelace formula} ist eine Optimierung der Trapezformel, welche die praktische Anwendung vereinfachen soll.
+Der Ursprung des Namens ist in \aTeLi{pic:polygon} und \aTeLi{pic:shoelace} illustriert\footnotemark.
+
+\footnotetext{Beide Abbildungen inspiriert durch \cite{Wiki:traFormel}.}
+
+\begin{minipage}[t]{0.47\textwidth}
+    \begin{tikzpicture}[scale=1.2, every node/.style={font=\small}]
+        % Points
+        \coordinate (A) at (0.0,0.0);
+        \coordinate (B) at (3.0,0.5);
+        \coordinate (C) at (3.0,2.5);
+        \coordinate (D) at (0.5,3.0);
+        \coordinate (E) at (1.5,2.0);
+
+        % Area
+        \fill[blue!10] (A)--(B)--(C)--(D)--(E)--cycle;
+
+        % Sides
+        \draw[thick] (A)--(B)--(C)--(D)--(E)--cycle;
+
+        % Point names
+        \filldraw[black] (A) circle (1.5pt)
+            node[below left=1pt] {$A(x_1|y_1)$};
+
+        \filldraw[black] (B) circle (1.5pt)
+            node[right=1pt] {$B(x_2|y_2)$};
+
+        \filldraw[black] (C) circle (1.5pt)
+            node[right=1pt] {$C(x_3|y_3)$};
+
+        \filldraw[black] (D) circle (1.5pt)
+            node[above right=1pt] {$D(x_4|y_4)$};
+
+        \filldraw[black] (E) circle (1.5pt)
+            node[left=1pt] {$E(x_5|y_5)$};
+
+        % Axis
+        \draw[->, gray!70] (-0.5,0) -- (3.5,0) node[right] {$x$};
+        \draw[->, gray!70] (0,-0.5) -- (0,3.5) node[above] {$y$};
+    \end{tikzpicture}
+    \captionof{figure}{Ein Polygon.}
+        \label{pic:polygon}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.5\textwidth}
+    \begin{tikzpicture}[node distance=1.5cm, every node/.style={circle, draw, minimum size=8mm, align=center}]
+        % Upper circles
+        \node (X1) {\inlinemath{x_1}};
+        \node (X2) [right of=X1] {\inlinemath{x_2}};
+        \node (X3) [right of=X2] {\inlinemath{x_3}};
+        \node (X4) [right of=X3] {\inlinemath{x_4}};
+        \node (X5) [right of=X4] {\inlinemath{x_5}};
+        \node (X6) [right of=X5] {\inlinemath{x_1}};
+
+        % Lower circles
+        \node (Y1) [below=2cm of X1] {\inlinemath{y_1}};
+        \node (Y2) [right of=Y1] {\inlinemath{y_2}};
+        \node (Y3) [right of=Y2] {\inlinemath{y_3}};
+        \node (Y4) [right of=Y3] {\inlinemath{y_4}};
+        \node (Y5) [right of=Y4] {\inlinemath{y_5}};
+        \node (Y6) [right of=Y5] {\inlinemath{y_1}};
+
+        % Point Names
+        \node[above=0.3cm of X1, circle=false, draw=none] {\inlinemath{A}};
+        \node[above=0.3cm of X2, circle=false, draw=none] {\inlinemath{B}};
+        \node[above=0.3cm of X3, circle=false, draw=none] {\inlinemath{C}};
+        \node[above=0.3cm of X4, circle=false, draw=none] {\inlinemath{D}};
+        \node[above=0.3cm of X5, circle=false, draw=none] {\inlinemath{E}};
+        \node[above=0.3cm of X6, circle=false, draw=none] {\inlinemath{A}};
+
+        % Shoelaces
+        \draw[->, plusGreen, thick] (X1) -- (Y2);
+        \draw[->, plusGreen, thick] (X2) -- (Y3);
+        \draw[->, plusGreen, thick] (X3) -- (Y4);
+        \draw[->, plusGreen, thick] (X4) -- (Y5);
+        \draw[->, plusGreen, thick] (X5) -- (Y6);
+
+        \draw[->, minusRed, thick] (X2) -- (Y1);
+        \draw[->, minusRed, thick] (X3) -- (Y2);
+        \draw[->, minusRed, thick] (X4) -- (Y3);
+        \draw[->, minusRed, thick] (X5) -- (Y4);
+        \draw[->, minusRed, thick] (X6) -- (Y5);
+
+    \end{tikzpicture}
+    \captionof{figure}{Illustration Shoelace-Muster.}
+        \label{pic:shoelace}
+\end{minipage}
+
 \blindtext
+
+\[
+2A = 
+\begin{aligned}[t]
+    & |\cp (x_1 \cdot y_2) \cp (x_2 \cdot y_3) \cp (x_3 \cdot y_4) \cp (x_4 \cdot y_5) \cp (x_5 \cdot y_1) \\
+    & \cm (x_2 \cdot y_1) \cm (x_3 \cdot y_2) \cm (x_4 \cdot y_3) \cm (x_5 \cdot y_4) \cm (x_1 \cdot y_5)|
+\end{aligned}
+\]
+
 
 \section{Crazyflie 2.0}
 \blindtext
