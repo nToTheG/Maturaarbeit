@@ -116,7 +116,7 @@ Um einen gesuchten Marker in den Bibliotheken zu finden, braucht man den Namen d
 Der Name der Bibliothek legt die Grösse der Matrix und somit Komplexität des Markers fest sowie die Anzahl möglicher Marker.
 
 In der Tabelle \aTeLi{tab:arucoDicts} sind drei Bibliotheken und deren Eigenschaften dargestellt.
-Es ist zu beachten, dass alle Marker der Bibliothek \bodyCode{DICT\_4X4\_50} auch in \bodyCode{DICT\_4X4\_100} vorhanden sind, da die größere Bibliothek alle IDs der kleineren umfasst.
+Es ist zu beachten, dass alle Marker der Bibliothek \bodyCode{DICT\_4X4\_50} auch in \bodyCode{DICT\_4X4\_100} vorhanden sind, da die grössere Bibliothek alle IDs der kleineren umfasst.
 Für dieses Projekt wird die Bibliothek \bodyCode{DICT\_4X4\_50} verwendet, weil es die geometrisch unkomplizierteste Bibliothek ist, die OpenCV unterstützt.
 Das ist insofern wichtig, weil die Markern letztendlich unter Winkeln bis zu 45° erkennbar sein sollen.
 Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_50} Bibliothek aus.
@@ -147,21 +147,31 @@ Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_
 \blindtext
 
 \subsection{Flächenberechnung mit Gausschen Trapezformel}
-Die Gaussche Trapezformel wird zur Berechnung der Fläche \inlinemath{A} von ebenen, unregelmässigen Polygonen verwendet.
-Sie lautet folgendermassen:
+\label{sub:gauTrap}
+
+Die Gaussche Trapezformel dient zur Berechnung der Fläche \inlinemath{A} von ebenen, unregelmässigen Polygonen. Sie lautet wie folgt:
 
 \[
-2A = \left|\sum_{i=1}^{n} (x_i - x_{i+1}) \cdot (y_i + y_{i+1})\right|
-\quad \Longrightarrow \quad
-A = \frac{1}{2} \left|\sum_{i=1}^{n} (x_i - x_{i+1}) \cdot (y_i + y_{i+1})\right|
+2A = \left| \sum_{i=1}^{n} \big((x_i - x_{i+1}) \cdot (y_i + y_{i+1}) \big) \right|
 \]
 
-Wobei \inlinemath{n} die Anzahl Eckpunkte des Polygons darstellt, sowie \inlinemath{x_i} und \inlinemath{y_i} die Koordinaten des \inlinemath{i}-ten Punktes im zweidimensionalen Raum.
+Dabei bezeichnet \inlinemath{n} die Anzahl der Eckpunkte des Polygons, sowie \inlinemath{x_i} und \inlinemath{y_i} die Koordinaten des \inlinemath{i}-ten Punktes im zweidimensionalen Raum.
 
-Die Trapezformel ist mathematisch äquivalent zur sogenannten \textit{Shoelace formula} („Schnürsenkel-Formel“), die insbesondere in der Informatik und Bildverarbeitung verwendet wird.
-Die \textit{Shoelace formula} ist eine Optimierung der Trapezformel, welche die praktische Anwendung vereinfachen soll.
-Der Ursprung des Namens ist in \aTeLi{pic:polygon} und \aTeLi{pic:shoelace} illustriert\footnotemark.
+Wird der Klammerausdruck ausmultipliziert, ergibt sich:
 
+\[
+2A = \left| \sum_{i=1}^{n} \big( x_i y_i + x_i y_{i+1} - x_{i+1} y_i - x_{i+1} y_{i+1} \big) \right|
+\]
+
+Da gilt, dass sich die Terme \inlinemath{x_i y_i} und \inlinemath{x_{i+1} y_{i+1}} innerhalb der Summe gegenseitig aufheben. Nach der Kürzung bleibt nur Folgendes übrig:
+
+\[
+2A = \left| \sum_{i=1}^{n} \big( x_i y_{i+1} - x_{i+1} y_i \big) \right|
+\]
+
+Diese Form entspricht der sogenannten \textit{Shoelace formula} („Schnürsenkel-Formel“), die insbesondere in der Informatik und Bildverarbeitung Anwendung findet. Sie stellt eine kompakte und praktisch gut anwendbare Variante der Gausschen Trapezformel dar.\footnotemark
+\footnotetext{Siehe \TeLi{tab:tools}{Hilfsmittelverzeichnis}.}
+Der Ursprung ihres Namens ist in \aTeLi{pic:polygon} und \aTeLi{pic:shoelace} illustriert.\footnotemark
 \footnotetext{Beide Abbildungen inspiriert durch \cite{Wiki:traFormel}.}
 
 \begin{figure}[H]
@@ -247,23 +257,38 @@ Der Ursprung des Namens ist in \aTeLi{pic:polygon} und \aTeLi{pic:shoelace} illu
             \draw[->, minusRed, thick] (X5) -- (Y4);
             \draw[->, minusRed, thick] (X6) -- (Y5);
         \end{tikzpicture}
-        \caption{Shoelace-Muster.}
+        \caption{Schnürsenkel-Muster.}
         \label{pic:shoelace}
     \end{subfigure}
     \caption{Illustrationen zur Shoelace Formula.}
     \label{fig:overall}
 \end{figure}
 
-\blindtext
+Setzt man nun die \inlinemath{x}- und \inlinemath{y}-Werte für die einzelnen Punkte ein, so erhält man die doppelte Fläche des Polygons (hier Pentagon).
 
-\[
-2A = 
-\begin{aligned}[t]
-    & |\cp (x_1 \cdot y_2) \cp (x_2 \cdot y_3) \cp (x_3 \cdot y_4) \cp (x_4 \cdot y_5) \cp (x_5 \cdot y_1) \\
-    & \cm (x_2 \cdot y_1) \cm (x_3 \cdot y_2) \cm (x_4 \cdot y_3) \cm (x_5 \cdot y_4) \cm (x_1 \cdot y_5)|
-\end{aligned}
-\]
+\begin{minipage}[t]{0.2\textwidth}
+    \begin{align*}
+        x_n &| y_n \\[3pt]
+        A(0.0 &| 0.0) \\
+        B(3.0 &| 0.5) \\
+        C(3.0 &| 2.5) \\
+        D(0.5 &| 3.0) \\
+        E(1.5 &| 2.0)
+    \end{align*}
+\end{minipage}
+\vline
+\begin{minipage}[t]{0.7\textwidth}
+    \begin{align*}
+        2A = |&\cp (x_1 \cdot y_2) \cp (x_2 \cdot y_3) \cp (x_3 \cdot y_4) \cp (x_4 \cdot y_5) \cp (x_5 \cdot y_1) \\
+        &\cm (x_2 \cdot y_1) \cm (x_3 \cdot y_2) \cm (x_4 \cdot y_3) \cm (x_5 \cdot y_4) \cm (x_1 \cdot y_5)| \\[3pt]
+        = |&\cp (0.0 \cdot 0.5) \cp (3.0 \cdot 2.5) \cp (3.0 \cdot 3.0) \cp (0.5 \cdot 2.0) \cp (1.5 \cdot 0.0) \\
+        &\cm (3.0 \cdot 0.0) \cm (3.0 \cdot 0.5) \cm (0.5 \cdot 2.5) \cm (1.5 \cdot 3.0) \cm (0.0 \cdot 2.0)| \\[3pt]
+        = |&\cp 0.0 \cp 7.5 \cp 9.0 \cp 1.0 \cp 0.0 \cm 0.0 \cm 1.5 \cm 1.25 \cm 4.5 \cm 0.0| \\[3pt]
+        = |&\cp 10.25|
+    \end{align*}
+\end{minipage}
 
+Am Ende muss noch mit \inlinemath{\frac{1}{2}} multipliziert werden, um das korrekte Ergebnis zu erhalten: \inlinemath{A = 5.125}
 
 \section{Crazyflie 2.0}
 \blindtext
