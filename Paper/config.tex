@@ -52,7 +52,14 @@
 }
 
 % Befehl für einzelne, farbige interne Links
-\newcommand{\TeLi}[2]{%
+\newcommand{\TeLi}[1]{%
+  \begingroup
+    \hypersetup{linkcolor=TeLicolor}%
+    \ref{#1}%
+  \endgroup
+}
+
+\newcommand{\hTeLi}[2]{%
   \begingroup
     \hypersetup{linkcolor=TeLicolor}%
     \hyperref[#1]{#2}%

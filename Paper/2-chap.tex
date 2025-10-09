@@ -59,7 +59,7 @@ In \aTeLi{tab:ocvModules} sind drei zentrale Module von OpenCV aufgeführt:
         \texttt{imgproc} & Das imgproc-Modul bietet eine umfassende Reihe von Bildverarbeitungsfunktionen.\\
         \addlinespace[3pt]
 
-        \texttt{aruco} & Das aruco-Modul ermöglicht die Erkennung und Verarbeitung von \TeLi{sec:aruco}{ArUco-Markern}. Es kann die Position und Orientierung der Marker berechnen und ist das wichtigste Modul dieser Arbeit.\\
+        \texttt{aruco} & Das aruco-Modul ermöglicht die Erkennung und Verarbeitung von \hTeLi{sec:aruco}{ArUco-Markern}. Es kann die Position und Orientierung der Marker berechnen und ist das wichtigste Modul dieser Arbeit.\\
         \bottomrule
     \end{tabularx}
     \caption{Wichtige Module der OpenCV-Bibliothek \cite{ocv:docs}.}
@@ -84,7 +84,7 @@ Für diese Arbeit werden aus folgenden Gründen quadratische benutzt:
     \item Sie sind relativ einfach einzusetzen.
 \end{itemize}
 
-ArUco-basierte Marker zählen zu den verlässlichsten, vor allem seit \TeLi{sec:ocv}{OpenCV} ein Submodul zur Implementierung dieser Marker hinzugefügt hat \cite{IJ:fiducial}.
+ArUco-basierte Marker zählen zu den verlässlichsten, vor allem seit \hTeLi{sec:ocv}{OpenCV} ein Submodul zur Implementierung dieser Marker hinzugefügt hat \cite{IJ:fiducial}.
 
 \begin{figure}[H]
     \centering
@@ -170,7 +170,7 @@ Da gilt, dass sich die Terme \inlinemath{x_i y_i} und \inlinemath{x_{i+1} y_{i+1
 \]
 
 Diese Form entspricht der sogenannten \textit{Shoelace formula} („Schnürsenkel-Formel“), die insbesondere in der Informatik und Bildverarbeitung Anwendung findet. Sie stellt eine kompakte und praktisch gut anwendbare Variante der Gausschen Trapezformel dar.\footnotemark
-\footnotetext{Siehe \TeLi{tab:tools}{Hilfsmittelverzeichnis}.}
+\footnotetext{Siehe \hTeLi{tab:tools}{Hilfsmittelverzeichnis}.}
 Der Ursprung ihres Namens ist in \aTeLi{pic:polygon} und \aTeLi{pic:shoelace} illustriert.\footnotemark
 \footnotetext{Beide Abbildungen inspiriert durch \cite{Wiki:traFormel}.}
 
@@ -291,12 +291,42 @@ Setzt man nun die \inlinemath{x}- und \inlinemath{y}-Werte für die einzelnen Pu
 Am Ende muss noch mit \inlinemath{\frac{1}{2}} multipliziert werden, um das korrekte Ergebnis zu erhalten: \inlinemath{A = 5.125}
 
 \section{Crazyflie 2.0}
+Die Crazyflie 2.0 ist ein Quadrokopter entwickelt von Bitcraze. Diese Drohne wird oft in Forschungsprojekten genutzt wegen folgender Eigenschaften:
+
+\begin{itemize}
+    \item \textbf{Gewicht:} Die Drohne ist sehr leicht, was vor allem für Laien praktisch ist, da sie schwierig zu beschädigen ist.
+    \item \textbf{API:} Bitcraze stellt eine Open-Source-Python-Schnittstelle zur Verfügung, was fundamental für das Gelingen dieser Arbeit ist. Mehr dazu im Unterkapitel \hTeLi{sub:cflib}{cflib}.
+    \item \textbf{Modularitär:} Bitcraze hat 15 Erweiterungs-Komponenten entwickelt, die den Anwendungsbereich der Crazyflie in Experimenten vergrössert.
+\end{itemize}
+
+Im Rahmen dieser Arbeit wird nur das im \aTeLi{sub:v2} erwähnte \textit{Flow-Deck V2} als Erweiterung verwendet.
+
+Inziwschen ist eine neue Version der Crazyflie erschienen. Die \textit{Crazyflie 2.1\texttt{+}} wurde mit einer längeren Flugzeit und verbesserten Flugleistung. 
+
+Beide Produkte sind mit folgenden Funktionen ausgestattet:
+
+\begin{itemize}
+    \item Unterstützt Steurung durch für IOS-App via BLE (Bluetooth Low Energy) sowie durch Computer, an denen ein \hTeLi{sec:crpa}{\textit{Crazyradio PA}} angeschlossen ist.
+    \item Einem dreiachsigen Gyrosensor.\footnotemark
+    \item Einem dreiachsigen Beschleunigungssensor.\footnotemark[\value{footnote}]
+    \item Einem dreiachsigen Magnetometer.\footnotemark[\value{footnote}]
+    \item Einem Hochpräzision-Drucksensor.
+\end{itemize}
+
+\footnotetext{Element des \textit{MPU-9250}-Bauteils}
+
+\subsection{Flow-Deck V2}
+\label{sub:v2}
+
 \blindtext
 
 \subsection{cflib}
+\label{sub:cflib}
+
 \blindtext
 
 \section{Crazyradio PA}
+\label{sec:crpa}
 \blindtext
 
 % End font-size
