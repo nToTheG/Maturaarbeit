@@ -19,13 +19,13 @@
 \newcommand{\codesnippetpath}{code_snippets/}
 \newcommand{\codefile}[2][]{%
   \begin{listing}[H]
-  \begin{codeblock}[#1]
-    \inputminted[
-      fontsize=\small,
-      breaklines=true,
-      linenos=false,
-    ]{python}{\codesnippetpath#2}
-  \end{codeblock}
+    \begin{codeblock}[#1]
+      \inputminted[
+        fontsize=\small,
+        breaklines=true,
+        linenos=false,
+      ]{python}{\codesnippetpath#2}
+    \end{codeblock}
   \end{listing}
 }
 
@@ -35,6 +35,9 @@
 % Für Math
 \newcommand{\cp}{\textcolor{plusGreen}{\texttt{+}}}
 \newcommand{\cm}{\textcolor{minusRed}{\texttt{-}}}
+
+% Für Tech-Wörter
+\newcommand{\techWord}[1]{\textit{#1}}
 
 % Text auf Titelseite festlegen
 \subject{Maturaarbeit}

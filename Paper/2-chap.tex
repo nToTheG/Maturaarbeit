@@ -141,8 +141,6 @@ Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_
         \label{tab:arucoDicts}
 \end{table}
 
-
-
 \section{Mathematische Grundlagen}
 \blindtext
 
@@ -163,13 +161,15 @@ Wird der Klammerausdruck ausmultipliziert, ergibt sich:
 2A = \left| \sum_{i=1}^{n} \big( x_i y_i + x_i y_{i+1} - x_{i+1} y_i - x_{i+1} y_{i+1} \big) \right|
 \]
 
-Da gilt, dass sich die Terme \inlinemath{x_i y_i} und \inlinemath{x_{i+1} y_{i+1}} innerhalb der Summe gegenseitig aufheben. Nach der Kürzung bleibt nur Folgendes übrig:
+Da gilt, dass sich die Terme \inlinemath{x_i y_i} und \inlinemath{x_{i+1} y_{i+1}} innerhalb der Summe gegenseitig aufheben.
+Nach der Kürzung bleibt nur Folgendes übrig:
 
 \[
 2A = \left| \sum_{i=1}^{n} \big( x_i y_{i+1} - x_{i+1} y_i \big) \right|
 \]
 
-Diese Form entspricht der sogenannten \textit{Shoelace formula} („Schnürsenkel-Formel“), die insbesondere in der Informatik und Bildverarbeitung Anwendung findet. Sie stellt eine kompakte und praktisch gut anwendbare Variante der Gausschen Trapezformel dar.\footnotemark
+Diese Form entspricht der sogenannten \textit{Shoelace formula} („Schnürsenkel-Formel“), die insbesondere in der Informatik und Bildverarbeitung Anwendung findet.
+Sie stellt eine kompakte und praktisch gut anwendbare Variante der Gausschen Trapezformel dar.\footnotemark
 \footnotetext{Siehe \hTeLi{tab:tools}{Hilfsmittelverzeichnis}.}
 Der Ursprung ihres Namens ist in \aTeLi{pic:polygon} und \aTeLi{pic:shoelace} illustriert.\footnotemark
 \footnotetext{Beide Abbildungen inspiriert durch \cite{Wiki:traFormel}.}
@@ -291,25 +291,19 @@ Setzt man nun die \inlinemath{x}- und \inlinemath{y}-Werte für die einzelnen Pu
 Am Ende muss noch mit \inlinemath{\frac{1}{2}} multipliziert werden, um das korrekte Ergebnis zu erhalten: \inlinemath{A = 5.125}
 
 \section{Crazyflie 2.0}
-Die Crazyflie 2.0 ist ein Quadrokopter entwickelt von Bitcraze. Diese Drohne wird oft in Forschungsprojekten genutzt wegen folgender Eigenschaften:
+Die Crazyflie 2.0 ist ein Quadrokopter entwickelt von Bitcraze.
+Diese Drohne wird oft in Forschungsprojekten genutzt wegen folgender Eigenschaften:
 
 \begin{itemize}
     \item \textbf{Gewicht:} Die Drohne ist sehr leicht, was vor allem für Laien praktisch ist, da sie schwierig zu beschädigen ist.
-    \item \textbf{API:} Bitcraze stellt eine Open-Source-Python-Schnittstelle zur Verfügung, was fundamental für das Gelingen dieser Arbeit ist. Mehr dazu im Unterkapitel \hTeLi{sub:cflib}{cflib}.
+    \item \textbf{API:} Bitcraze stellt eine Open-Source-Python-Schnittstelle zur Verfügung, was fundamental für das Gelingen dieser Arbeit ist. Mehr dazu im Unterkapitel \hTeLi{sub:cflib}{CFLib}.
     \item \textbf{Modularitär:} Bitcraze hat 15 Erweiterungs-Komponenten entwickelt, die den Anwendungsbereich der Crazyflie in Experimenten vergrössert.
 \end{itemize}
 
-Im Rahmen dieser Arbeit wird nur das im \aTeLi{sub:v2} erwähnte \textit{Flow-Deck V2} als Erweiterung verwendet.
+Im Rahmen dieser Arbeit wird nur das im \aTeLi{sub:v2} erwähnte \techWord{Flow-Deck V2} als Erweiterung verwendet.
 
-\begin{figure}[H]
-    \centering
-        \includegraphics[width=0.3\textwidth]{cf.pdf}
-    \caption{Crazyflie \bodyCode{2.0} \cite{bc:cf20}}.
-
-        \label{pic:marker0}
-\end{figure}
-
-Inziwschen ist eine neue Version der Crazyflie erschienen. Die \textit{Crazyflie 2.1\texttt{+}} wurde mit einer längeren Flugzeit und verbesserten Flugleistung. 
+Inziwschen ist eine neue Version der Crazyflie erschienen.
+Die \techWord{Crazyflie 2.1\texttt{+}} wurde mit einer längeren Flugzeit und verbesserten Flugleistung. 
 
 Beide Produkte sind mit folgenden Funktionen ausgestattet:
 
@@ -321,21 +315,81 @@ Beide Produkte sind mit folgenden Funktionen ausgestattet:
     \item Einem Hochpräzision-Drucksensor.
 \end{itemize}
 
-\footnotetext{Element des \textit{MPU-9250}-Bauteils}
+\footnotetext{Element des \techWord{MPU-9250}-Bauteils}
 
 \subsection{Flow-Deck V2}
 \label{sub:v2}
 
-\blindtext
+Das Flow-Deck V2 ist ein Erweiterungs-Deck für die Crazyflie. Es wird an der Unterseite der Nano-Drohne befestigt und ermöglicht es ihr, die absolute Position relativ zum Boden (direkt) unter ihr zu bestimmen.
+Die Komponente ist mit einem \techWord{VL53L1x}ToF Sensor\footnotemark  und einem \techWord{PMW3901} Sensor für optischen Bewegungsfluss.
+\footnotetext{ToF (Time of Flight) Sensor: Entfernungssensor}
+Der \techWord{VL53L1x} Sensor sendet über eine Infrarot-Laserdiode kurze Lichtimpulse aus. Die Photonen reflektieren von der Oberfläche ab und treffen in die integrierten SPADs\footnotemark. Aus der gemessenen Laufzeit wird mit der Formel
+\footnotetext{\enquote{Single Photon Avalanche Diodes} erfassen einzelne Photonen}
 
-\subsection{cflib}
+\[
+Entfernung = \frac{c \cdot t}{2}
+\]
+
+die Entfernung bestimmt, wobei \inlinemath{c} die Lichtgeschwindigkeitskonstante und \inlinemath{t} die gemessene Laufzeit darstellt.
+
+Der \techWord{PMW3901} Sensor nimmt mit einer Frequenz von 1000Hz Bildausschnitte der Oberfläche auf.
+Anschliessend werden immer zwei Bilder miteinander verglichen, um Musteränderungen zu finden.
+Aus diesen Pixelverschiebungen wird der optische Fluss bestimmt, in dem sich der Träger des Sensors befindet. \cite{bc:fdv2_specs}
+
+Ist das Flow-Deck an die Drohne angeschlossen, so kann die Crazyflie genauere Anweisungen befolgen.
+Befehle, die sinnbildlich als \textbf{\enquote{Fliege \inlinemath{s} Meter nach \inlinemath{d}!}} mit \inlinemath{s} als Entfernung und \inlinemath{d} als Bewegungsrichtung zu verstehen sind, können nur auf diese Weise effizient genutzt werden.
+
+\subsection{CFLib}
 \label{sub:cflib}
+CFLib steht für \enquote{Crazyflie Python Library}.
+Das Softwarepaket verfügt unter anderem über mehrere API-Funktionen, die in Kapitel !!! TODO !!! ausführlicher erläutert werden.
 
-\blindtext
+Das Modul ist in 8 Submodule unterteilt.
+In der Praxis braucht man meistens alle entweder direkt oder indirekt.
+CFLib ist also nicht wie OpenCV aufgebaut.
+Im folgenden Teil sind die Submodule und ihre Aufgaben aufgeführt:
+
+\begin{enumerate}
+    \item \texttt{cflib.bootloader:} Firmware-Update
+    \item \texttt{cflib.cpx:} Hilfsfunktionen
+    \item \texttt{cflib.crazyflie:} Zugriff auf Drohnenobjekte, Basisklassen und Schnittstellen
+    \item \texttt{cflib.crtp:} Funkkommunikation über Crazy RealTime Protocol (CRTP)
+    \item \texttt{cflib.drivers:} Hardwarezugriff auf Sensoren, Motoren etc.
+    \item \texttt{cflib.localization:} Indoor-Positionierung über LPS (Loco Positioning System)
+    \item \texttt{cflib.positioning:} Optisches Tracking, Positionsberechnung und Stabilisierung
+    \item \texttt{cflib.utils:} Allgemeine Hilfsfunktionen, Unterstützung anderer Module
+\end{enumerate}
 
 \section{Crazyradio PA}
 \label{sec:crpa}
-\blindtext
+
+\begin{figure}[H]
+    \centering
+    \begin{imgbox}
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{cf.pdf}
+            \caption{Crazyflie \bodyCode{2.0} \cite{bc:cf20}}
+            \label{pic:cf20}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{crpa.pdf}
+            \caption{Crazyradio PA \cite{bc:crpa}}
+            \label{pic:crpa}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{fdv2.pdf}
+            \caption{Flow-Deck V2 \cite{bc:fdv2}}
+            \label{pic:fdv2}
+        \end{subfigure}
+    \end{imgbox}
+    \caption{Physische Komponenten}
+        \label{fig:drohne_und_radio}
+\end{figure}
 
 % End font-size
 \endgroup

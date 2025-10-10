@@ -15,6 +15,8 @@
 \definecolor{TeLicolor}{RGB}{90, 95, 110}
 \definecolor{plusGreen}{RGB}{0, 150, 0}
 \definecolor{minusRed}{RGB}{200, 0, 0}
+\definecolor{boxBG}{RGB}{230, 230, 230}
+\definecolor{boxFrame}{RGB}{50, 50, 50}
 
 % Für Untertitel
 \usepackage{caption}
@@ -40,8 +42,8 @@
 \usemintedstyle{manni}
 \tcbuselibrary{listingsutf8}
 \newtcolorbox{codeblock}[1][]{%
-  colback=gray!5,       % Hintergrundfarbe
-  colframe=gray!60,     % Rahmenfarbe
+  colback=boxBG
+  colframe=boxFrame
   boxrule=0.4pt,        % Rahmenstärke
   arc=2mm,              % abgerundete Ecken
   outer arc=2mm,
@@ -49,6 +51,19 @@
   left=2pt, right=2pt, top=2pt, bottom=2pt,
   listing only,
   minted options={fontsize=\small, breaklines, #1}
+}
+
+\tcbuselibrary{skins, breakable}
+\newtcolorbox{imgbox}[1][]{%
+  enhanced,
+  colback=boxBG,
+  colframe=boxFrame,
+  boxrule=0.4pt,
+  arc=2mm,
+  outer arc=2mm,
+  boxsep=3pt,
+  left=3pt, right=3pt, top=3pt, bottom=3pt,
+  #1
 }
 
 % Befehl für einzelne, farbige interne Links
