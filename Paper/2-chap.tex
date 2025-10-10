@@ -290,63 +290,65 @@ Setzt man nun die \inlinemath{x}- und \inlinemath{y}-Werte für die einzelnen Pu
 
 Am Ende muss noch mit \inlinemath{\frac{1}{2}} multipliziert werden, um das korrekte Ergebnis zu erhalten: \inlinemath{A = 5.125}
 
-\section{Crazyflie 2.0}
-Die Crazyflie 2.0 ist ein Quadrokopter entwickelt von Bitcraze.
-Diese Drohne wird oft in Forschungsprojekten genutzt wegen folgender Eigenschaften:
+\section{Crazyflie}
+Die Crazyflie~2.0 ist ein Quadrokopter entwickelt von Bitcraze.
+Die Drohne wird häufig in Forschungsprojekten eingesetzt wegen folgender Eigenschaften:
 
 \begin{itemize}
-    \item \textbf{Gewicht:} Die Drohne ist sehr leicht, was vor allem für Laien praktisch ist, da sie schwierig zu beschädigen ist.
-    \item \textbf{API:} Bitcraze stellt eine Open-Source-Python-Schnittstelle zur Verfügung, was fundamental für das Gelingen dieser Arbeit ist. Mehr dazu im Unterkapitel \hTeLi{sub:cflib}{CFLib}.
-    \item \textbf{Modularitär:} Bitcraze hat 15 Erweiterungs-Komponenten entwickelt, die den Anwendungsbereich der Crazyflie in Experimenten vergrössert.
+    \item \textbf{Gewicht:} Die Drohne ist sehr leicht, was vor allem für Einsteiger praktisch ist, da sie weniger anfällig für Beschädigung ist.
+    \item \textbf{API:} Bitcraze stellt eine Open-Source-Python-Schnittstelle zur Verfügung, die eine direkte Programmierung der Drohne ermöglicht und damit zentral für diese Arbeit ist (siehe \hTeLi{sub:cflib}{Kapitel~CFLib}).
+    \item \textbf{Modularitär:} Es existieren über 15 optionale Erweiterungs-Decks, die den Anwendungsbereich der Crazyflie gezielt erweitern.
 \end{itemize}
 
-Im Rahmen dieser Arbeit wird nur das im \aTeLi{sub:v2} erwähnte \techWord{Flow-Deck V2} als Erweiterung verwendet.
+Im Rahmen dieser Arbeit wird ausschliesslich das in \hTeLi{sub:v2}{Kapitel~\ref{sub:v2}} beschriebene \techWord{Flow-Deck V2} als Erweiterung verwendet.
 
-Inziwschen ist eine neue Version der Crazyflie erschienen.
-Die \techWord{Crazyflie 2.1\texttt{+}} wurde mit einer längeren Flugzeit und verbesserten Flugleistung. 
+Inziwschen ist mit \techWord{Crazyflie 2.1\texttt{+}} eine neue Version der erschienen.
+Diese wurde mit einer längeren Flugzeit und verbesserten Flugleistung. 
 
-Beide Produkte sind mit folgenden Funktionen ausgestattet:
+Beide Versionen der Crazyflie sind mit folgenden Funktionen ausgestattet:
 
 \begin{itemize}
-    \item Unterstützt Steurung durch Apple- und Anroid-Smartphones via BLE (Bluetooth Low Energy) sowie durch Computer, an denen ein \hTeLi{sec:crpa}{\textit{Crazyradio PA}} angeschlossen ist.
+    \item Unterstützung der Steuerung über Apple- und Anroid-Smartphones via BLE (Bluetooth Low Energy) sowie über Computer mit angeschlossenem \hTeLi{sec:crpa}{Crazyradio~PA}.
     \item Einem dreiachsigen Gyrosensor.\footnotemark
     \item Einem dreiachsigen Beschleunigungssensor.\footnotemark[\value{footnote}]
     \item Einem dreiachsigen Magnetometer.\footnotemark[\value{footnote}]
     \item Einem Hochpräzision-Drucksensor.
 \end{itemize}
 
-\footnotetext{Element des \techWord{MPU-9250}-Bauteils}
+\footnotetext{Bestandteil des \techWord{MPU-9250}-Bauteils.}
 
 \subsection{Flow-Deck V2}
 \label{sub:v2}
 
-Das Flow-Deck V2 ist ein Erweiterungs-Deck für die Crazyflie. Es wird an der Unterseite der Nano-Drohne befestigt und ermöglicht es ihr, die absolute Position relativ zum Boden (direkt) unter ihr zu bestimmen.
-Die Komponente ist mit einem \techWord{VL53L1x}ToF Sensor\footnotemark  und einem \techWord{PMW3901} Sensor für optischen Bewegungsfluss.
-\footnotetext{ToF (Time of Flight) Sensor: Entfernungssensor}
-Der \techWord{VL53L1x} Sensor sendet über eine Infrarot-Laserdiode kurze Lichtimpulse aus. Die Photonen reflektieren von der Oberfläche ab und treffen in die integrierten SPADs\footnotemark. Aus der gemessenen Laufzeit wird mit der Formel
+Das Flow-Deck~V2 ist ein Erweiterungsmodul, das an der Unterseite der Drohne befestigt wird.
+Es ermöglicht der Crazyflie, ihre absolute Position relativ zur darunterliegenden Oberfläche zu bestimmen.
+Das Deck kombiniert einen \techWord{VL53L1x}-ToF-Sensor\footnotemark{} mit einem \techWord{PMW3901}-Sensor für die Erfassung des optischen Flusses.
+\footnotetext{ToF (Time of Flight) Sensor: Entfernungssensor.}
+Der \techWord{VL53L1x}-Sensor sendet über eine Infrarot-Laserdiode kurze Lichtimpulse aus.
+Die reflektierten Photonen werden durch sogenannte SPADs\footnotemark{} detektiert. 
 \footnotetext{\enquote{Single Photon Avalanche Diodes} erfassen einzelne Photonen}
+Aus der gemessenen Laufzeit wird die Entfernung mit folgender Formel berechnet:
 
 \[
-Entfernung = \frac{c \cdot t}{2}
+\text{Entfernung} = \frac{c \cdot t}{2}
 \]
 
-die Entfernung bestimmt, wobei \inlinemath{c} die Lichtgeschwindigkeitskonstante und \inlinemath{t} die gemessene Laufzeit darstellt.
+wobei \inlinemath{c} die Lichtgeschwindigkeitskonstante und \inlinemath{t} die gemessene Laufzeit ist.
 
-Der \techWord{PMW3901} Sensor nimmt mit einer Frequenz von 1000Hz Bildausschnitte der Oberfläche auf.
-Anschliessend werden immer zwei Bilder miteinander verglichen, um Musteränderungen zu finden.
-Aus diesen Pixelverschiebungen wird der optische Fluss bestimmt, in dem sich der Träger des Sensors befindet. \cite{bc:fdv2_specs}
+Der \techWord{PMW3901} Sensor nimmt mit einer Frequenz von 1000\,Hz kontinuierlich Bildausschnitte der Oberfläche auf und vergleicht jeweils zwei aufeinanderfolgende miteinander.
+Aus den erkannten Musteränderungen wird der optische Fluss und damit die Bewegung des Sensors relativ zur Oberfläche bestimmt \cite{bc:fdv2_specs}.
 
-Ist das Flow-Deck an die Drohne angeschlossen, so kann die Crazyflie genauere Anweisungen befolgen.
-Befehle, die sinnbildlich als \textbf{\enquote{Fliege \inlinemath{s} Meter nach \inlinemath{d}!}} mit \inlinemath{s} als Entfernung und \inlinemath{d} als Bewegungsrichtung zu verstehen sind, können nur auf diese Weise effizient genutzt werden.
+Ist das Flow-Deck aktiviert, kann die Crazyflie präzisere Positionsbefehle umsetzen.
+Befehle der Form \enquote{Fliege \inlinemath{s}~Meter nach \inlinemath{d}}, wobei \inlinemath{s} die Distanz und \inlinemath{d} die Bewegungsrichtung bezeichnet, können ausschliesslich so ausgeführt werden.
 
 \subsection{CFLib}
 \label{sub:cflib}
 CFLib steht für \enquote{Crazyflie Python Library}.
-Das Softwarepaket verfügt unter anderem über mehrere API-Funktionen, die in Kapitel !!! TODO !!! ausführlicher erläutert werden.
+Das Softwarepaket stellt die Programmierschnittstelle (\textit{API}) zur Steuerung der Drohne bereit. 
+Einzelne API-Funktionen werden in Kapitel~!!!TODO!!! detaillierter erläutert.
 
 Das Modul ist in 8 Submodule unterteilt.
-In der Praxis braucht man meistens alle entweder direkt oder indirekt.
-CFLib ist also nicht wie OpenCV aufgebaut.
+Im Gegensatz zu OpenCV braucht man die Submodule von CFLib meist alle, auch wenn manche nur im Hintergrund laufen.
 Im folgenden Teil sind die Submodule und ihre Aufgaben aufgeführt:
 
 \begin{enumerate}
