@@ -317,6 +317,34 @@ Beide Versionen der Crazyflie sind mit folgenden Funktionen ausgestattet:
 
 \footnotetext{Bestandteil des \techWord{MPU-9250}-Bauteils.}
 
+\begin{figure}[H]
+    \centering
+    \begin{imgbox}
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{cf.pdf}
+            \caption{Crazyflie \bodyCode{2.0} \cite{bc:cf20}}
+            \label{pic:cf20}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{crpa.pdf}
+            \caption{Crazyradio PA \cite{bc:crpa}}
+            \label{pic:crpa}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[b]{0.3\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{fdv2.pdf}
+            \caption{Flow-Deck V2 \cite{bc:fdv2}}
+            \label{pic:fdv2}
+        \end{subfigure}
+    \end{imgbox}
+    \caption{Physische Komponenten}
+        \label{fig:drohne_und_radio}
+\end{figure}
+
 \subsection{Flow-Deck V2}
 \label{sub:v2}
 
@@ -364,34 +392,42 @@ Im folgenden Teil sind die Submodule und ihre Aufgaben aufgeführt:
 
 \section{Crazyradio PA}
 \label{sec:crpa}
+Für die Kommunikation zwischen Computer und Drohne ist das Crazyradio PA zuständig.
+Es ist ein USB-Funkdongle mit einer Reichweite von bis zu zwei Kilometern in kontrollierten Umgebungen.
+Die Datenübertragung erfolgt bidirektional:
+Befehle werden über das \techWord{Crazy RealTime Protocol (CRTP)} von der Steuerkonsole über das Crazyradio an die Drohne gesendet, während Telemetriedaten in umgekehrter Richtung übertragen werden.
+Zu den typischen Telemetriedaten zählen die vom Flow-Deck gemessene Höhe, die aktuelle Ausrichtung des Gyroskops sowie der Batteriestatus.
+Der Funk arbeitet im lizenzfreien \SI{2.4}{\giga\hertz}-ISM-Band (Industrial, Scientific and Medical).
+Dieses Frequenzband wird auch von zahlreichen anderen Geräten genutzt. Dazu gehören etwa WLAN-Router, Bluetooth-Geräte und drahtlose Eingabegeräte, die das Signal zwischen Crazyradio und Crazyflie stören können. Dieses Problem lässt sich jedoch durch das Wählen andere Kanäle umgehen. \cite{bc:crpa_conf}
 
-\begin{figure}[H]
+\subsection{Funkverbidung}
+Um eine Verbindung zwschen dem Crazyradio und einer Crazyflie aufzubauen braucht man einen sogenannten URI (Uniform Resource Identifier), die Verbindungsadresse:
+
+\begin{description}
+    \item \text{\textbf{Allgemeine Form eines URIs:}} \bodyCode{radio://<interface>/<channel>/<datarate>/<address>}
+    \item \text{\textbf{Beispiel eines funktionierenden URIs:}} \bodyCode{radio://0/80/2M/E7E7E7E7E7}
+\end{description}
+
+Die Zeichenabfolge beinhaltet vier Variabeln, die mit \bodyCode{<>} markiert sind. Diese Variabeln sorgen für eine eindeutige Definition des Kommunikationsweges. Die \hTeLi{tab:uri}{folgende Tabelle} erklärt, wie die einzelnen Felder gewählt werden sollten. Dabei steht \inlinemath{m} für die Anzahl angeschlossener Crazyradio-Dongles.
+
+\begin{table}[H]
     \centering
-    \begin{imgbox}
-        \begin{subfigure}[b]{0.3\textwidth}
-            \centering
-            \includegraphics[width=\textwidth]{cf.pdf}
-            \caption{Crazyflie \bodyCode{2.0} \cite{bc:cf20}}
-            \label{pic:cf20}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.3\textwidth}
-            \centering
-            \includegraphics[width=\textwidth]{crpa.pdf}
-            \caption{Crazyradio PA \cite{bc:crpa}}
-            \label{pic:crpa}
-        \end{subfigure}
-        \hfill
-        \begin{subfigure}[b]{0.3\textwidth}
-            \centering
-            \includegraphics[width=\textwidth]{fdv2.pdf}
-            \caption{Flow-Deck V2 \cite{bc:fdv2}}
-            \label{pic:fdv2}
-        \end{subfigure}
-    \end{imgbox}
-    \caption{Physische Komponenten}
-        \label{fig:drohne_und_radio}
-\end{figure}
+    \caption{Variabeln eines URIs}
+        \label{tab:uri}
+    \begin{tabularx}{\textwidth}{l X X >{\hsize=0.37\hsize}X}
+        \toprule
+        \textbf{Variabel} & \textbf{Beschreibung} & \textbf{Zweck} & \textbf{Optionen} \\
+        \midrule
+        \bodyCode{<interface>} & Index des angeschlossenen Dongles & Zwischen mehrerer angeschlossener Funkadaptern & \bodyCode{0} bis \inlinemath{m-1} \\
+        \addlinespace[3pt]
+        \bodyCode{<channel>} & Funkkanal im \SI{2.4}{\giga\hertz}-Bereich & Wahl des Kanals zur Vermeidung von Störungen & \bodyCode{0 - 125} \\
+        \addlinespace[3pt]
+        \bodyCode{<datarate>} & Übertragungsgeschwindigkeit in Bit/s & Reichweite und Stabilität des Signals & \SI{250}{\kilo\bit},~\SI{1}{\mega\bit}, \SI{2}{\mega\bit}\\
+        \addlinespace[3pt]
+        \bodyCode{<address>} & Hexadezimale Adresse der Drohne & Unterscheidung mehrerer Crazyflies & Hexadezimale Adressen \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
 
 % End font-size
 \endgroup
