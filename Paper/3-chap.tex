@@ -5,7 +5,37 @@
 \begingroup
 \fontsize{12pt}{14pt}\selectfont
 
+In diesem Kapitel wird beschrieben, wie die im Kapitel 2 vorgestellten theoretischen Grundlagen praktisch umgesetzt werden.
+Ziel ist es, eine Gestensteuerung der Crazyflie 2.0 mithilfe von ArUco-Markern zu realisieren.
+Um dieses Ziel zu erreichen, wurde eine Methode entwickelt, die sowohl die Erkennung und Analyse von Handbewegungen als auch die Steuerung der Drohne umfasst.
 
+\section{Vorgehensweise}
+
+Diese Arbeit umfasst mehrere Prozessschritte, die von der Erfassung visueller Daten über deren mathematische Verarbeitung bis hin zur Umsetzung in Steuerbefehle für die Drohne reichen.
+Dazu werden folgende Schritte durchgeführt:
+
+\begin{enumerate}
+    \item \textbf{Erfassen der Handbewegung:}
+    \begin{itemize}
+        \item Kameraerfassung der ArUco-Marker auf der Hand.
+        \item Verarbeitung der Bilder mit OpenCV.
+        \item Extraktion der Markerpositionen und Eckpunkte.
+    \end{itemize}
+    \item \textbf{Datenverarbeitung und Interpretation:}
+    \begin{itemize}
+        \item Flächenberechnung jedes Markers mittels Gaußscher Trapezformel.
+        \item Bestimmung der Ausrichtung der Handfläche.
+    \end{itemize}
+    \item \textbf{Steuerung der Crazyflie:}
+    \begin{itemize}
+        \item Übersetzung der Handausrichtung in Steuerargumente.
+        \item Verwendung dieser Argumente in den CFLib-Funktionen.
+        \item Übertragung der Befehle über das Crazyradio PA via CRTP.
+    \end{itemize}
+\end{enumerate}
+
+\section{Erfassen der Handbewegung}
+\blindtext
 
 % End font-size
 \endgroup
