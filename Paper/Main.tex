@@ -70,29 +70,28 @@ Abteilung GH}
 % erstelle Titel
 \maketitle
 
-% erstelle Inhaltsverzeichnis
-\tableofcontents
+\input{acknowledgements.tex}
 
-% erstelle alle Kapitel
+\tableofcontents
+\clearpage
+
+\begingroup
+    \let\clearpage\relax
+    \listoffigures
+    \listoftables
+\endgroup
+
 \input{1-chap.tex}
 \input{2-chap.tex}
 \input{3-chap.tex}
 \input{4-chap.tex}
 \input{5-chap.tex}
 
-% erstelle Verzeichnis
-\listoffigures
-\listoftables
 \input{tools.tex}
+
 \printbibliography
 
-% Github QR-Code
-\begin{figure}[H]
-    \centering
-        \includegraphics[width=0.8\textwidth]{github_repo.pdf}
-    \caption{QR-Code zu meinem Github-Repository \cite{git:repo}.}
-        \label{qr:github}
-\end{figure}
+\input{attachment.tex}
 
 \end{document}
 % ENDE DOKUMENT -----------------------------------
