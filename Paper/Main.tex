@@ -16,7 +16,6 @@
 \newcommand{\bodyCode}[1]{\texttt{\small #1}}
 
 % Für Code der alleine steht (Usage: '\codefile{code.py}')
-\newcommand{\codesnippetpath}{code_snippets/}
 \newcommand{\codefile}[2][]{%
   \begin{listing}[H]
     \begin{codeblock}[#1]
@@ -24,7 +23,7 @@
         fontsize=\small,
         breaklines=true,
         linenos=false,
-      ]{python}{\codesnippetpath#2}
+      ]{python}{code_snippets/#2}
     \end{codeblock}
   \end{listing}
 }
