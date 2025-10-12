@@ -46,17 +46,50 @@ Diese gibt zwei Werte zurück:
 
 \begin{itemize}
     \item Der erste Wert gibt an, ob ein Bild erfolgreich empfangen wurde\footnotemark{}.
-    \footnotetext{Im \hTeLi{sni:cam}{Codeausschnitt} als \bodyCode{success} ersichtlich.}
+    \footnotetext{Im \hTeLi{sni:det}{Codeausschnitt} als \bodyCode{success} ersichtlich.}
     \item Der zweite Wert enthält das aktuelle Kamerabild in Form eines NumPy-Arrays\footnotemark{}.
-    \footnotetext{Im \hTeLi{sni:cam}{Codeausschnitt} als \bodyCode{frame} ersichtlich.}
+    \footnotetext{Im \hTeLi{sni:det}{Codeausschnitt} als \bodyCode{frame} ersichtlich.}
 \end{itemize}
 
 Wenn kein Bild empfangen werden konnte, wird das Programm beendet.
 Anschliessend wird das Bild in Graustufen konvertiert, um die spätere Erkennung der ArUco-Marker zu erleichtern.
 Die Spiegelung entlang der vertikalen Achse sorgt dafür, dass das angezeigte Bild der realen Ausrichtung der Hand entspricht.
 
-\codefile[cam.py]{Codeausschnitt: Initialisierung der Kamera}{sni:cam}
+Damit im aufgenommenen Bild nach ArUco-Markern gesucht werden kann, muss zunächst die passende ArUco-Bibliothek definiert werden.
+Das geschieht einmalig mit dem Befehl
 
+\bodyCode{cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT\_4X4\_50)}.
+
+Wie bereits in \hTeLi{sub:fw}{Kapitel~\ref{sub:fw}} erwähnt, werden im Rahmen dieser Arbeit Marker aus der \bodyCode{4X4\_50}-Bibliothek verwendet.
+Mit \bodyCode{DetectorParameters()} wird eine Instanz der im ArUco-Modul enthaltenen Parameterklasse erstellt.
+Diese Klasse definiert unter anderem die internen Abläufe der Markererkennung wie beispielsweise die Kantenerkennung oder die Filterung von Fehlkandidaten.
+
+Das Parameterobjekt und die festgelegte Bibliothek werden anschliessend als Argumente an die Funktion \bodyCode{ArucoDetector()} übergeben, welche den eigentlichen Erkennungsablauf initialisiert.
+Die Detektion erfolgt durch den Aufruf von \bodyCode{detectMarkers()}, der das aktuelle Bild als Argument entgegennimmt.
+Als Rückgabewert erhält man eine geordnete Sammlung (ein sogenanntes Tupel) dreier Elemente.
+
+\begin{itemize}
+    \item Das erste Element enthält die Eckkoordinaten der erkannten Marker in Form von NumPy-Arrays.
+    \item Das zweite Element enthält die zugehörigen Marker-IDs.
+    \item Das dritte Element umfasst Marker-Kandidaten\footnotemark{}, die zwar als potenzielle Marker erkannt, aber nach der Validierung verworfen wurden.
+    \footnotetext{Im \hTeLi{sni:det}{Codeausschnitt} als \bodyCode{rejected} ersichtlich.}
+\end{itemize}
+
+\codefile[detection.py]{Codeausschnitt: Initialisierung der Kamera und Erfassung der ArUco-Marker}{sni:det}
+
+\subsection{Potenzielle Probleme}
+Bei der Erkennung der ArUco-Marker wird davon ausgegangen, dass verschiedene Faktoren die Genauigkeit und Stabilität der Resultate beeinflussen könnten.
+
+Ein wesentlicher Einflussfaktor dürften die Lichtverhältnisse sein.
+Starke Reflexionen, Schatten oder ungleichmässige Beleuchtung könnten dazu führen, dass die Kanten der Marker nicht eindeutig erkannt werden.
+Dies würde sich insbesondere auf die Kantenerkennung und damit auf die Validierung der Marker auswirken.
+
+Auch die Grösse der Marker sowie der Abstand zur Kamera könnten eine Rolle spielen.
+Befinden sich die Marker zu weit entfernt oder werden sie in zu kleiner Auflösung aufgenommen, wären die schwarzen und weissen Bereiche nicht mehr klar voneinander unterscheidbar, was die Erkennung erschweren könnte.
+Ebenso wäre es denkbar, dass eine teilweise Verdeckung oder eine starke Neigung der Hand dazu führt, dass Marker nicht erkannt oder falsch identifiziert würden.
+
+Darüber hinaus könnte Bewegung während der Aufnahme zu unscharfen Bildern führen.
+Dies träfe insbesondere dann zu, wenn die Framerate der Kamera zu niedrig oder die Bewegung der Hand zu schnell wäre.
 
 \section{Datenverarbeitung und Interpretation}
 
