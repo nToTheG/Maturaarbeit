@@ -149,26 +149,20 @@ Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_
 \label{sub:gauTrap}
 
 Die Gaussche Trapezformel dient zur Berechnung der Fläche \inlinemath{A} von ebenen, unregelmässigen Polygonen. Sie lautet wie folgt:
-
 \[
 2A = \left| \sum_{i=1}^{n} \big((x_i - x_{i+1}) \cdot (y_i + y_{i+1}) \big) \right|
 \]
-
 Dabei bezeichnet \inlinemath{n} die Anzahl der Eckpunkte des Polygons, sowie \inlinemath{x_i} und \inlinemath{y_i} die Koordinaten des \inlinemath{i}-ten Punktes im zweidimensionalen Raum.
 
 Wird der Klammerausdruck ausmultipliziert, ergibt sich:
-
 \[
 2A = \left| \sum_{i=1}^{n} \big( x_i y_i + x_i y_{i+1} - x_{i+1} y_i - x_{i+1} y_{i+1} \big) \right|
 \]
-
 Da gilt, dass sich die Terme \inlinemath{x_i y_i} und \inlinemath{x_{i+1} y_{i+1}} innerhalb der Summe gegenseitig aufheben.
 Nach der Kürzung bleibt nur Folgendes übrig:
-
 \[
 2A = \left| \sum_{i=1}^{n} \big( x_i y_{i+1} - x_{i+1} y_i \big) \right|
 \]
-
 Diese Form entspricht der sogenannten \textit{Shoelace formula} („Schnürsenkel-Formel“), die insbesondere in der Informatik und Bildverarbeitung Anwendung findet.
 Sie stellt eine kompakte und praktisch gut anwendbare Variante der Gausschen Trapezformel dar.\footnotemark
 \footnotetext{Siehe \hTeLi{tab:tools}{Hilfsmittelverzeichnis}.}
@@ -291,6 +285,83 @@ Setzt man nun die \inlinemath{x}- und \inlinemath{y}-Werte für die einzelnen Pu
 
 Am Ende muss noch mit \inlinemath{\frac{1}{2}} multipliziert werden, um das korrekte Ergebnis zu erhalten: \inlinemath{A = 5.125}
 
+\subsection{Quadratische Skalierung und Verhältnisbildung}
+\label{sub:quska}
+
+Die in \hTeLi{sub:gauTrap}{Abschnitt~\ref{sub:gauTrap}} vorgestellte Flächenberechnung liefert die Grundlage, um die Ausrichtung der Hand zu bestimmen.
+Da sich die Werte der einzelnen Markerflächen jedoch häufig nur geringfügig unterscheiden, ist ein direkter Vergleich der Flächen nicht immer aussagekräftig.
+Um Unterschiede deutlicher hervorzuheben, wird das Prinzip der quadratischen Skalierung angewendet.
+Dabei wird jede berechnete Fläche \inlinemath{A_i} quadriert, wodurch grössere Werte stärker gewichtet werden:
+\[
+A_i' = A_i^2
+\]
+Diese Transformation betont selbst kleine Differenzen zwischen den Flächen und ermöglicht so eine präzisere Auswertung der Handbewegung.
+
+Zur Orientierung sind die vier Marker auf der Handfläche wie folgt angeordnet:
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \begin{tikzpicture}[baseline=(current bounding box.center),
+            every node/.style={rectangle, rounded corners=2pt, draw, align=center}]
+            \node (ol) {\bodyCode{ID=1}};
+            \node (or) [right=2.0cm of ol] {\bodyCode{ID=2}};
+
+            % Lower circles
+            \node (ul) [below=1.0cm of ol] {\bodyCode{ID=4}};
+            \node (ur) [right=2.0cm of ul] {\bodyCode{ID=3}};
+
+            % Alias'
+            \node[font=\small, above=1mm of ol, rectangle=false, draw=none, inner sep=0] {oben, links};
+            \node[font=\small, above=1mm of or, rectangle=false, draw=none, inner sep=0] {oben, rechts};
+            \node[font=\small, below=1mm of ur, rectangle=false, draw=none, inner sep=0] {unten, rechts};
+            \node[font=\small, below=1mm of ul, rectangle=false, draw=none, inner sep=0] {unten, links};
+
+            % Lines
+            \draw (ol.east) -- (or.west);
+            \draw (ul.east) -- (ur.west);
+            \draw (ol.south) -- (ul.north);
+            \draw (or.south) -- (ur.north);
+
+        \end{tikzpicture}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \ensuremath{\vcenter{\hbox{%
+            \begin{tabular}{c|c}
+                \textbf{Marker-ID} & \textbf{Flächenbezeichnung} \\ \hline
+                \bodyCode{1} & \inlinemath{A_{OL}} \\
+                \bodyCode{2} & \inlinemath{A_{OR}} \\
+                \bodyCode{3} & \inlinemath{A_{UR}} \\
+                \bodyCode{4} & \inlinemath{A_{UL}}
+            \end{tabular}%
+        }}}
+    \end{subfigure}
+\end{figure}
+
+Jede Fläche \(A_i\) entspricht somit einem bestimmten Marker auf der Hand, wie in der Tabelle dargestellt.
+Für die Ermittlung der Ausrichtung werden die Marker in vier Gruppen unterteilt: oben, unten, rechts und links.
+Für jede dieser Gruppen wird die Summe der quadrierten Flächen gebildet:
+\[
+S_\text{oben} = A_{OL}' + A_{OR}', \quad S_\text{unten} = A_{UL}' + A_{UR}'
+\]
+\[
+S_\text{rechts} = A_{OR}' + A_{UR}', \quad S_\text{links} = A_{OL}' + A_{UL}'
+\]
+Da die absoluten Flächenwerte je nach Aufnahmebedingungen variieren können, ist ein Vergleich über Differenzen nicht wirklich robust.
+Stattdessen werden die Werte über Verhältnisse miteinander verglichen, indem jeweils der Quotient der grösseren durch die kleinere Gruppensumme gebildet wird:
+\[
+Q_\text{OU} = \frac{\max(S_\text{oben}, S_\text{unten})}{\min(S_\text{oben}, S_\text{unten})}, \quad
+Q_\text{RL} = \frac{\max(S_\text{rechts}, S_\text{links})}{\min(S_\text{rechts}, S_\text{links})}
+\]
+Diese Quotienten drücken die Verhätnisse der Flächenverteilung aus.
+Je grösser der Quotient, desto stärker ist die Neigung der Hand entlang der entsprechenden Achse ausgeprägt.
+Ein höherer Wert von \inlinemath{Q_\text{OU}} weist somit auf eine vertikale Ausrichtung (vorwärts oder rückwärts) hin, während ein grösserer \inlinemath{Q_\text{RL}} eine horizontale Ausrichtung (nach links oder rechts) signalisiert.
+
+Dieses Verfahren liefert somit eine robuste und normalisierte Entscheidungsgrundlage für die spätere Steuerung der Drohne.
+
 \section{Crazyflie}
 Die Crazyflie~2.0 ist ein Quadrokopter entwickelt von Bitcraze.
 Die Drohne wird häufig in Forschungsprojekten eingesetzt wegen folgender Eigenschaften:
@@ -357,11 +428,9 @@ Der \techWord{VL53L1x}-Sensor sendet über eine Infrarot-Laserdiode kurze Lichti
 Die reflektierten Photonen werden durch sogenannte SPADs\footnotemark{} detektiert. 
 \footnotetext{\enquote{Single Photon Avalanche Diodes} erfassen einzelne Photonen}
 Aus der gemessenen Laufzeit wird die Entfernung mit folgender Formel berechnet:
-
 \[
 \text{Entfernung} = \frac{c \cdot t}{2}
 \]
-
 wobei \inlinemath{c} die Lichtgeschwindigkeitskonstante und \inlinemath{t} die gemessene Laufzeit ist.
 
 Der \techWord{PMW3901} Sensor nimmt mit einer Frequenz von 1000\,Hz kontinuierlich Bildausschnitte der Oberfläche auf und vergleicht jeweils zwei aufeinanderfolgende miteinander.
