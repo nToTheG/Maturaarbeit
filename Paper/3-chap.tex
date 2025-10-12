@@ -1,4 +1,4 @@
-\chapter{\chapThree}
+ar\chapter{\chapThree}
 \label{cha:chapter3} % Label for hyperlink
 
 % Start font-size
@@ -35,7 +35,33 @@ Dazu werden folgende Schritte durchgeführt:
 \end{enumerate}
 
 \section{Erfassen der Handbewegung}
-\blindtext
+
+Zu Beginn muss die OpenCV-Bibliothek in das Python-Skript importiert werden, da sie die grundlegenden Funktionen für die Bildverarbeitung bereitstellt.
+Für die Erfassung der Handbewegung ist der Zugriff auf die Kamera erforderlich.
+Dies erfolgt über die Klasse \bodyCode{VideoCapture()}, die eine Verbindung zur Kamera herstellt und kontinuierlichen Zugriff auf deren Bilddaten ermöglicht.
+Ob die Kamera erfolgreich geöffnet wurde oder beispielsweise durch ein anderes Programm blockiert ist, kann mit der integrierten Funktion \bodyCode{isOpened()} überprüft werden.
+
+Um sicherzustellen, dass tatsächlich Bildinformationen empfangen werden, muss in einer Schleife die \bodyCode{read()}-Funktion aufgerufen werden.
+Diese gibt zwei Werte zurück:
+
+\begin{itemize}
+    \item Der erste Wert gibt an, ob ein Bild erfolgreich empfangen wurde\footnotemark{}.
+    \footnotetext{Im \hTeLi{sni:cam}{Codeausschnitt} als \bodyCode{success} ersichtlich.}
+    \item Der zweite Wert enthält das aktuelle Kamerabild in Form eines NumPy-Arrays\footnotemark{}.
+    \footnotetext{Im \hTeLi{sni:cam}{Codeausschnitt} als \bodyCode{frame} ersichtlich.}
+\end{itemize}
+
+Wenn kein Bild empfangen werden konnte, wird das Programm beendet.
+Anschliessend wird das Bild in Graustufen konvertiert, um die spätere Erkennung der ArUco-Marker zu erleichtern.
+Die Spiegelung entlang der vertikalen Achse sorgt dafür, dass das angezeigte Bild der realen Ausrichtung der Hand entspricht.
+
+\codefile[cam.py]{Codeausschnitt: Initialisierung der Kamera}{sni:cam}
+
+
+\section{Datenverarbeitung und Interpretation}
+
+\section{Steuerung der Crazyflie}
+\label{sec:cf_co}
 
 % End font-size
 \endgroup

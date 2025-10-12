@@ -15,17 +15,23 @@
 % Für Code im Fliesstext
 \newcommand{\bodyCode}[1]{\texttt{\small #1}}
 
-% Für Code der alleine steht (Usage: '\codefile{code.py}')
-\newcommand{\codefile}[2][]{%
-  \begin{listing}[H]
-    \begin{codeblock}[#1]
-      \inputminted[
-        fontsize=\small,
-        breaklines=true,
-        linenos=false,
-      ]{python}{code_snippets/#2}
-    \end{codeblock}
-  \end{listing}
+% Für Code der alleine steht
+% Usage: \codefile[filename]{caption}{label}
+\newcommand{\codefile}[3][]{%
+    \begin{minipage}{\linewidth}
+        \vspace{1ex}
+        \captionsetup{type=listing,labelformat=empty}
+        \caption*{\large{\textbf{#2}}}
+        \label{#3}
+        \vspace{-1ex}
+        \begin{codeblock}[#1]
+            \inputminted[
+                fontsize=\small,
+                breaklines=true,
+                linenos=false
+            ]{python}{code_snippets/#1}
+        \end{codeblock}
+    \end{minipage}
 }
 
 % Für Mathe im Fliesstext
