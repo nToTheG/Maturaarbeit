@@ -1,4 +1,4 @@
-ar\chapter{\chapThree}
+\chapter{\chapThree}
 \label{cha:chapter3} % Label for hyperlink
 
 % Start font-size
@@ -102,6 +102,17 @@ Innerhalb dieser Listen sind die Koordinaten der vier Eckpunkte jeweils als Tupe
 Mit dieser Datenstruktur lässt sich anschliessend die Fläche jedes Markers mithilfe der Shoelace-Formel berechnen, wie in \hTeLi{sni:slf}{Codeausschnitt} dargestellt.
 
 \codefile[shoelace.py]{Codeausschnitt: Algorithmus Shoelace-Formel}{sni:slf}
+
+Zur Auswertung der Handbewegung wird auf das in \hTeLi{sub:quska}{Kapitel~\ref{sub:quska}} eingeführte Prinzip der quadratischen Skalierung und Verhältnisbildung zurückgegriffen.
+Die Markerflächen werden also zunächst quadriert, in die vier Gruppen (oben, unten, rechts, links) eingeordnet und die Summen sowie Quotienten \inlinemath{Q_\text{OU}} und \inlinemath{Q_\text{RL}} gebildet.
+Anhand dieser Quotienten lässt sich die dominierende Bewegungsrichtung der Hand bestimmen:
+
+\begin{itemize}
+    \item \inlinemath{Q_\text{OU} < Q_\text{RL}}: horizontale Bewegung (links/rechts) überwiegt
+    \item \inlinemath{Q_\text{OU} > Q_\text{RL}}: vertikale Bewegung (vorwärts/rückwärts) überwiegt
+\end{itemize}
+
+
 
 \section{Steuerung der Crazyflie}
 \label{sec:cf_co}
