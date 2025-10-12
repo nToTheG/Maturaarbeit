@@ -93,6 +93,16 @@ Dies träfe insbesondere dann zu, wenn die Framerate der Kamera zu niedrig oder 
 
 \section{Datenverarbeitung und Interpretation}
 
+Als Nächstes soll die Fläche jedes erkannten Markers berechnet werden.
+Dafür müssen die Eckkoordinaten zunächst in ein handlicheres Format überführt werden.
+Das gewünschte Format ist eine Liste, die für jeden Marker eine weitere Liste enthält.\footnotemark{}
+\footnotetext{Im \hTeLi{sni:slf}{Codeausschnitt} als \bodyCode{formatted\_markers} visualisiert.}
+Innerhalb dieser Listen sind die Koordinaten der vier Eckpunkte jeweils als Tupel gespeichert.
+
+Mit dieser Datenstruktur lässt sich anschliessend die Fläche jedes Markers mithilfe der Shoelace-Formel berechnen, wie in \hTeLi{sni:slf}{Codeausschnitt} dargestellt.
+
+\codefile[shoelace.py]{Codeausschnitt: Algorithmus Shoelace-Formel}{sni:slf}
+
 \section{Steuerung der Crazyflie}
 \label{sec:cf_co}
 
