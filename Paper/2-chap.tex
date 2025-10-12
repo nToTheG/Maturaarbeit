@@ -119,7 +119,7 @@ Der Name der Bibliothek legt die Grösse der Matrix und somit Komplexität des M
 In der Tabelle \aTeLi{tab:arucoDicts} sind drei Bibliotheken und deren Eigenschaften dargestellt.
 Es ist zu beachten, dass alle Marker der Bibliothek \bodyCode{DICT\_4X4\_50} auch in \bodyCode{DICT\_4X4\_100} vorhanden sind, da die grössere Bibliothek alle IDs der kleineren umfasst.
 Für dieses Projekt wird die Bibliothek \bodyCode{DICT\_4X4\_50} verwendet, weil es die geometrisch unkomplizierteste Bibliothek ist, die OpenCV unterstützt.
-Das ist insofern wichtig, weil die Markern letztendlich unter Winkeln bis zu 45° erkennbar sein sollen.
+Das ist insofern wichtig, weil die Marker letztendlich unter Winkeln bis zu 45° erkennbar sein sollen.
 Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_50} Bibliothek aus.
 
 \begin{table}[H]
@@ -259,7 +259,7 @@ Der Ursprung ihres Namens ist in \aTeLi{pic:polygon} und \aTeLi{pic:shoelace} il
     \label{fig:overall}
 \end{figure}
 
-Setzt man nun die \inlinemath{x}- und \inlinemath{y}-Werte für die einzelnen Punkte ein, so erhält man die doppelte Fläche des Polygons (hier Pentagon).
+Setzt man die \inlinemath{x}- und \inlinemath{y}-Werte für die einzelnen Punkte ein, so erhält man die doppelte Fläche des Polygons (hier Pentagon).
 
 \begin{minipage}[t]{0.2\textwidth}
     \begin{align*}
@@ -363,8 +363,8 @@ Ein höherer Wert von \inlinemath{Q_\text{OU}} weist somit auf eine vertikale Au
 Dieses Verfahren liefert somit eine robuste und normalisierte Entscheidungsgrundlage für die spätere Steuerung der Drohne.
 
 \section{Crazyflie}
-Die Crazyflie~2.0 ist ein Quadrokopter entwickelt von Bitcraze.
-Die Drohne wird häufig in Forschungsprojekten eingesetzt wegen folgender Eigenschaften:
+Als Drohne für diese Arbeit wurde die Crazyflie~2.0 ausgewählt.
+Die Eigenschaften, welche \textbf{für} die Wahl dieses Quadrokopters in Forschungsprojekten sprechen, sind im Folgenden aufgelistet:
 
 \begin{itemize}
     \item \textbf{Gewicht:} Die Drohne ist sehr leicht, was vor allem für Einsteiger praktisch ist, da sie weniger anfällig für Beschädigung ist.
@@ -446,7 +446,7 @@ Das Softwarepaket stellt die Programmierschnittstelle (\textit{API}) zur Steueru
 Einzelne API-Funktionen werden in \hTeLi{sec:cf_co}{Kapitel~\ref{sec:cf_co}} detaillierter erläutert.
 
 Das Modul ist in 8 Submodule unterteilt.
-Im Gegensatz zu OpenCV braucht man die Submodule von CFLib meist alle, auch wenn manche nur im Hintergrund laufen.
+Im Gegensatz zu OpenCV benötigt man die Submodule von CFLib meist alle, auch wenn manche nur im Hintergrund laufen.
 Im folgenden Teil sind die Submodule und ihre Aufgaben aufgeführt:
 
 \begin{enumerate}
@@ -470,7 +470,7 @@ Zu den typischen Telemetriedaten zählen die vom Flow-Deck gemessene Höhe, die 
 Der Funk arbeitet im lizenzfreien \SI{2.4}{\giga\hertz}-ISM-Band (Industrial, Scientific and Medical).
 Dieses Frequenzband wird auch von zahlreichen anderen Geräten genutzt. Dazu gehören etwa WLAN-Router, Bluetooth-Geräte und drahtlose Eingabegeräte, die das Signal zwischen Crazyradio und Crazyflie stören können. Dieses Problem lässt sich jedoch durch das Wählen andere Kanäle umgehen. \cite{bc:crpa_conf}
 
-\subsection{Funkverbidung}
+\subsection{Funkverbindung}
 Um eine Verbindung zwschen dem Crazyradio und einer Crazyflie aufzubauen braucht man einen sogenannten URI (Uniform Resource Identifier), die Verbindungsadresse:
 
 \begin{description}
