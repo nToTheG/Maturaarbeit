@@ -144,6 +144,15 @@ Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_
 
 \section{Mathematische Grundlagen}
 
+\subsection{NumPy-Arrays und zweidimensionale Listen}
+\label{sub:numpy}
+NumPy ist eine Python-Bibliothek, die für numerische Berechnungen optimiert ist und in der Regel automatisch mitinstalliert wird, wenn OpenCV installiert wird.
+Ein NumPy-Array ist eine Datenstruktur, die numerische Werte in einer festen, mehrdimensionalen Form speichert.
+Damit lassen sich Vektor- und Matrixoperationen effizient und direkt ausführen, was insbesondere bei grossen Datensätzen oder komplexen Berechnungen von Vorteil ist.
+
+Im Rahmen dieser Arbeit werden NumPy-Arrays vor allem als Zwischenergebnis bei der Marker-Erkennung durch OpenCV erzeugt.
+Da für die weitere Verarbeitung jedoch nur einfache Operationen wie das Durchlaufen und Vergleichen von Koordinaten notwendig sind, werden diese Arrays in zweidimensionale Python-Listen umgewandelt.
+Dies vereinfacht den Zugriff auf einzelne Werte und vermeidet die zusätzlichen Strukturen, die NumPy für umfangreiche mathematische Berechnungen bereitstellt.
 
 \subsection{Flächenberechnung mit Gausschen Trapezformel}
 \label{sub:gauTrap}
