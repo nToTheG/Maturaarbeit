@@ -5,7 +5,29 @@
 \begingroup
 \fontsize{12pt}{14pt}\selectfont
 
+\section{Fazit}
 
+\section{Rückblick}
+
+Rückblickend zeigte sich, dass die gewählte Lösung mit ArUco-Markern zwar eine robuste und vergleichsweise einfache Möglichkeit zur Gestenerkennung ist, jedoch auch einige Einschränkungen aufweist.
+Die Marker müssen klar sichtbar und gut beleuchtet sein, was die praktische Anwendbarkeit reduziert.
+Zudem wirkt die Interaktion durch die sichtbaren Markierungen weniger natürlich.
+
+Ein alternativer Ansatz wäre die Verwendung einer echten Handerkennung gewesen, beispielsweise mit der Python-Bibliothek MediaPipe in Kombination mit OpenCV.
+Diese Methode hätte eine markerlose Steuerung ermöglicht und damit eine natürlichere Mensch-Maschine-Interaktion geschaffen.
+Zum Zeitpunkt der Planung wurde dieser Weg jedoch verworfen, da der Implementierungsaufwand und die technische Komplexität zu hoch eingeschätzt wurden.
+Rückblickend wäre es jedoch ein lohnendes Experiment gewesen, um das Potenzial einer rein visuellen Gestensteuerung zu untersuchen.
+
+\section{Zukunft und Weiterentwicklung}
+
+In zukünftigen Arbeiten soll die Steuerung der Crazyflie auf eine markerlose Handerkennung umgestellt werden.
+Die Kombination aus MediaPipe und OpenCV bietet dafür eine geeignete Grundlage, um Gesten in Echtzeit zu erkennen und deren Position sowie Ausrichtung präzise zu bestimmen.
+Durch diese Erweiterung könnte die Steuerung deutlich natürlicher und intuitiver werden, da keine sichtbaren Marker mehr benötigt würden.
+
+Das Ziel ist es, diesen Ansatz in einem nächsten Schritt praktisch umzusetzen und zu evaluieren, wie zuverlässig und reaktionsschnell die Drohne auf reine Handbewegungen reagiert.
+Dabei steht insbesondere die Stabilität der Erkennung und die Latenz der Steuerung im Vordergrund.
+
+\section{Selbstreflexion}
 
 % End font-size
 \endgroup
