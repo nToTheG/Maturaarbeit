@@ -108,11 +108,25 @@ Die Markerflächen werden also zunächst quadriert, in die vier Gruppen (oben, u
 Anhand dieser Quotienten lässt sich die dominierende Bewegungsrichtung der Hand bestimmen:
 
 \begin{itemize}
-    \item \inlinemath{Q_\text{OU} < Q_\text{RL}}: horizontale Bewegung (links/rechts) überwiegt
+    \item \inlinemath{Q_\text{OU} < Q_\text{RL}}: horizontale Drehung (links/rechts) überwiegt
     \item \inlinemath{Q_\text{OU} > Q_\text{RL}}: vertikale Bewegung (vorwärts/rückwärts) überwiegt
 \end{itemize}
 
+Somit wurde die Anwinkelung der Hand interpretiert.
+Sie beschreibt jedoch keine seitliche Verschiebung, sondern eine Drehung um die vertikale Achse (Yaw-Bewegung) oder eine Vorwärts- oder Rückwärtsbewegung.
+Damit auch die vertikale Position der Hand im Bild erfasst werden kann, wird der Mittelpunkt\footnotemark{} der Handfläche auf der \inlinemath{y}-Achse berechnet.
+\footnotetext{Wenn von Mittelpunkt gesprochen wird, ist damit der \inlinemath{y}-Wert des Mittelpunkts gemeint.}
 
+Dazu werden zunächst die \inlinemath{y}-Mittelpunkte der beiden oberen und der beiden unteren Marker bestimmt.
+Aus diesen Werten wird jeweils der Durchschnitt gebildet, wodurch der vertikale Mittelpunkt der oberen und der unteren Marker entsteht.
+Der Mittelwert dieser beiden Punkte ergibt den \inlinemath{y}-Mittelpunkt der gesamten Handfläche.
+
+Anschliessend vergleicht man diesen Wert mit der Hälfte der Bildhöhe.
+Liegt der Mittelpunkt deutlich oberhalb dieser Bildmitte, so wird die Hand als \enquote{oben} interpretiert; liegt er deutlich darunter, als \enquote{unten}.
+Um zufällige oder geringe Schwankungen zu vermeiden, wird eine sogenannte Deadzone definiert:
+Erst wenn der Mittelpunkt mindestens um \SI{100}{Pixel} (etwa \SI{2.5}{\centi\meter}) über oder unter der Bildmitte liegt, wird eine vertikale Bewegung erkannt.
+
+Ist \inlinemath{Q_\text{RL}} grösser, ist klar, dass die Drohne nach \inlinemath{\max{(S_\text{rechts}, S_\text{links})}} drehen muss. Im Fall, dass \inlinemath{Q_\text{OU}} grösser ist, wird die Drohne nach \inlinemath{\max{(S_\text{oben}, S_\text{unten})}} fliegen.
 
 \section{Steuerung der Crazyflie}
 \label{sec:cf_co}
