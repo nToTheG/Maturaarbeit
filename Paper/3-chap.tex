@@ -126,10 +126,66 @@ Liegt der Mittelpunkt deutlich oberhalb dieser Bildmitte, so wird die Hand als \
 Um zufällige oder geringe Schwankungen zu vermeiden, wird eine sogenannte Deadzone definiert:
 Erst wenn der Mittelpunkt mindestens um \SI{100}{Pixel} (etwa \SI{2.5}{\centi\meter}) über oder unter der Bildmitte liegt, wird eine vertikale Bewegung erkannt.
 
-Ist \inlinemath{Q_\text{RL}} grösser, ist klar, dass die Drohne nach \inlinemath{\max{(S_\text{rechts}, S_\text{links})}} drehen muss. Im Fall, dass \inlinemath{Q_\text{OU}} grösser ist, wird die Drohne nach \inlinemath{\max{(S_\text{oben}, S_\text{unten})}} fliegen.
+Ist \inlinemath{Q_\text{RL}} grösser, ist klar, dass die Drohne nach \inlinemath{\max{(S_\text{rechts}, S_\text{links})}} drehen muss.
+Im Fall, dass \inlinemath{Q_\text{OU}} grösser ist, wird die Drohne nach \inlinemath{\max{(S_\text{oben}, S_\text{unten})}} fliegen.
 
 \section{Steuerung der Crazyflie}
 \label{sec:cf_co}
+Um eine Crazyflie zu steuern, müssen mehrere Module der \bodyCode{CFlib}-Bibliothek importiert werden:
+
+\begin{itemize}
+    \item Die \bodyCode{Crazyflie}-Klasse stellt die grundlegende Kommunikationsschnittstelle zur Drohne bereit.
+    \item Die \bodyCode{SyncCrazyflie}-Klasse verwaltet die Verbindung zur Drohne und sorgt für einen synchronisierten Datenaustausch.
+    \item Die \bodyCode{MotionCommander}-Klasse ermöglicht Streckenbefehle, wie in \hTeLi{sub:v2}{Kapitel~\ref{sub:v2}} beschrieben.
+\end{itemize}
+
+Die Verbindung zur Crazyflie wird mit einer \bodyCode{with}-Anweisung hergestellt.
+Dabei wird eine Instanz der \bodyCode{SyncCrazyflie} mit einem entsprechenden URI als Argument erstellt.
+Innerhalb dieses Kontexts kann eine \bodyCode{MotionCommander}-Instanz\footnotemark{} erzeugt werden, die eine definierte Flughöhe vorgibt.
+Anschliessend können, basierend auf der aus den ArUco-Markern interpretierten Handbewegung, Steuerbefehle an die Crazyflie gesendet werden.
+\footnotetext{Teilweise als \bodyCode{mc} ersichtlicht.}
+
+Die mögliche Befehle sind in Tabelle~\TeLi{tab:cf_cmds} dargestellt.
+Die Parameter \bodyCode{V\_YAW}, \bodyCode{V\_ALT} und \bodyCode{V\_HOR} definieren dabei die jeweiligen Geschwindigkeiten der Bewegungen:
+
+\begin{itemize}
+    \item \bodyCode{V\_YAW} beschreibt die Drehgeschwindigkeit um die vertikale Achse (Yaw), angegeben in m/s.
+    \item \bodyCode{V\_ALT} bezeichnet die vertikale Steig- oder Sinkgeschwindigkeit in m/s.
+    \item \bodyCode{V\_HOR} steht für die horizontale Fluggeschwindigkeit (Vorwärts oder Rückwärts) in m/s.
+\end{itemize}
+
+Die Werte dieser Konstanten werden so gewählt, dass die Bewegungen der Crazyflie sanft und kontrollierbar bleiben.
+Zu hohe Geschwindigkeiten würden das präzise Steuern über Gesten erschweren.
+
+\begin{table}[H]
+    \centering
+    \caption{Steuerbefehle des \bodyCode{MotionCommander}}
+        \label{tab:cf_cmds}
+    \begin{tabular}{l|l}
+        \textbf{Richtung} & \textbf{MotionCommander-Befehl} \\ \hline
+        Rechtsdrehung & \bodyCode{mc.start\_turn\_right(V\_YAW)} \\
+        Linksdrehung & \bodyCode{mc.start\_turn\_left(V\_YAW)} \\
+        Sinken & \bodyCode{mc.start\_down(V\_ALT)} \\
+        Steigen & \bodyCode{mc.start\_up(V\_ALT)} \\
+        Rückwärts & \bodyCode{mc.start\_back(V\_HOR)} \\
+        Vorwärts & \bodyCode{mc.start\_forward(V\_HOR)} \\
+    \end{tabular}
+\end{table}
+
+Die Klasse \bodyCode{MotionCommander} sendet kontinuierlich Bewegungsanweisungen an die Crazyflie.
+Werden keine neuen Befehle übermittelt, beginnt sie automatisch mit der Landung.
+Um dies zu verhindern, werden \textit{leere} Befehle an die Drohne gesendet, sofern keine Anweisungen aus der ArUco-Erkennung vorliegen.
+Ein solcher leerer Befehl lautet:
+\begin{center}
+    \bodyCode{mc.start\_linear\_motion(0, 0, 0, rate\_yaw=0.0)}
+\end{center}
+Dieser Befehl teilt der Crazyflie mit, dass sie ihre aktuelle Position und Orientierung beibehalten soll.
+
+\subsection{Sicherheitsmechanismen}
+Als Sicherheitsmechanismus wurde eine Klasse implementiert, die eine Art Stopuhr-Funktion erfüllt.
+Jedes Mal, wenn alle vier Marker auf der Hand erkannt werden, wird diese Stopuhr auf \inlinemath{t=0} zurückgesetzt.
+Sie zählt kontinuierlich weiter und sobald sie \inlinemath{t=5} erreicht, wird die Crazyflie automatisch gelandet.
+Damit ist der Landungsprozess abgesichert, und in einer Notsituation, beispielsweise bei einem Ausfall der Kamera, wird das Risiko einer Beschädigung der Drohne deutlich reduziert.
 
 % End font-size
 \endgroup
