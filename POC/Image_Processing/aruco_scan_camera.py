@@ -52,6 +52,7 @@ def draw_detected_markers(corners, ids, feed_frame):
     Draws detected corners onto the frame.
     """
     flipped_frame = feed_frame
+    print(ids)
     if ids is not None and len(ids) != 0:
         for i, _ in enumerate(ids.flatten()):
             for corner in corners[i][0]:
