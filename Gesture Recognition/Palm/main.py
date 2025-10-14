@@ -9,12 +9,13 @@ Purpose:
 
 import sys
 import time
+import math
 
 import cv2
-import cflib.crtp
-from cflib.crazyflie import Crazyflie
-from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
-from cflib.positioning.motion_commander import MotionCommander
+#import cflib.crtp
+#from cflib.crazyflie import Crazyflie
+#from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+#from cflib.positioning.motion_commander import MotionCommander
 
 import config
 import debug
@@ -56,47 +57,57 @@ class DroneController:
 
         time.sleep(0.1)
 
-
 class TagEvaluater:
+    """
+    - Makes a snapshot of the distances between the markers and their sizes
+    - Determines the tilt of the hand compared to the snapshot
+    """
+
     def __init__(self):
         self.ids = None
         self.tags = []
-        self.direction = None
+        self.calibrated = False
+        self.distance_snapshot = (None, None)
+        self.distance = None
+        self.area_snapshot = None
+        self.area = None
 
-    def _sum(self, areas):
-        A_OL = areas[self.ids.index(1)]
-        A_OR = areas[self.ids.index(2)]
-        A_UR = areas[self.ids.index(3)]
-        A_UL = areas[self.ids.index(4)]
+    def determine_tilt(self):
+        d_ss = self.distance_snapshot
+        d = self.distance
+        id_ss = self.area_snapshot[1]
 
-        S_O = A_OR + A_OL
-        S_U = A_UR + A_UL
-        S_R = A_OR + A_UR
-        S_L = A_OL + A_UL
+        if d_ss[0]/d[0] > d_ss[1]/d[1] + config.V_DZ:
+            if self.area[self.ids.index(2)] < self.area_snapshot[0][id_ss.index(2)]:
+                return "right"
+            return "left"
 
-        Q_OU = (max(S_O, S_U)) / (min(S_O, S_U))
-        Q_RL = (max(S_R, S_L)) / (min(S_R, S_L))
+        if d_ss[0]/d[0] < d_ss[1]/d[1] - config.H_DZ:
+            if self.area[self.ids.index(1)] > self.area_snapshot[0][id_ss.index(1)]:
+                return "forwards"
+            return "backwards"
 
-        if Q_OU < Q_RL - config.V_DZ:
-            if S_R > S_L:
-                self.direction = "right"
-            else:
-                self.direction = "left"
+        return "hover"
 
-        if Q_RL < Q_OU - config.H_DZ:
-            if S_O > S_U:
-                self.direction = "forward"
-            else:
-                self.direction = "backward"
+    def get_distance(self, id1, id2):
+        tag1 = self.tags[self.ids.index(id1)]
+        tag2 = self.tags[self.ids.index(id2)]
+        vector1 = self.middle_point(tag1)
+        vector2 = self.middle_point(tag2)
+        distance = self.vector_subtraction(vector1, vector2)
+        return distance
 
-        self.direction = None
+    def middle_point(self, tag):
+        sx = sum(corner[0] for corner in tag)
+        sy = sum(corner[1] for corner in tag)
+        mx = sx / 4
+        my = sy / 4
+        return (mx, my)
 
-    def scale(self, areas):
-        scaled_areas = []
-        for area in areas:
-            scaled_area = area**2
-            scaled_areas.append(scaled_area)
-        return scaled_areas
+    def vector_subtraction(self, v1, v2):
+        v3 = (v1[0] - v2[0], v1[1] - v2[1])
+        d = math.sqrt(v3[0]**2 + v3[1]**2)
+        return d
 
     def shoelace_formula(self):
         """
@@ -133,7 +144,12 @@ class TagEvaluater:
 
             self.tags.append(tag_as_2d_array)
 
-        return self.tags
+    def make_snapshot(self, tags, ids):
+        if all(_id in ids for _id in config.USED_TAGS):
+            _ = self.update(tags, ids)
+            self.distance_snapshot = self.distance
+            self.area_snapshot = (self.area, self.ids)
+            self.calibrated = True
 
     def update(self, tags, ids):
         """
@@ -142,9 +158,11 @@ class TagEvaluater:
 
         self.ids = [_id[0] for _id in ids]
         self.numpy_to_2d(tags)
-        areas = self.shoelace_formula()
-        scaled_areas = self.scale(areas)
-        self._sum(scaled_areas)
+        self.area = self.shoelace_formula()
+        self.distance = (self.get_distance(1, 2), self.get_distance(4, 1))
+        if self.calibrated:
+            return self.determine_tilt()
+        return None
 
 
 class Stopwatch:
@@ -198,8 +216,18 @@ class Camera:
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         corners, ids, _ = detector.detectMarkers(gray_frame)
 
-        return gray_frame, corners, ids
+        return frame, corners, ids
 
+
+def calibrate(te, cam):
+    add_text = ""
+    while not te.calibrated:
+        frame, corners, ids = cam.process_frame()
+        if cv2.waitKey(1) == ord("s"):
+            te.make_snapshot(corners, ids)
+            if add_text == "":
+                add_text = " (Try again)"
+        show_feed(None, None, config.frame_text(frame, add_text))
 
 def main():
     """
@@ -212,28 +240,25 @@ def main():
     te = TagEvaluater()
     controller = DroneController()
 
-    cflib.crtp.init_drivers()
-    debug.main("deck")
+    calibrate(te, cam)
 
     try:
-        with SyncCrazyflie(config.MY_URI, cf=Crazyflie(rw_cache='cache')) as scf:
-            scf.cf.platform.send_arming_request(True)
-            time.sleep(1.0)
+        while True:
+            if cv2.waitKey(1) == ord('q'):
+                break
 
-            with MotionCommander(scf, default_height=config.DEFAULT_HEIGHT) as mc:
-                while controller.flying:
-                    frame, corners, ids = cam.process_frame()
-                    if ids is not None:
-                        if all(_id in config.USED_TAGS for _id in ids) and len(ids) == 4:
-                            sw.reset()
-                            te.update(corners, ids)
-                        else:
-                            sw.safety_check(controller)
-                    else:
-                        sw.safety_check(controller)
+            frame, corners, ids = cam.process_frame()
+            if ids is not None:
+                if all(_id in ids for _id in config.USED_TAGS):
+                    sw.reset()
+                    direction = te.update(corners, ids)
+                    print(direction)
+                else:
+                    sw.safety_check(controller)
+            else:
+                sw.safety_check(controller)
 
-                    controller.send_instructions(mc, te.direction)
-                    draw_detected_markers(corners, ids, frame)
+            show_feed(corners, ids, frame)
 
     except Exception as e:
         debug.main("error", e)
@@ -243,7 +268,7 @@ def main():
         cv2.destroyAllWindows()
         sys.exit()
 
-def draw_detected_markers(corners, ids, feed_frame):
+def show_feed(corners, ids, feed_frame):
     flipped_frame = feed_frame
     if ids is not None and len(ids) != 0:
         for i, _ in enumerate(ids.flatten()):
