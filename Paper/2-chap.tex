@@ -144,6 +144,9 @@ Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_
 
 \section{Mathematische Grundlagen}
 
+In diesem Kapitel werden die für das Verständnis dieser Arbeit benötigten mathematischen Grundlagen erläutert.
+Dabei handelt es sich um grundlegende mathematische Konzepte, die für die Auswertung der Bildaten von Nöten sind.
+
 \subsection{NumPy-Arrays und zweidimensionale Listen}
 \label{sub:numpy}
 NumPy ist eine Python-Bibliothek, die für numerische Berechnungen optimiert ist und in der Regel automatisch mitinstalliert wird, wenn OpenCV installiert wird.
@@ -293,6 +296,27 @@ Setzt man die \inlinemath{x}- und \inlinemath{y}-Werte für die einzelnen Punkte
 \end{minipage}
 
 Am Ende muss noch mit \inlinemath{\frac{1}{2}} multipliziert werden, um das korrekte Ergebnis zu erhalten: \inlinemath{A = 5.125}
+
+\subsection{Mittelpunkt eines Vierecks berechnen}
+Die Berechnung des Mittelpunktes eines Vierecks ist sehr einfach, weswegen hier nur die Formel angegeben wird:
+\[
+M_x = \frac{x_1 + x_2 + x_3 + x_4}{4}, \quad M_y = \frac{y_1 + y_2 + y_3 + y_4}{4}
+\]
+\subsection{Distanzberechnung mittels Vektorsubtraktion}
+Jegliche Distanze werden in dieser Arbeit durch die Subtraktion von Vektoren berechnet.
+Dazu werden zuerst die Ortsvektoren der Punkte \inlinemath{A(x_1|y_1)} und \inlinemath{B(x_2|y_2)} bestimmt.
+\[
+\overrightarrow{OA} = \vect{x_1}{y_1}, \quad \overrightarrow{OB} = \vect{x_2}{y_2}
+\]
+Anschliessend muss der Vektor \inlinemath{\overrightarrow{AB}} berechnet werden.
+Das geschieht durch Vektorsubtraktion:
+\[
+\overrightarrow{AB} = \overrightarrow{OA} - \overrightarrow{OB} = \vect{x_1}{y_1} - \vect{x_2}{y_2} = \vect{x_1-x_2}{y_1-y_2} = \vect{x_3}{y_3}
+\]
+Zum Schluss muss nur noch der \textit{Satz des Pythagoras} angewendet werden, um die Länge \inlinemath{|\overrightarrow{AB}|} zu berechnen.
+\[
+|\overrightarrow{AB}| = \sqrt{(x_3)^2 + (y_3)^2}
+\]
 
 \section{Crazyflie}
 Als Drohne für diese Arbeit wurde die Crazyflie~2.0 ausgewählt.
