@@ -5,14 +5,15 @@
 \begingroup
 \fontsize{12pt}{14pt}\selectfont
 
-In diesem Kapitel wird beschrieben, wie die im Kapitel 2 vorgestellten theoretischen Grundlagen praktisch umgesetzt werden.
+In diesem Kapitel wird beschrieben, wie die in \hTeLi{cha:chapter2}{Kapitel~\ref{cha:chapter2}} vorgestellten theoretischen Grundlagen praktisch umgesetzt werden.
 Ziel ist es, eine Gestensteuerung der Crazyflie 2.0 mithilfe von ArUco-Markern zu realisieren.
-Um dieses Ziel zu erreichen, wurde eine Methode entwickelt, die sowohl die Erkennung und Analyse von Handbewegungen als auch die Steuerung der Drohne umfasst.
+Um dieses Ziel zu erreichen, wurde eine zwei Methoden entwickelt, die sowohl die Erkennung und Analyse von Handbewegungen als auch die Steuerung der Drohne umfasst.
 
 \section{Vorgehensweise}
 
-Diese Arbeit umfasst mehrere Prozessschritte, die von der Erfassung visueller Daten über deren mathematische Verarbeitung bis hin zur Umsetzung in Steuerbefehle für die Drohne reichen.
-Dazu werden folgende Schritte durchgeführt:
+Beide Methoden umfassen die selben Prozessschritte, die von der Erfassung visueller Daten über deren mathematische Verarbeitung bis hin zur Umsetzung in Steuerbefehle für die Drohne reichen.
+Der ausschlaggebende Unterschied ist dabei die Platzierung der Marker auf der Hand (mehr dazu in \hTeLi{sec:diff_meth}{Kapitel~\ref{sec:diff_meth}}).
+Innerhalb beider Methoden werden folgende Schritte durchgeführt:
 
 \begin{enumerate}
     \item \textbf{Erfassen der Handbewegung:}
@@ -23,7 +24,8 @@ Dazu werden folgende Schritte durchgeführt:
     \end{itemize}
     \item \textbf{Datenverarbeitung und Interpretation:}
     \begin{itemize}
-        \item Flächenberechnung jedes Markers mittels Gaußscher Trapezformel.
+        \item Flächenberechnung jedes Markers mittels Gausscher Trapezformel.
+        \item Einmaliges Kalibrieren der Marker.
         \item Bestimmung der Ausrichtung der Handfläche.
     \end{itemize}
     \item \textbf{Steuerung der Crazyflie:}
@@ -34,8 +36,41 @@ Dazu werden folgende Schritte durchgeführt:
     \end{itemize}
 \end{enumerate}
 
-\section{Erfassen der Handbewegung}
+\section{Unterschiede der Lösungsansätze}
+\label{sec:diff_meth}
 
+Wie bereits erwähnt, unterscheiden sich die Methoden in der Platzierung der ArUco-Marker auf der Hand.
+Beide Methoden verwenden genau vier Marker, welche die IDs 1 bis 4 darstellen.
+
+\subsection{Methode 1}
+In Methode~1 werden die Marker in einem Rechteck platziert.
+Als Referenzpunkte dienen dazu die Fingergrundgelenke (\textit{FFG}) und das Handgelenk (\textit{HG}) der Hand:
+
+\begin{itemize}
+    \item Marker \bodyCode{ID=1} wird auf das \textit{FGG} des kleinen Fingers geklebt.
+    \item Marker \bodyCode{ID=2} wird auf das \textit{FGG} des Indexfingers geklebt.
+    \item Marker \bodyCode{ID=3} wird auf die rechte Seite des \textit{HG}s geklebt.
+    \item Marker \bodyCode{ID=4} wird auf die linke Seite des \textit{HG}s geklebt.
+\end{itemize}
+
+Die Breite des Markerbereichs ist hier als Distanz zwischen den Mittelpunkten der ArUco-Marker mit den IDs 1 und 2 definiert.
+Die Höhe ist mit der Entfernung der Mittelpunkte zwischen Marker \bodyCode{ID=1} und \bodyCode{ID=4} gleichzusetzen.
+
+\subsection{Methode 2}
+Im Gegensatz zur Methode~1 werden bei Methode~2 die Finger als Teil der Hand mitverwendet.
+Markern mit \bodyCode{ID=1} soll auf der Spitze des kleinen Fingers befestigt werden.
+Gegenüberliegend davon ist auf der Daumenspitze der Marker mit der ID 3 anzubringen
+Die übrigen Marker werden auf die Spitze des Mittelfingers (\bodyCode{ID=2}) und zentriert auf das HG (\bodyCode{ID=4}) geklebt.
+Die Tags bilden somit ein Viereck in Form einer Raute.
+
+Auch bei dieser Version muss die Breite und die Höhe des von Markern umschlossenen Bereichs bestimmt werden.
+
+\begin{itemize}
+    \item \textbf{Breite:} Mittelpunktentfernung der Markern des kleinen Fingers und des Daumens.
+    \item \textbf{Höhe:} Distanz zwischen Mittelpunkt des \textit{HG}-Tags und des Mittelfingertags.
+\end{itemize}
+
+\section{Erfassen der Handbewegung}
 Zu Beginn muss die OpenCV-Bibliothek in das Python-Skript importiert werden, da sie die grundlegenden Funktionen für die Bildverarbeitung bereitstellt.
 Für die Erfassung der Handbewegung ist der Zugriff auf die Kamera erforderlich.
 Dies erfolgt über die Klasse \bodyCode{VideoCapture()}, die eine Verbindung zur Kamera herstellt und kontinuierlichen Zugriff auf deren Bilddaten ermöglicht.
@@ -76,6 +111,9 @@ Als Rückgabewert erhält man eine geordnete Sammlung (ein sogenanntes Tupel) dr
 
 \codefile[detection.py]{Codeausschnitt: Initialisierung der Kamera und Erfassung der ArUco-Marker}{sni:det}
 
+Hierbei ist es wichtig zu beachten, dass die \inlinemath{y}-Achse eines von von OpenCV aufgenommenen Kamerabildes invertiert.
+Das bedeutet, das Pixel mit den Koordinaten (0|0) ist im oberen linken Ecken des Bildes.
+
 \subsection{Potenzielle Probleme}
 Bei der Erkennung der ArUco-Marker wird davon ausgegangen, dass verschiedene Faktoren die Genauigkeit und Stabilität der Resultate beeinflussen könnten.
 
@@ -91,42 +129,42 @@ Darüber hinaus könnte Bewegung während der Aufnahme zu unscharfen Bildern fü
 Dies träfe insbesondere dann zu, wenn die Framerate der Kamera zu niedrig oder die Bewegung der Hand zu schnell wäre.
 
 \section{Datenverarbeitung und Interpretation}
+Innerhalb der Datenverarbeitung unterscheidet man zwischen zwei verschiedenen Funktionen.
+Der erste beinhaltet die Kalibrierung der Referenzdaten.
+ist diese einmal fertig, wird sie icht mehr verwendet.
 
-Als Nächstes soll die Fläche jedes erkannten Markers berechnet werden.
-Dafür müssen die Eckkoordinaten zunächst in ein handlicheres Format überführt werden.
-Das gewünschte Format ist eine Liste, die für jeden Marker eine weitere Liste enthält.\footnotemark{}
-\footnotetext{Im \hTeLi{sni:slf}{Codeausschnitt} als \bodyCode{formatted\_markers} visualisiert.}
-Innerhalb dieser Listen sind die Koordinaten der vier Eckpunkte jeweils als Tupel gespeichert.
+\subsection{Kalibrieren der Marker}
+Der Zweck der Kalibrierung ist es, Referenzdaten für die spätere Bestimmung der Ausrichtung zu haben.\footnotemark{}
+\footnotetext{Diese Momentaufnahmen werden von nun an als \textit{Snapshots} bezeichnet}
+Die gespeicherten Daten bestehen zum einen aus der Höhe und der Breite des erkannten Markerbereiches.
+Dafür muss zunächst die Hand mittig auf dem Kamerabild platziert werden.
+Ein Knopfdruck startet die Kalibrierung. 
+Nun müssen zunächst die Mittelpunkte derjenigen Marker bestimmt, die für die Berechnung der Höhe und Breite benötigt sind.
+Anschliessend kann mit Vektorsubtraktion und dem Satz des Pythagoras die Distanz zwischen den Referenzpunkte berechnet werden.
 
-Mit dieser Datenstruktur lässt sich anschliessend die Fläche jedes Markers mithilfe der Shoelace-Formel berechnen, wie im folgenden \hTeLi{sni:slf}{Skript} dargestellt.
+Zusätzlich müssen noch die Fläche der Marker gespeichert werden.
+Die Shoelace-Formel ist hierfür der genau richtige Ansatz.
 
-\codefile[shoelace.py]{Codeausschnitt: Algorithmus Shoelace-Formel}{sni:slf}
+\subsection{Richtungsbestimmung}
+In dieser Arbeit wird ein Ausschlussverfahren für die Richtungsbestimmung verwendet.
+Es soll eingangs die Horizontale und Vertikale des erkannten Markerbereichs berechnet und anschliessend mit den gespeicherten \textit{Snapshot}s veglichen werden.
+Dafür werden wiederum die Mittelpunkte ausschlaggebender Tags bestimmt.
 
-Zur Auswertung der Handbewegung wird auf das in \hTeLi{sub:quska}{Kapitel~\ref{sub:quska}} eingeführte Prinzip der quadratischen Skalierung und Verhältnisbildung zurückgegriffen.
-Die Markerflächen werden also zunächst quadriert, in die vier Gruppen (oben, unten, rechts, links) eingeordnet und die Summen sowie Quotienten \inlinemath{Q_\text{OU}} und \inlinemath{Q_\text{RL}} gebildet.
-Anhand dieser Quotienten lässt sich die dominierende Bewegungsrichtung der Hand bestimmen:
-
-\begin{itemize}
-    \item \inlinemath{Q_\text{OU} < Q_\text{RL}}: horizontale Drehung (links/rechts) überwiegt
-    \item \inlinemath{Q_\text{OU} > Q_\text{RL}}: vertikale Bewegung (vorwärts/rückwärts) überwiegt
-\end{itemize}
-
+Weil die Marker in \textbf{beiden} Versionen nicht quadratisch exakt angeordnet sind, müssen die Verhältnisse miteinander verglichen werden.
+Ist der Quotient aus dem \textit{Snapshot} der Breite und der aktuellen Breite grösser als der der Höhe, so ist eine Drehung um die \inlinemath{x}-Achse ausgeschlossen.
+In diesem Fall würde es sich also um eine Drehung and der \inlinemath{y}-Achse handeln.
+Ob es sich um eine Drehung nach links oder rechts handelt, wird durch einen weiteren Vergleich mit den gespeicherten \textit{Snapshots} ermittelt.
+Ist die Fläche der rechtsliegenden Marker kleiner als die korrespondierende Fläche im \textit{Snapshot} und die Fläche der linken Marker grösser als die der rechten, so ist eine Linksdrehung vorhanden.
 Somit wurde die Anwinkelung der Hand interpretiert.
 Sie beschreibt jedoch keine seitliche Verschiebung, sondern eine Drehung um die vertikale Achse (Yaw-Bewegung) oder eine Vorwärts- oder Rückwärtsbewegung.
-Damit auch die vertikale Position der Hand im Bild erfasst werden kann, wird der Mittelpunkt\footnotemark{} der Handfläche auf der \inlinemath{y}-Achse berechnet.
-\footnotetext{Wenn von Mittelpunkt gesprochen wird, ist damit der \inlinemath{y}-Wert des Mittelpunkts gemeint.}
 
-Dazu werden zunächst die \inlinemath{y}-Mittelpunkte der beiden oberen und der beiden unteren Marker bestimmt.
-Aus diesen Werten wird jeweils der Durchschnitt gebildet, wodurch der vertikale Mittelpunkt der oberen und der unteren Marker entsteht.
-Der Mittelwert dieser beiden Punkte ergibt den \inlinemath{y}-Mittelpunkt der gesamten Handfläche.
-
+Damit auch die vertikale Position der Hand im Bild erfasst werden kann, wird die \inlinemath{y}-Koordinate des Markerbereichs berechnet.
+Der Mittelpunkt des Markerbereichs ist gleich dem Mittelpunkt des Vierecks, dass die Mittelpunkte der marker als Eckpunkte hat.
 Anschliessend vergleicht man diesen Wert mit der Hälfte der Bildhöhe.
 Liegt der Mittelpunkt deutlich oberhalb dieser Bildmitte, so wird die Hand als \enquote{oben} interpretiert; liegt er deutlich darunter, als \enquote{unten}.
-Um zufällige oder geringe Schwankungen zu vermeiden, wird eine sogenannte Deadzone definiert:
-Erst wenn der Mittelpunkt mindestens um \SI{100}{Pixel} (etwa \SI{2.5}{\centi\meter}) über oder unter der Bildmitte liegt, wird eine vertikale Bewegung erkannt.
 
-Ist \inlinemath{Q_\text{RL}} grösser, ist klar, dass die Drohne nach \inlinemath{\max{(S_\text{rechts}, S_\text{links})}} drehen muss.
-Im Fall, dass \inlinemath{Q_\text{OU}} grösser ist, wird die Drohne nach \inlinemath{\max{(S_\text{oben}, S_\text{unten})}} fliegen.
+Um zufällige oder geringe Schwankungen der Hand nicht mit einem Bewegungsbefehl zu verwechseln, werden sogenannte \textit{Deadzones} definiert.
+Für Drehung um die \inlinemath{x}- oder \inlinemath{y}-Achse bedeutet das, dass der Quotient der einen Distanz und des dazugehörigen \textit{Snapshot}-Werts grösser als die Summe aus dem Quotient der anderen Distanzwerte und einem gewissen \textit{Deadzone}-Werts sein muss.
 
 \section{Steuerung der Crazyflie}
 \label{sec:cf_co}
@@ -185,6 +223,8 @@ Als Sicherheitsmechanismus wurde eine Klasse implementiert, die eine Art Stopuhr
 Jedes Mal, wenn alle vier Marker auf der Hand erkannt werden, wird diese Stopuhr auf \inlinemath{t=0} zurückgesetzt.
 Sie zählt kontinuierlich weiter und sobald sie \inlinemath{t=5} erreicht, wird die Crazyflie automatisch gelandet.
 Damit ist der Landungsprozess abgesichert, und in einer Notsituation, beispielsweise bei einem Ausfall der Kamera, wird das Risiko einer Beschädigung der Drohne deutlich reduziert.
+
+\codefile[stopwatch.py]{Codeausschnitt: Klasse einer Stopuhr-Funktion}{}
 
 % End font-size
 \endgroup
