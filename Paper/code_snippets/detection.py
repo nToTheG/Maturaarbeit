@@ -17,9 +17,6 @@ while True: # Schleife zum kontinuierlichen Einlesen von Bildern
     # Umwandeln des Farbbilds in ein Graustufenbild
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    # Spiegelung entlang der vertikalen Achse
-    flipped_frame = cv2.flip(gray_frame, 1)
-
     # Definition der verwendeten ArUco-Bibliothek
     aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
 
@@ -30,4 +27,4 @@ while True: # Schleife zum kontinuierlichen Einlesen von Bildern
     detector = cv2.aruco.ArucoDetector(aruco_dict, parameters)
 
     # Erkennen der Marker im aktuellen Kamerabild
-    corners, ids, rejected = detector.detectMarkers(flipped_frame)
+    corners, ids, rejected = detector.detectMarkers(gray_frame)
