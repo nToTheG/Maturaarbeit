@@ -109,10 +109,10 @@ Als Rückgabewert erhält man eine geordnete Sammlung (ein sogenanntes Tupel) dr
     \footnotetext{Im \hTeLi{sni:det}{Codeausschnitt} als \bodyCode{rejected} ersichtlich.}
 \end{itemize}
 
-\codefile[detection.py]{Codeausschnitt: Initialisierung der Kamera und Erfassung der ArUco-Marker}{sni:det}
+Es ist wichtig zu beachten, dass die \inlinemath{y}-Achse eines von OpenCV aufgenommenen Kamerabildes invertiert ist.
+Das bedeutet, dass das Pixel mit den Koordinaten (0|0) sich im oberen linken Ecken des Bildes befindet.
 
-Hierbei ist es wichtig zu beachten, dass die \inlinemath{y}-Achse eines von von OpenCV aufgenommenen Kamerabildes invertiert.
-Das bedeutet, das Pixel mit den Koordinaten (0|0) ist im oberen linken Ecken des Bildes.
+\codefile[detection.py]{Codeausschnitt: Initialisierung der Kamera und Erfassung der ArUco-Marker}{sni:det}
 
 \subsection{Potenzielle Probleme}
 Bei der Erkennung der ArUco-Marker wird davon ausgegangen, dass verschiedene Faktoren die Genauigkeit und Stabilität der Resultate beeinflussen könnten.
