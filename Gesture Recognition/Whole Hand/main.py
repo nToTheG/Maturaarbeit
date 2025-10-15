@@ -12,9 +12,13 @@ import time
 import math
 
 import cv2
+import cflib.crtp
+from cflib.crazyflie import Crazyflie
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from cflib.positioning.motion_commander import MotionCommander
 
 import config
-
+import my_debug
 
 class DroneController:
     def __init__(self):
@@ -29,26 +33,26 @@ class DroneController:
             mc.stop()
 
         elif direction:
-            if direction == "left":
-                mc.start_turn_left(config.V_YAW)
+            if direction == "right":
+                mc.start_linear_motion(0, 0, 0, rate_yaw=config.V_YAW)
 
-            elif direction == "right":
-                mc.start_turn_right(config.V_YAW)
-
-            elif direction == "down":
-                mc.start_down(config.V_ALT)
+            elif direction == "left":
+                mc.start_linear_motion(0, 0, 0, rate_yaw=-config.V_YAW)
 
             elif direction == "up":
-                mc.start_up(config.V_ALT)
+                mc.start_linear_motion(0, 0, config.V_ALT)
 
-            elif direction == "backward":
-                mc.start_back(config.V_HOR)
+            elif direction == "down":
+                mc.start_linear_motion(0, 0, -config.V_ALT)
 
             elif direction == "forward":
-                mc.start_forward(config.V_HOR)
+                mc.start_linear_motion(config.V_HOR, 0, 0)
 
-        else:
-            mc.start_linear_motion(0, 0, 0, rate_yaw=0.0)
+            elif direction == "backward":
+                mc.start_linear_motion(-config.V_HOR, 0, 0)
+
+            else:
+                mc.start_linear_motion(0, 0, 0, rate_yaw=0.0)
 
         time.sleep(0.1)
 
@@ -73,15 +77,20 @@ class TagEvaluater:
         d = self.distance
         id_ss = self.area_snapshot[1]
 
+        area_of_tag1 = self.area[self.ids.index(1)]
+        area_of_tag3 = self.area[self.ids.index(3)]
+
         if d_ss[0]/d[0] > d_ss[1]/d[1] + config.V_DZ:
-            if self.area[self.ids.index(2)] < self.area_snapshot[0][id_ss.index(2)]:
-                return "right"
+            if area_of_tag3 > self.area_snapshot[0][id_ss.index(3)]:
+                if area_of_tag3 > area_of_tag1:
+                    return "right"
             return "left"
 
-        if d_ss[0]/d[0] < d_ss[1]/d[1] - config.H_DZ:
-            if self.area[self.ids.index(1)] > self.area_snapshot[0][id_ss.index(1)]:
-                return "forwards"
-            return "backwards"
+        if d_ss[1]/d[1] > d_ss[0]/d[0] + config.H_DZ:
+            if area_of_tag1 > self.area_snapshot[0][id_ss.index(1)]:
+                if area_of_tag1 > area_of_tag3:
+                    return "forward"
+            return "backward"
 
         return "hover"
 
@@ -140,12 +149,15 @@ class TagEvaluater:
 
             self.tags.append(tag_as_2d_array)
 
-    def make_snapshot(self, tags, ids):
-        if all(_id in ids for _id in config.USED_TAGS):
+    def make_snapshot(self, tags, ids, cam):
+        if ids is not None and all(_id in ids for _id in config.USED_TAGS):
             _ = self.update(tags, ids)
             self.distance_snapshot = self.distance
             self.area_snapshot = (self.area, self.ids)
             self.calibrated = True
+            corner1 = (self.tags[self.ids.index(1)][0][0], self.tags[self.ids.index(2)][0][1])
+            corner3 = (self.tags[self.ids.index(3)][2][0], self.tags[self.ids.index(4)][2][1])
+            cam.outline = [(int(corner1[0]), int(corner1[1])), (int(corner3[0]), int(corner3[1]))]
 
     def update(self, tags, ids):
         """
@@ -187,6 +199,8 @@ class Camera:
         self.cam = None
         self.aruco_dict = cv2.aruco.getPredefinedDictionary(config.MY_ARUCO_DICT)
         self.parameters = cv2.aruco.DetectorParameters()
+        self.outline = []
+        self.direction = ""
 
     def open_cam(self):
         self.cam = cv2.VideoCapture(0)
@@ -214,16 +228,64 @@ class Camera:
 
         return frame, corners, ids
 
+    def show_feed(self, corners, ids, feed_frame):
+        if self.outline:
+            tl = self.outline[0]
+            br = self.outline[1]
+            cv2.rectangle(feed_frame, tl, br, (0, 0, 255), 2)
+
+        if ids is not None and len(ids) != 0:
+            for i, _ in enumerate(ids.flatten()):
+                for corner in corners[i][0]:
+                    x, y = corner
+                    feed_frame = cv2.circle(
+                        feed_frame.copy(),
+                        (int(x), int(y)),
+                        radius=5,
+                        color=(0, 0, 255),
+                        thickness=-1)
+
+        text = self.direction
+        flipped_frame = cv2.flip(feed_frame, 1)
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        text_size = cv2.getTextSize(text, font, 1.0, 1)[0]
+        x = (flipped_frame.shape[1] - text_size[0]) // 2
+        y = 10 + text_size[1]
+        cv2.putText(flipped_frame, text, (x, y), font, 1.0, (0, 0, 255), 2)
+        feed_frame = cv2.flip(flipped_frame, 1)
+
+        cv2.imshow("Camera Feed", cv2.flip(feed_frame, 1))
+
 
 def calibrate(te, cam):
-    add_text = ""
-    while not te.calibrated:
+    setpoint = 5
+    cam.open_cam()
+    mode = None
+
+    while True:
+        if mode == [5]:
+            cam.close_cam()
+            cv2.destroyAllWindows()
+            break
+
         frame, corners, ids = cam.process_frame()
-        if cv2.waitKey(1) == ord("s"):
-            te.make_snapshot(corners, ids)
-            if add_text == "":
-                add_text = " (Try again)"
-        show_feed(None, None, config.frame_text(frame, add_text))
+        mode = [3, 4]
+
+        if not te.calibrated:
+            now = time.perf_counter()
+            if cv2.waitKey(1) == ord("s"):
+                setpoint = now
+
+            if now - setpoint < 4:
+                if now - setpoint < 3:
+                    te.make_snapshot(corners, ids, cam)
+                    mode = [1]
+                else:
+                    mode = [2]
+        else:
+            mode = [5]
+
+        cam.show_feed(corners, ids, config.frame_text(frame, mode))
 
 def main():
     """
@@ -231,55 +293,49 @@ def main():
     """
 
     cam = Camera()
-    cam.open_cam()
     sw = Stopwatch()
     te = TagEvaluater()
     controller = DroneController()
 
     calibrate(te, cam)
 
+    cflib.crtp.init_drivers()
+    my_debug.main("deck")
+
     try:
-        while True:
-            if cv2.waitKey(1) == ord('q'):
-                break
+        with SyncCrazyflie(config.MY_URI, cf=Crazyflie(rw_cache='cache')) as scf:
+            scf.cf.platform.send_arming_request(True)
+            time.sleep(1.0)
+            with MotionCommander(scf, default_height=config.DEFAULT_HEIGHT) as mc:
+                cam.open_cam()
+                sw.reset()
+                while controller.flying:
+                    if cv2.waitKey(1) == ord('q'):
+                        break
 
-            frame, corners, ids = cam.process_frame()
-            if ids is not None:
-                if all(_id in ids for _id in config.USED_TAGS):
-                    sw.reset()
-                    direction = te.update(corners, ids)
-                    print(direction)
-                else:
-                    sw.safety_check(controller)
-            else:
-                sw.safety_check(controller)
+                    frame, corners, ids = cam.process_frame()
+                    if ids is not None:
+                        if all(_id in ids for _id in config.USED_TAGS):
+                            sw.reset()
+                            direction = te.update(corners, ids)
+                        else:
+                            sw.safety_check(controller)
+                            direction = "hover"
+                    else:
+                        direction = "hover"
+                        sw.safety_check(controller)
 
-            show_feed(corners, ids, frame)
+                    controller.send_instructions(mc, direction)
+                    cam.direction = direction
+                    cam.show_feed(corners, ids, frame)
+
+                controller.send_instructions(mc, direction)
+                cam.close_cam()
+                cv2.destroyAllWindows()
+                sys.exit()
 
     except Exception as e:
-        print(e)
-
-    finally:
-        cam.close_cam()
-        cv2.destroyAllWindows()
-        sys.exit()
-
-def show_feed(corners, ids, feed_frame):
-    flipped_frame = feed_frame
-    if ids is not None and len(ids) != 0:
-        for i, _ in enumerate(ids.flatten()):
-            for corner in corners[i][0]:
-                x, y = corner
-                painted_frame = cv2.circle(
-                    feed_frame,
-                    (int(x), int(y)),
-                    radius=5,
-                    color=(0, 0, 255),
-                    thickness=-1)
-                flipped_frame = cv2.flip(painted_frame, 1)
-    else:
-        flipped_frame = cv2.flip(feed_frame, 1)
-    cv2.imshow("Camera Feed", flipped_frame)
+        my_debug.handle_error(e)
 
 if __name__ == "__main__":
     main()
