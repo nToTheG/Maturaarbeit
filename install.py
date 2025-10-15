@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
 """
+Author: ChatGPT 5 (OpenAI)
+
+Purpose:
+    - Create venv
+    - Install all python requirements
 """
 
 from __future__ import annotations
