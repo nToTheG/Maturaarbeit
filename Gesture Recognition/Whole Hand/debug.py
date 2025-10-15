@@ -25,7 +25,7 @@ import config
 
 URI = config.MY_URI
 EXCEPTIONS = config.my_exceptions
-ERROR_END = "-----------------------------------------------------"
+ERROR_END = "=" * 40
 
 
 def get_uri():
