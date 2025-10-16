@@ -12,55 +12,60 @@ import time
 import math
 
 import cv2
-#import cflib.crtp
-#from cflib.crazyflie import Crazyflie
-#from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
-#from cflib.positioning.motion_commander import MotionCommander
+import cflib.crtp
+from cflib.crazyflie import Crazyflie
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from cflib.positioning.motion_commander import MotionCommander
 
 import config
 import debug
 
 
 class DroneController:
+    """
+    Drone controller class.
+    Stores a value on if the drone should be flying.
+    Sends movement instructions.
+    """
     def __init__(self):
         self.flying = True
+        self.mc = None
 
-    def send_instructions(self, mc, direction):
+    def land(self):
         """
-        Sends a movement setpoint to Crazyflie based on current key input.
+        Landing function; lands the drone safely if hand has gone undetecked for too long
         """
 
-        if self.flying is False:
-            mc.stop()
+        self.mc.stop()
 
-        elif direction:
-            if direction == "left":
-                mc.start_turn_left(config.V_YAW)
+    def send_instructions(self, velocities):
+        """
+        Starts a linear motion with the velocities:
+            - v_til is for back/forth
+            - v_yaw is for left/right
+            - v_alt is for up/down
+        """
 
-            elif direction == "right":
-                mc.start_turn_right(config.V_YAW)
-
-            elif direction == "down":
-                mc.start_down(config.V_ALT)
-
-            elif direction == "up":
-                mc.start_up(config.V_ALT)
-
-            elif direction == "backward":
-                mc.start_back(config.V_HOR)
-
-            elif direction == "forward":
-                mc.start_forward(config.V_HOR)
-
-        else:
-            mc.start_linear_motion(0, 0, 0, rate_yaw=0.0)
+        v_til, v_alt, v_yaw = velocities
+        self.mc.start_linear_motion(v_til, 0, v_alt, rate_yaw=v_yaw)
 
         time.sleep(0.1)
 
+    def determine_state(self, mc, velocities):
+        """
+        Calls functions based on whether the drone should stay in air.
+        """
+
+        self.mc = mc
+        if self.flying is False:
+            self.land()
+        else:
+            self.send_instructions(velocities)
+
+
 class TagEvaluater:
     """
-    - Makes a snapshot of the distances between the markers and their sizes
-    - Determines the tilt of the hand compared to the snapshot
+    Handles all the image and aruco tag processing.
     """
 
     def __init__(self):
@@ -70,51 +75,82 @@ class TagEvaluater:
         self.distance_snapshot = (None, None)
         self.distance = None
         self.area_snapshot = None
-        self.area = None
+        self.y_middle = None
 
     def determine_tilt(self):
-        d_ss = self.distance_snapshot
+        """
+        Compares distances and areas to determine flight hand allignment on screen.
+        """
+
+        v_til, v_alt, v_yaw = 0, 0, 0
+
         d = self.distance
-        id_ss = self.area_snapshot[1]
+        d_ss = self.distance_snapshot
 
-        if d_ss[0]/d[0] > d_ss[1]/d[1] + config.V_DZ:
-            if self.area[self.ids.index(2)] < self.area_snapshot[0][id_ss.index(2)]:
-                return "right"
-            return "left"
+        a = self._shoelace_formula()
+        areas = dict(zip(self.ids, a))
+        areas_ss = self.area_snapshot
 
-        if d_ss[0]/d[0] < d_ss[1]/d[1] - config.H_DZ:
-            if self.area[self.ids.index(1)] > self.area_snapshot[0][id_ss.index(1)]:
-                return "forwards"
-            return "backwards"
+        if (d_ss[0]/d[0]) + (d_ss[2]/d[2]) > (d_ss[1]/d[1]) + (d_ss[3]/d[3]) + config.Y_DZ:
+            # y-axis yaw detecked
+            if areas[2] + areas[3] > areas[1] + areas[4]:
+                # yaw to the right
+                if areas[2] > areas_ss[2] and areas[3] > areas_ss[3]:
+                    # left closer to screen than snapshot
+                    v_yaw = -config.VY
 
-        return "hover"
+            elif areas[1] + areas[4] > areas[2] + areas[3]:
+                # yaw to the left
+                if areas[1] > areas_ss[1] and areas[4] + areas_ss[4]:
+                    # right closer to screen than snapshot
+                    v_yaw = config.VY
 
-    def get_distance(self, id1, id2):
+        if (d_ss[1]/d[1]) + (d_ss[3]/d[3]) > (d_ss[0]/d[0]) + (d_ss[2]/d[2]) + config.T_DZ:
+            # x-axis tilt detecked
+            if areas[1] + areas[2] > areas[3] + areas[4]:
+                # forwards-tilt
+                if areas[1] > areas_ss[1] and areas[2] > areas_ss[2]:
+                    # top closer to screen than snapshot
+                    v_til = config.VT
+
+            elif areas[3] + areas[4] > areas[1] + areas[2]:
+                # backward-tilt
+                if areas[3] > areas_ss[3] and areas[4] > areas_ss[4]:
+                    # bottom closer to screen than snapshot
+                    v_til = -config.VT
+
+        big_marker = [self._get_middle(tag) for tag in self.tags]
+        m_big_marker = self._get_middle(big_marker)
+        ym_big_marker = m_big_marker[1]
+
+        if self.y_middle - ym_big_marker > config.A_DZ: # Middle point above y-deadzone
+            v_alt = config.VA
+        elif ym_big_marker - self.y_middle > config.A_DZ: # Middle point below y-deadzone
+            v_alt = -config.VA
+
+        return (v_til, v_alt, v_yaw)
+
+    def _get_distance(self, id1, id2):
         tag1 = self.tags[self.ids.index(id1)]
         tag2 = self.tags[self.ids.index(id2)]
-        vector1 = self.middle_point(tag1)
-        vector2 = self.middle_point(tag2)
-        distance = self.vector_subtraction(vector1, vector2)
+        vector1 = self._get_middle(tag1)
+        vector2 = self._get_middle(tag2)
+        distance = self._vector_subtraction(vector1, vector2)
         return distance
 
-    def middle_point(self, tag):
+    def _get_middle(self, tag):
         sx = sum(corner[0] for corner in tag)
         sy = sum(corner[1] for corner in tag)
         mx = sx / 4
         my = sy / 4
         return (mx, my)
 
-    def vector_subtraction(self, v1, v2):
+    def _vector_subtraction(self, v1, v2):
         v3 = (v1[0] - v2[0], v1[1] - v2[1])
         d = math.sqrt(v3[0]**2 + v3[1]**2)
         return d
 
-    def shoelace_formula(self):
-        """
-        Function that uses the Shoelace formula.
-        Shoelace formula: calculates the area of any quadrilateral.
-        """
-
+    def _shoelace_formula(self):
         areas = []
         for tag in self.tags:
             x1, y1 = tag[0]
@@ -130,11 +166,7 @@ class TagEvaluater:
 
         return areas
 
-    def numpy_to_2d(self, tags):
-        """ 
-        Converts the corners from NumPy-Arrays into a 2D-Arrays.
-        """
-
+    def _numpy2list(self, tags):
         self.tags = []
         for i in range(len(self.ids)):
             tag_as_2d_array = []
@@ -144,67 +176,125 @@ class TagEvaluater:
 
             self.tags.append(tag_as_2d_array)
 
-    def make_snapshot(self, tags, ids):
-        if all(_id in ids for _id in config.USED_TAGS):
+    def _y_center(self, tags):
+        m1 = self._get_middle(tags[1])
+        m2 = self._get_middle(tags[2])
+        m3 = self._get_middle(tags[3])
+        m4 = self._get_middle(tags[4])
+
+        big_middle = self._get_middle([m1, m2, m3, m4])
+
+        self.y_middle = big_middle[1]
+
+    def make_snapshot(self, tags, ids, cam):
+        """
+        Initiates the calibration process.
+        Safes a snapshot of the data.
+        """
+
+        if ids is not None and all(_id in ids for _id in config.USED_TAGS):
             _ = self.update(tags, ids)
             self.distance_snapshot = self.distance
-            self.area_snapshot = (self.area, self.ids)
+
+            areas = self._shoelace_formula()
+            self.area_snapshot = dict(zip(self.ids, areas))
+
+            assigned_tags = dict(zip(self.ids, self.tags))
+            self._y_center(assigned_tags)
+
+            reference_marker = self.tags[self.ids.index(4)]
+            tl = reference_marker[0]
+            br = reference_marker[2]
+            k = 10
+            start_point = (int(tl[0] - k), int(tl[1] - k))
+            end_point = (int(br[0] + k), int(br[1] + k))
+            cam.reference = [start_point, end_point]
+
             self.calibrated = True
 
     def update(self, tags, ids):
         """
-        Updates variables and executes formatting and calculating functions.
+        Updates variables.
+        Executes formatting and calculating functions.
+        Returns the calculated velocity tuple.
         """
 
         self.ids = [_id[0] for _id in ids]
-        self.numpy_to_2d(tags)
-        self.area = self.shoelace_formula()
-        self.distance = (self.get_distance(1, 2), self.get_distance(4, 1))
+        self._numpy2list(tags)
+        self.distance = (
+            self._get_distance(1, 2),
+            self._get_distance(2, 3),
+            self._get_distance(3, 4),
+            self._get_distance(4, 1)
+            )
+
         if self.calibrated:
             return self.determine_tilt()
         return None
 
 
-class Stopwatch:
-    def __init__(self):
+class Timer:
+    """
+    Imitates timer functionality.
+    """
+
+    def __init__(self, timeout=5):
         self.start_time = time.perf_counter()
-        self.timeout = 5
+        self.t = timeout
 
     def reset(self):
         """
-        Reset the timer.
+        Starts and resets a timer.
         """
 
         self.start_time = time.perf_counter()
 
-    def safety_check(self, controller):
+    def safety_check(self, controller, cam):
         """
-        Switch the flight control mode.
+        Compares the difference of the current time and when the timer started.
+        Initiates the landing process of the drone if timeout was reached.
         """
 
-        if time.perf_counter() - self.start_time >= self.timeout:
+        if time.perf_counter() - self.start_time >= self.t:
             controller.flying = False
+            cam.close_cam()
 
 
 class Camera:
+    """
+    Handles the camera and the aruco detection.
+    """
+
     def __init__(self):
         self.cam = None
         self.aruco_dict = cv2.aruco.getPredefinedDictionary(config.MY_ARUCO_DICT)
         self.parameters = cv2.aruco.DetectorParameters()
+        self.reference = []
 
-    def open_cam(self):
-        self.cam = cv2.VideoCapture(0)
+    def open_cam(self, index=0): # 0 for built-in camera
+        """
+        Opens the camera safely
+        """
+
+        self.cam = cv2.VideoCapture(index)
         if not self.cam.isOpened():
             raise IOError("Cannot open camera")
 
     def close_cam(self):
+        """
+        Closes the camera and destroys GUI.
+        """
+
         self.cam.release()
+        cv2.destroyAllWindows()
+        cv2.waitKey(1)
 
     def process_frame(self):
         """
-        Reads camera feed.
-        Determines flight mode.
-        Displays camera feed.
+        Reads camera feed (ends script if feed is unsubscriptable).
+        Creates detector instance.
+        Converts feed to grayscale for better detection results.
+        Returns important data.
         """
 
         success, frame = self.cam.read()
@@ -218,72 +308,112 @@ class Camera:
 
         return frame, corners, ids
 
+    def show_feed(self, corners, ids, feed_frame):
+        """
+        Draws the reference marker onto camera feed.
+        Draws detected corners of aruco tags onto feed.
+        Displays feed.
+        """
+
+        if self.reference:
+            tl = self.reference[0]
+            br = self.reference[1]
+            cv2.rectangle(feed_frame, tl, br, (0, 0, 255), 2)
+
+        if ids is not None and len(ids) != 0:
+            for i, _ in enumerate(ids.flatten()):
+                for corner in corners[i][0]:
+                    x, y = corner
+                    feed_frame = cv2.circle(
+                        feed_frame.copy(),
+                        (int(x), int(y)),
+                        radius=5,
+                        color=(0, 0, 255),
+                        thickness=-1)
+
+        cv2.imshow("Camera Feed", cv2.flip(feed_frame, 1))
+
 
 def calibrate(te, cam):
-    add_text = ""
-    while not te.calibrated:
+    """
+    Runs calibration process of the hand.
+    Calls draw_text() function from custom config module.
+    Displays the animation and text on feed.
+    """
+
+    setpoint = 5
+    cam.open_cam()
+    mode = None
+
+    while True:
         frame, corners, ids = cam.process_frame()
-        if cv2.waitKey(1) == ord("s"):
-            te.make_snapshot(corners, ids)
-            if add_text == "":
-                add_text = " (Try again)"
-        show_feed(None, None, config.frame_text(frame, add_text))
+        mode = [3, 4]
+
+        if not te.calibrated:
+            now = time.perf_counter()
+            if cv2.waitKey(1) == ord("s"):
+                setpoint = now
+            if cv2.waitKey(1) == ord("q"):
+                sys.exit()
+
+            if now - setpoint < 4:
+                if now - setpoint < 3:
+                    te.make_snapshot(corners, ids, cam)
+                    mode = [1]
+                else:
+                    mode = [2]
+        else:
+            mode = [5]
+
+        if mode == [5]:
+            cam.close_cam()
+            break
+
+        cam.show_feed(corners, ids, config.draw_text(frame, mode))
 
 def main():
     """
-    Executes main loop.
+    Initiates all the classes.
+    Catches errors.
+    Connects to crazyflie with the MotionCommander
     """
 
     cam = Camera()
-    cam.open_cam()
-    sw = Stopwatch()
+    sw = Timer()
     te = TagEvaluater()
     controller = DroneController()
 
     calibrate(te, cam)
 
+    cflib.crtp.init_drivers()
+    debug.main("deck")
     try:
-        while True:
-            if cv2.waitKey(1) == ord('q'):
-                break
+        with SyncCrazyflie(config.MY_URI, cf=Crazyflie(rw_cache="cache")) as scf:
+            scf.cf.platform.send_arming_request(True)
+            time.sleep(1.0)
+            with MotionCommander(scf, default_height=config.DEFAULT_HEIGHT) as mc:
+                cam.open_cam()
+                sw.reset()
+                while controller.flying:
+                    if cv2.waitKey(1) == ord("q"):
+                        cam.close_cam()
+                        controller.land()
+                        break
 
-            frame, corners, ids = cam.process_frame()
-            if ids is not None:
-                if all(_id in ids for _id in config.USED_TAGS):
-                    sw.reset()
-                    direction = te.update(corners, ids)
-                    print(direction)
-                else:
-                    sw.safety_check(controller)
-            else:
-                sw.safety_check(controller)
+                    frame, corners, ids = cam.process_frame()
+                    if ids is not None and all(_id in ids for _id in config.USED_TAGS):
+                        sw.reset()
+                        direction = te.update(corners, ids)
+                    else:
+                        direction = (0, 0, 0)
+                        sw.safety_check(controller, cam)
 
-            show_feed(corners, ids, frame)
+                    controller.determine_state(mc, direction)
+                    cam.show_feed(corners, ids, frame)
 
     except Exception as e:
-        debug.main("error", e)
+        debug.handle_error(e)
 
-    finally:
-        cam.close_cam()
-        cv2.destroyAllWindows()
-        sys.exit()
-
-def show_feed(corners, ids, feed_frame):
-    flipped_frame = feed_frame
-    if ids is not None and len(ids) != 0:
-        for i, _ in enumerate(ids.flatten()):
-            for corner in corners[i][0]:
-                x, y = corner
-                painted_frame = cv2.circle(
-                    feed_frame,
-                    (int(x), int(y)),
-                    radius=5,
-                    color=(0, 0, 255),
-                    thickness=-1)
-                flipped_frame = cv2.flip(painted_frame, 1)
-    else:
-        flipped_frame = cv2.flip(feed_frame, 1)
-    cv2.imshow("Camera Feed", flipped_frame)
 
 if __name__ == "__main__":
     main()

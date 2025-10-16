@@ -25,7 +25,7 @@ import config
 
 URI = config.MY_URI
 EXCEPTIONS = config.my_exceptions
-ERROR_END = "-----------------------------------------------------"
+ERROR_END = "=" * 40
 
 
 def get_uri():
@@ -90,7 +90,10 @@ def handle_error(e):
         if error_message in str(e):
             print(user_friendly_message)
             print(ERROR_END)
-            sys.exit(1)
+            break
+    else:
+        print(e)
+    sys.exit(1)
 
 
 def main(*mode):
