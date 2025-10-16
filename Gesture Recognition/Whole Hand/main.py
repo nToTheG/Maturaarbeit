@@ -68,14 +68,14 @@ class TagEvaluater:
     Handles all the image and aruco tag processing.
     """
 
-    def __init__(self, frame_ym=None):
+    def __init__(self):
         self.ids = None
         self.tags = []
         self.calibrated = False
         self.distance_snapshot = (None, None)
         self.distance = None
         self.area_snapshot = None
-        self.frame_y_middle = frame_ym
+        self.y_middle = None
 
     def determine_tilt(self):
         """
@@ -112,9 +112,9 @@ class TagEvaluater:
         m_big_marker = self._get_middle(big_marker)
         ym_big_marker = m_big_marker[1]
 
-        if self.frame_y_middle - ym_big_marker > config.A_DZ: # Middle point above y-deadzone
+        if self.y_middle - ym_big_marker > config.A_DZ: # Middle point above y-deadzone
             v_alt = config.VA
-        elif ym_big_marker - self.frame_y_middle > config.A_DZ: # Middle point below y-deadzone
+        elif ym_big_marker - self.y_middle > config.A_DZ: # Middle point below y-deadzone
             v_alt = -config.VA
 
         return (v_til, v_alt, v_yaw)
@@ -174,16 +174,21 @@ class TagEvaluater:
         if ids is not None and all(_id in ids for _id in config.USED_TAGS):
             _ = self.update(tags, ids)
             self.distance_snapshot = self.distance
+
             areas = self._shoelace_formula()
             self.area_snapshot = dict(zip(self.ids, areas))
-            self.calibrated = True
+
+            assigned_tags = dict(zip(self.ids, self.tags))
+            self.y_middle = (assigned_tags[2] + assigned_tags[4]) / 2
+
             reference_marker = self.tags[self.ids.index(4)]
             tl = reference_marker[0]
             br = reference_marker[2]
-            k = 10
-            start_point = (int(tl[0] - k), int(tl[1] - k))
-            end_point = (int(br[0] + k), int(br[1] + k))
+            start_point = (int(tl[0] - 10), int(tl[1] - 10))
+            end_point = (int(br[0] + 10), int(br[1] + 10))
             cam.reference = [start_point, end_point]
+
+            self.calibrated = True
 
     def update(self, tags, ids):
         """
@@ -367,8 +372,7 @@ def main():
                         break
 
                     frame, corners, ids = cam.process_frame()
-                    if te.frame_y_middle is None:
-                        te.frame_y_middle = frame.shape[0] // 2
+
                     if ids is not None and all(_id in ids for _id in config.USED_TAGS):
                         sw.reset()
                         direction = te.update(corners, ids)
