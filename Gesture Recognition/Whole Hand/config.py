@@ -18,12 +18,13 @@ MY_URI = "radio://0/80/2M/E7E7E7E7E7"
 
 DEFAULT_HEIGHT = 0.5
 
-H_DZ = 0.06
-V_DZ = 0.01
+T_DZ = 0.06
+A_DZ = 100
+Y_DZ = 0.01
 
-VX = 0.5
-VY = 30
-VA = 0.2
+VT = 0.5 # tilt (forward/backward) velocity
+VA = 0.2 # altitude (up/down) velocity
+VY = 30 # yaw (right/left) velocity
 
 my_exceptions = {
     f"No driver found or malformed URI: {MY_URI}": "❌ Crazyradio not plugged in.",

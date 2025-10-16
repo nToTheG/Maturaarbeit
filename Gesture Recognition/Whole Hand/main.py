@@ -46,8 +46,8 @@ class DroneController:
             - vz is for up/down
         """
 
-        vx, va, vz,  = velocities
-        self.mc.start_linear_motion(vx, 0, vz, rate_yaw=va)
+        v_til, v_alt, v_yaw = velocities
+        self.mc.start_linear_motion(v_til, 0, v_alt, rate_yaw=v_yaw)
 
         time.sleep(0.1)
 
@@ -68,16 +68,21 @@ class TagEvaluater:
     Handles all the image and aruco tag processing.
     """
 
-    def __init__(self):
+    def __init__(self, frame_ym=None):
         self.ids = None
         self.tags = []
         self.calibrated = False
         self.distance_snapshot = (None, None)
         self.distance = None
         self.area_snapshot = None
+        self.frame_y_middle = frame_ym
 
     def determine_tilt(self):
-        vx, vz, va = 0, 0, 0
+        """
+        Compares distances and areas to determine flight hand allignment on screen.
+        """
+
+        v_til, v_alt, v_yaw = 0, 0, 0
 
         d = self.distance
         d_ss = self.distance_snapshot
@@ -86,24 +91,33 @@ class TagEvaluater:
         areas = dict(zip(self.ids, a))
         areas_ss = self.area_snapshot
 
-        if d_ss[0]/d[0] > d_ss[1]/d[1] + config.V_DZ: # y-axis yaw detecked
+        if d_ss[0]/d[0] > d_ss[1]/d[1] + config.Y_DZ: # y-axis yaw detecked
             if areas[3] > areas[1]: # yaw to the right
                 if areas[3] > areas_ss[3]: # left closer to screen than snapshot
-                    va = config.VA
+                    v_yaw = config.VY
 
             elif areas[1] > areas[3]: # yaw to the left
                 if areas[1] > areas_ss[1]: # right closer to screen than snapshot
-                    va = -config.VA
+                    v_yaw = -config.VY
 
-        if d_ss[1]/d[1] > d_ss[0]/d[0] + config.H_DZ: # x-axis tilt detecked
+        if d_ss[1]/d[1] > d_ss[0]/d[0] + config.T_DZ: # x-axis tilt detecked
             if areas[2] > areas[4]: # forwards-tilt
                 if areas[2] > areas_ss[2]: # top closer to screen than snapshot
-                    vx = config.VX
+                    v_til = config.VT
 
             elif areas[4] > areas[2]: # backward-tilt
-                vx = -config.VX
+                v_til = -config.VT
 
-        return (vx, va, vz)
+        big_marker = [self._get_middle(tag) for tag in self.tags]
+        m_big_marker = self._get_middle(big_marker)
+        ym_big_marker = m_big_marker[1]
+
+        if self.frame_y_middle - ym_big_marker > config.A_DZ: # Middle point above y-deadzone
+            v_alt = config.VA
+        elif ym_big_marker - self.frame_y_middle > config.A_DZ: # Middle point below y-deadzone
+            v_alt = -config.VA
+
+        return (v_til, v_alt, v_yaw)
 
     def _get_distance(self, id1, id2):
         tag1 = self.tags[self.ids.index(id1)]
@@ -341,8 +355,6 @@ def main():
     cflib.crtp.init_drivers()
     debug.main("deck")
     try:
-        cam.open_cam()
-        sw.reset()
         with SyncCrazyflie(config.MY_URI, cf=Crazyflie(rw_cache="cache")) as scf:
             scf.cf.platform.send_arming_request(True)
             time.sleep(1.0)
@@ -354,17 +366,18 @@ def main():
                         cam.close_cam()
                         break
 
-                frame, corners, ids = cam.process_frame()
+                    frame, corners, ids = cam.process_frame()
+                    if te.frame_y_middle is None:
+                        te.frame_y_middle = frame.shape[0] // 2
+                    if ids is not None and all(_id in ids for _id in config.USED_TAGS):
+                        sw.reset()
+                        direction = te.update(corners, ids)
+                    else:
+                        direction = (0, 0, 0)
+                        sw.safety_check(controller, cam)
 
-                if ids is not None and all(_id in ids for _id in config.USED_TAGS):
-                    sw.reset()
-                    direction = te.update(corners, ids)
-                else:
-                    direction = (0, 0, 0)
-                    sw.safety_check(controller, cam)
-
-                controller.determine_state(mc, direction)
-                cam.show_feed(corners, ids, frame)
+                    controller.determine_state(mc, direction)
+                    cam.show_feed(corners, ids, frame)
 
     except Exception as e:
         debug.handle_error(e)
