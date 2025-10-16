@@ -41,9 +41,9 @@ class DroneController:
     def send_instructions(self, velocities):
         """
         Starts a linear motion with the velocities:
-            - vx is for back/forth
-            - va is for left/right
-            - vz is for up/down
+            - v_til is for back/forth
+            - v_yaw is for left/right
+            - v_alt is for up/down
         """
 
         v_til, v_alt, v_yaw = velocities
@@ -94,11 +94,11 @@ class TagEvaluater:
         if d_ss[0]/d[0] > d_ss[1]/d[1] + config.Y_DZ: # y-axis yaw detecked
             if areas[3] > areas[1]: # yaw to the right
                 if areas[3] > areas_ss[3]: # left closer to screen than snapshot
-                    v_yaw = config.VY
+                    v_yaw = -config.VY
 
             elif areas[1] > areas[3]: # yaw to the left
                 if areas[1] > areas_ss[1]: # right closer to screen than snapshot
-                    v_yaw = -config.VY
+                    v_yaw = config.VY
 
         if d_ss[1]/d[1] > d_ss[0]/d[0] + config.T_DZ: # x-axis tilt detecked
             if areas[2] > areas[4]: # forwards-tilt
