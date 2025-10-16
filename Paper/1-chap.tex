@@ -35,26 +35,29 @@ Dies soll eine präzise Erkennung der Handausrichtung ermöglichen, indem Fläch
 Anschliessend wird mit den in \hTeLi{sec:cf}{Kapiteln~\ref{sec:cf}} und \hTeLi{sec:crpa}{\ref{sec:crpa}} beschriebenen Hardware-Komponenten eine Drohne gesteuert.
 
 In diesem Projekt werden zwei Ansätze getestet, die sich in der Platzierung der Marker unterscheiden.
-Die Anordnung der Marker soll die Bedeutsamkeit veranschaulichen, die Finger beim Gebrauch von Gesten haben.
 Der erste Ansatz sieht die Marker in einem Rechteck angeordnet vor, wobei ausschliesslich die Handfläche als Bereich für die Marker dient.
 Der zweite Versuch setzt hingegen drei von vier Markern auf den Fingerspitzen vorraus.
 Der vierte Marker wird auf dem Handgelenk platziert und markiert für die Kamera den Referenzpunkt der Hand.
 
+Die unterschiedliche Platzierung der Marker soll zeigen, inwieweit die Einbeziehung der Finger die Erkennungsgenauigkeit und Steuerung beeinflusst.
+
 \subsection{Fragestellung}
-Wie kann ein System zur gestenbasierten Steuerung einer Nano-Drohne entwickelt werden, das mithilfe von ArUco-Markern Handgesten zuverlässig erkennt, diese in präzise Steuerbefehle umwandelt und die Drohne per  Funkverbindung sicher und reaktionsschnell steuert?
+Wie beeinflusst die Platzierung von ArUco-Markern auf der Hand die Genauigkeit und Zuverlässigkeit einer gestenbasierten Steuerung einer Nano-Drohne?  
+Lässt sich durch die Einbeziehung der Finger in die Markeranordnung eine präzisere Erkennung der Handausrichtung und damit eine stabilere Steuerung erreichen?
 
 \subsection{Abgrenzung (ausgeschlossene Faktoren)}
-Im Rahmen dieses Projekts werden externe Einflussfaktoren bewusst ausgeklammert bzw. nicht im Detail untersucht.
+Im Rahmen dieses Projekts werden externe Einflussfaktoren bewusst ausgeklammert beziehungsweise nicht im Detail untersucht.
 Dazu gehören insbesondere:
 \begin{itemize}
-  \item \textbf{Licht- und Belichtungsverhältnisse:} Es wird von konstanten, guten Lichtverhältnissen ausgegangen (z.B. gleichmässige Raumbeleuchtung ohne starke Schatten oder Überbelichtung).
+  \item \textbf{Licht- und Belichtungsverhältnisse:} Es wird von konstanten, guten Lichtverhältnissen ausgegangen.
   \item \textbf{Wind- und Luftströmungen:} Das System wird ausschliesslich in einer windstillen Indoor-Umgebung getestet.
   \item \textbf{Funkstörungen:} Potenzielle Interferenzen durch andere Funkgeräte oder Netzwerke werden nicht berücksichtigt.
   \item \textbf{Komplexe Handgesten:} Es wird davon ausgegangen, dass die ArUco-Tags jederzeit für die Kamera sichtbar bleiben.
+  \item \textbf{Entfernung zur Kamera:} Die Entfernung zwischen der Kamera und der Hand in neutraler Position soll idealerweise so wenig wie möglich variieren.
 \end{itemize}
 
 \subsection{Hypothese}
-Die Nutzung von ArUco-Markern zur Gestenerkennung ermöglicht eine robuste Gestensteuerung der Drohne, wobei Positions- und Bewegungsdaten der Marker ausreichend präzise sind, um alle grundlegenden Steuerbefehle (z.B. Steigen, Sinken, Drehen) sicher und ohne Fehlinterpretationen auszuführen.
+Eine Markeranordnung, welche auch die Finger einbezieht, ermöglicht eine präzisere Bestimmung der Handausrichtung und führt somit zu einer zuverlässigeren und stabileren Steuerung der Drohne als eine ausschliesslich auf der Handfläche platzierte Markeranordnung.
 
 % End font-size
 \endgroup
