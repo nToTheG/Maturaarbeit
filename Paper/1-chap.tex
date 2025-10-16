@@ -5,56 +5,41 @@
 \begingroup
 \fontsize{12pt}{14pt}\selectfont
 
-\section{Aufbau der Arbeit}
-Das Paper \textit{\maTitle} ist in fünf Kapitel gegliedert.
-Im Folgenden wird ein Überblick über die Inhalte der einzelnen Kapitel gegeben.
-
-\hTeLi{cha:chapter1}{Kapitel~1} bildet die Einleitung dieser Arbeit.
-Zunächst wird der Aufbau des Papers erläutert.
-Anschliessend erfolgt eine thematische Hinführung: Das Projekt wird in seinen inhaltlichen Kontext eingeordnet und es wird auf die Relevanz der behandelten Thematik eingegangen.
-Darauf folgen die Zielsetzung der Arbeit sowie die zentrale Fragestellung und Hypothese.
-
-\hTeLi{cha:chapter2}{Kapitel~2} vermittelt die theoretischen Grundlagen, die für das Verständnis des Projekts erforderlich sind.
-Zunächst werden zentrale Begriffe definiert und erläutert.
-Daraufhin folgen Abschnitte zur Gestenerkennung, zur Funktionsweise und Erstellung der verwendeten ArUco-Marker, eine Einführung in die Python-Bibliothek OpenCV sowie eine Übersicht über die eingesetzten Hardware-Komponenten.
-Zudem wird der aktuelle Stand der Forschung dargestellt und auf vergleichbare Projekte eingegangen.
-
-\hTeLi{cha:chapter3}{Kapitel~3} widmet sich der praktischen Umsetzung des Projekts.
-Es enthält eine detaillierte Beschreibung des entwickelten Systems sowie der methodischen Vorgehensweise.
-Behandelt werden unter anderem die Softwarearchitektur und deren Integration in die verwendeten Hardware-Komponenten.
-Darüber hinaus werden durchgeführte Tests dokumentiert, die zur Beantwortung der aufgestellten Fragestellung beitragen.
-Abschliessend werden aufgetretene Herausforderungen sowie deren Lösungsansätze beschrieben.
-
-\hTeLi{cha:chapter4}{Kapitel~4} präsentiert die Ergebnisse der praktischen Umsetzung.
-Im Mittelpunkt steht die Analyse der Funktionalität des entwickelten Systems.
-Zur Veranschaulichung werden zudem Diagramme und Auswertungen der in \hTeLi{cha:chapter3}{Kapitel~3} beschriebenen Tests dargestellt.
-
-\hTeLi{cha:chapter5}{Kapitel~5} vergleicht die eingangs formulierte Fragestellung mit der aufgestellten Hypothese.
-Dabei werden sowohl technische Limitationen als auch persönliche Herausforderungen thematisiert, die sich auf die Qualität der Umsetzung ausgewirkt haben.
-Darauf aufbauend folgen konkrete Verbesserungsvorschläge sowie Ideen zur möglichen Weiterentwicklung des Systems.
-
-Den Abschluss des Kapitels bildet ein Fazit: Die wichtigsten Erkenntnisse werden zusammengefasst, die Zielerreichung reflektiert und die Forschungsfrage abschliessend beantwortet.
-Zudem beinhaltet das Fazit eine persönliche Reflexion über den Projektverlauf und den eigenen Lernprozess.
-
 \section{Einführung ins Thema}
-Gestenerkennung sowie Gestensteuerung haben sich in den letzten Jahren von Nischengebieten des Gamings wie beispielweise Kinect~\cite{Wiki:Kinect} hin zu weitreichenden Steuerungsmöglichkeiten von virtuellen Umgebungen entwickelt \cite{RG:GestureRecognition}.
-Ihre Wurzeln liegen teilweise in der Analyse der Gebärdensprache~\cite{Wiki:Gestenerkennung}, sind jedoch letztlich bis zu den Anfängen menschlicher Interaktion zurückzuverfolgen~\cite{RG:Gesten}, denn Gesten stellen einen festen und essentiellen Bestandteil der nonverbalen Kommunikation dar~\cite[10]{Hobmair:Psy}.
+Gestenerkennung und Gestensteuerung haben sich in den letzten Jahren von Nischenanwendungen im Gaming-Bereich wie beispielsweise der Kinect-Plattform~\cite{Wiki:Kinect} zu vielseitigen Steuerungsmöglichkeiten für virtuelle und reale Umgebungen entwickelt~\cite{RG:GestureRecognition}.
+Ihre Wurzeln liegen teilweise in der Analyse der Gebärdensprache, reichen jedoch letztlich bis zu den Anfängen menschlicher Kommunikation zurück.\cite{Wiki:Gestenerkennung}\cite{RG:Gesten}
+Gesten stellen einen festen und wesentlichen Bestandteil der nonverbalen Verständigung dar und bilden somit eine natürliche Grundlage für intuitive Interaktionsformen zwischen Mensch und Maschine.\cite[10]{Hobmair:Psy}
 
-\section{Relevanz des Themas}
-Im Bereich der virtuellen Umgebungen wie Augmented Reality (AR) und Virtual Reality (VR) werden grosse Fortschritte gemacht~\cite{SD:VR}.
-Interaktionen mit Software werden somit immer effizienter, intuitiver und vorallem präziser.
+Parallel dazu gewinnt die autonome Steuerung technischer Systeme zunehmend an Bedeutung.
+Fahrzeuge, die mit modernen Fahrassistenzsystemen ausgestattet sind, können heute vom Spurhalten bis zum automatischen Parkieren fast alles selbstständig ausführen.
+Doch nicht nur im Strassenverkehr, auch in der Luft- und Schifffahrt werden Prozesse automatisiert, um Effizienz und Sicherheit zu erhöhen und menschliche Fehler zu minimieren.
+Trotz dieser Entwicklungen bleibt der Mensch ein zentraler Bestandteil des Kontrollsystems: Er kann jederzeit in den automatisierten Ablauf eingreifen und die Steuerung übernehmen.\cite{Wiki:aupi}
 
-Auch in der Robotik eröffnen Gestensteuerungstechnologien neue Perspektiven: Sie ermöglichen eine fast natürliche Interaktion mit semi-autonomen und autonomen Systemen, etwa bei der Navigation und Steuerung von Luft-, Land- und Wasserfahrzeugen.
-So können beispielweise Bergungsaktionen und Minenentschärfung in Zukunft aus der ferne duchgeführt werden, ohne dabei weitere Personen in Gefahr zu bringen.
+Noch rasanter schreitet die Entwicklung im Bereich der virtuellen und erweiterten Realität (VR und AR) voran~\cite{SD:VR}.
+Hier ermöglichen innovative Interaktionskonzepte eine immer natürlichere, präzisere und intuitivere Steuerung digitaler Umgebungen.
+Ein beeindruckendes Bespiel ist dabei die \textit{Apple Vision Pro}, eine VR-Brille, die im Jahr 2023 auf den Märkten erschienen ist.
+Das Gerät verfolgt die Bewegung der Augen und verwendet diese als Gestensteuerung und erlaubt es durch Zusammenführen von Daumen und Zeigefinger Objekte auf dem virtuellen Bildschirm auszuwählen.\cite{apl:vision}
+
+Auch in der Robotik eröffnen Gestensteuerungssysteme neue Perspektiven: Sie erlauben eine direkte, beinahe natürliche Kommunikation mit semi-autonomen oder autonomen Geräten, etwa bei der Navigation von Drohnen oder mobilen Robotern.
+So können beispielsweise Bergungsarbeiten oder Minenräumungen künftig aus sicherer Entfernung durchgeführt werden, ohne dabei Menschen unnötigen Gefahren auszusetzen.
 
 \section{Zielsetzung der Arbeit}
 Das Ziel dieser Arbeit ist es, die Konzepte der Gestenerkennung sowie deren Einsatzmöglichkeiten zur Steuerung virtueller Systeme zu veranschaulichen.
-Als Grundlage dient dabei ein ähnliches Projekt, das in~\cite{arxiv:OmniRace} vorgestellt wird.
+Als Grundlage dient dabei ein ähnliches Projekt, welches ein neurales Netzwerk zur Erkennung von Handpositionen implementiert, um eine Steuerungsalternative zu traditionellen Kontrollern zu bieten.
+Die Position der Hand wird von einer Kamera erfasst und von einem Computer ausgewertet.
+Dieser sendet Steuerbefehle anhand der berechneten Daten an einer Renndrohne.\cite{arxiv:OmniRace}
 
 Um den Aufwand in einem realistischen Rahmen zu halten, wird in dieser Arbeit nicht auf eine direkte Erkennung der Fingerpositionen gesetzt.
-Stattdessen kommen ArUco-Marker zum Einsatz, die an den Fingern befestigt werden und eine präzise Erkennung der Fingerbewegungen ermöglichen.
+Stattdessen kommen vier ArUco-Marker zum Einsatz, die auf der Steuerhand befestigt werden.
+Dies soll eine präzise Erkennung der Handausrichtung ermöglichen, indem Flächen, Positionen und Distanzen der Marker berechnet und verglichen werden.
+Anschliessend wird mit den in \hTeLi{sec:cf}{Kapiteln~\ref{sec:cf}} und \hTeLi{sec:crpa}{\ref{sec:crpa}} beschriebenen Hardware-Komponenten eine Drohne gesteuert.
 
-\section{Forschungsgegenstand}
+In diesem Projekt werden zwei Ansätze getestet, die sich in der Platzierung der Marker unterscheiden.
+Die Anordnung der Marker soll die Bedeutsamkeit veranschaulichen, die Finger beim Gebrauch von Gesten haben.
+Der erste Ansatz sieht die Marker in einem Rechteck angeordnet vor, wobei ausschliesslich die Handfläche als Bereich für die Marker dient.
+Der zweite Versuch setzt hingegen drei von vier Markern auf den Fingerspitzen vorraus.
+Der vierte Marker wird auf dem Handgelenk platziert und markiert für die Kamera den Referenzpunkt der Hand.
+
 \subsection{Fragestellung}
 Wie kann ein System zur gestenbasierten Steuerung einer Nano-Drohne entwickelt werden, das mithilfe von ArUco-Markern Handgesten zuverlässig erkennt, diese in präzise Steuerbefehle umwandelt und die Drohne per  Funkverbindung sicher und reaktionsschnell steuert?
 
