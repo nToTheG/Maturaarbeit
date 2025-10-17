@@ -34,12 +34,12 @@ Einige typische Beispiele sind in der folgenden Liste\footnotemark{} dargestellt
     \begin{figure}[H]
         \centering
             \includegraphics[width=0.5\textwidth]{ocv_logo.pdf}
-        \caption{Logo von OpenCV \cite{ocv:org}.}
+        \caption{Logo von OpenCV \cite{ocv:org}}
             \label{pic:ocv_logo}
     \end{figure}
 \end{minipage}
 
-Abgesehen von diesen klassischen Anwendungsfeldern wird OpenCV auch zunehmend in Forschungsprojekten genutzt, beispielsweise zur Gesten- oder Marker-basierten Steuerung von Robotiksystemen, wie sie im Rahmen dieser Arbeit zum Einsatz kommt \cite{sse:foodDel}.
+Abgesehen von diesen klassischen Anwendungsfeldern wird OpenCV auch zunehmend in Forschungsprojekten genutzt, beispielsweise zur gesten- oder markerbasierten Steuerung von Robotiksystemen, wie sie im Rahmen dieser Arbeit zum Einsatz kommt~\cite{sse:foodDel}.
 
 \subsection{Module}
 OpenCV ist modular aufgebaut.
@@ -63,7 +63,7 @@ In \aTeLi{tab:ocvModules} sind drei zentrale Module von OpenCV aufgeführt:
         \texttt{aruco} & Das aruco-Modul ermöglicht die Erkennung und Verarbeitung von \hTeLi{sec:aruco}{ArUco-Markern}. Es kann die Position und Orientierung der Marker berechnen und ist das wichtigste Modul dieser Arbeit.\\
         \bottomrule
     \end{tabularx}
-    \caption{Wichtige Module der OpenCV-Bibliothek \cite{ocv:docs}.}
+    \caption{Wichtige Module der OpenCV-Bibliothek \cite{ocv:docs}}
         \label{tab:ocvModules}
 \end{table}
 
@@ -77,7 +77,7 @@ Sie dienen als optische Referenzpunkte für die Maschinen, die am Fertigungsproz
 Dadurch erhöhen sie die Präzision und reduzieren Kurzschlüsse \cite{Wiki:Passermarke}.
 
 Es gibt Referenzmarker in verschiedenen Grössen, Farbschemen und Formen, abhängig von ihrem Einsatzgebiet.
-Für diese Arbeit werden aus folgenden Gründen quadratische benutzt:
+Für diese Arbeit werden aus folgenden Gründen quadratische Marker benutzt:
 
 \begin{itemize}
     \item Die Erkennung der Marker erfolgt schnell und effizient, was bei Echtzeitsteuerung vorteilhaft ist.
@@ -90,7 +90,7 @@ ArUco-basierte Marker zählen zu den verlässlichsten, vor allem seit \hTeLi{sec
 \begin{figure}[H]
     \centering
         \includegraphics[width=0.3\textwidth]{aruco.pdf}
-    \caption{ArUco-Marker mit ID 0. Generiert von \cite{chev:arucogen}}.
+    \caption{ArUco-Marker mit ID 0 \cite{chev:arucogen}}
         \label{pic:marker0}
 \end{figure}
 
@@ -106,7 +106,7 @@ Die Fabrikation von QR-Codes beruht auf drei Hauptbestandteilen:
     \item Stärke der Fehlerkorrekturfunktion.
 \end{enumerate}
 
-Der entscheidende Unterschied zwischen dieser Funktionsweise und der von ArUco-Markern ist der Informationgehalt.
+Der entscheidende Unterschied zwischen dieser Funktionsweise und der von ArUco-Markern ist der Informationsgehalt.
 Bei ArUco-Markern existiert dieser nicht.
 Sie sind nicht eine binäre Übersetzung einer vordefinierten Eingabe, sondern sind in nummerierten Bibliotheken angelegt und besitzen keine versteckte Botschaft.
 Es gibt keinen Algorithmus, der Klartext in einen ArUco-Marker übersetzt.
@@ -117,9 +117,9 @@ Diese Bedingungen sind jedoch ideal für dieses Projekt, da nur wenige verschied
 Um einen gesuchten Marker in den Bibliotheken zu finden, braucht man den Namen der Bibliothek und die ID des Markers.
 Der Name der Bibliothek legt die Grösse der Matrix und somit Komplexität des Markers fest sowie die Anzahl möglicher Marker.
 
-In der Tabelle \aTeLi{tab:arucoDicts} sind drei Bibliotheken und deren Eigenschaften dargestellt.
+In der \aTeLi{tab:arucoDicts} sind drei Bibliotheken und deren Eigenschaften dargestellt.
 Es ist zu beachten, dass alle Marker der Bibliothek \bodyCode{DICT\_4X4\_50} auch in \bodyCode{DICT\_4X4\_100} vorhanden sind, da die grössere Bibliothek alle IDs der kleineren umfasst.
-Für dieses Projekt wird die Bibliothek \bodyCode{DICT\_4X4\_50} verwendet, weil es die geometrisch unkomplizierteste Bibliothek ist, die OpenCV unterstützt.
+Für dieses Projekt wird die Bibliothek \bodyCode{DICT\_4X4\_50} verwendet, weil sie die geometrisch unkomplizierteste Bibliothek ist, die OpenCV unterstützt.
 Das ist insofern wichtig, weil die Marker letztendlich unter Winkeln bis zu 45° erkennbar sein sollen.
 Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_50} Bibliothek aus.
 
@@ -139,14 +139,14 @@ Da weitaus weniger als fünfzig Marker benötigt werden, reicht die \bodyCode{\_
         \bodyCode{DICT\_5X5\_50} & 25 & 50 \\
         \bottomrule
     \end{tabular}
-    \caption{Eigenschaften ausgewählter ArUco-Dictionaries.}
+    \caption{Eigenschaften ausgewählter ArUco-Dictionaries}
         \label{tab:arucoDicts}
 \end{table}
 
 \section{Mathematische Grundlagen}
 
 In diesem Kapitel werden die für das Verständnis dieser Arbeit benötigten mathematischen Grundlagen erläutert.
-Dabei handelt es sich um grundlegende mathematische Konzepte, die für die Auswertung der Bildaten von Nöten sind.
+Dabei handelt es sich um grundlegende mathematische Konzepte, die für die Auswertung der Bilddaten vonnöten sind.
 
 \subsection{NumPy-Arrays und zweidimensionale Listen}
 \label{sub:numpy}
@@ -221,7 +221,7 @@ Der Ursprung ihres Namens ist in \aTeLi{pic:polygon} und \aTeLi{pic:shoelace} il
             \draw[->, gray!70] (-0.5,0) -- (3.5,0) node[right] {$x$};
             \draw[->, gray!70] (0,-0.5) -- (0,3.5) node[above] {$y$};
         \end{tikzpicture}
-        \caption{Ein Polygon.}
+        \caption{Ein Polygon}
             \label{pic:polygon}
     \end{subfigure}%
     \hfill
@@ -265,10 +265,10 @@ Der Ursprung ihres Namens ist in \aTeLi{pic:polygon} und \aTeLi{pic:shoelace} il
             \draw[->, minusRed, thick] (X5) -- (Y4);
             \draw[->, minusRed, thick] (X6) -- (Y5);
         \end{tikzpicture}
-        \caption{Schnürsenkel-Muster.}
+        \caption{Schnürsenkel-Muster}
         \label{pic:shoelace}
     \end{subfigure}
-    \caption{Illustrationen zur Shoelace Formula.}
+    \caption{Illustrationen zur Shoelace Formula}
     \label{fig:overall}
 \end{figure}
 
@@ -296,7 +296,7 @@ Setzt man die \inlinemath{x}- und \inlinemath{y}-Werte für die einzelnen Punkte
     \end{align*}
 \end{minipage}
 
-Am Ende muss noch mit \inlinemath{\frac{1}{2}} multipliziert werden, um das korrekte Ergebnis zu erhalten: \inlinemath{A = 5.125}
+Am Ende muss noch mit \inlinemath{\frac{1}{2}} multipliziert werden, um das korrekte Ergebnis zu erhalten: \inlinemath{A = 5.125}.
 
 \subsection{Mittelpunkt eines Vierecks berechnen}
 Die Berechnung des Mittelpunktes eines Vierecks ist sehr einfach, weswegen hier nur die Formel angegeben wird:
@@ -304,7 +304,7 @@ Die Berechnung des Mittelpunktes eines Vierecks ist sehr einfach, weswegen hier 
 M_x = \frac{x_1 + x_2 + x_3 + x_4}{4}, \quad M_y = \frac{y_1 + y_2 + y_3 + y_4}{4}
 \]
 \subsection{Distanzberechnung mittels Vektorsubtraktion}
-Jegliche Distanze werden in dieser Arbeit durch die Subtraktion von Vektoren berechnet.
+Jegliche Distanzen werden in dieser Arbeit durch die Subtraktion von Vektoren berechnet.
 Dazu werden zuerst die Ortsvektoren der Punkte \inlinemath{A(x_1|y_1)} und \inlinemath{B(x_2|y_2)} bestimmt.
 \[
 \overrightarrow{OA} = \vect{x_1}{y_1}, \quad \overrightarrow{OB} = \vect{x_2}{y_2}
@@ -328,22 +328,22 @@ Die Eigenschaften, welche \textbf{für} die Wahl dieses Quadrokopters in Forschu
 \begin{itemize}
     \item \textbf{Gewicht:} Die Drohne ist sehr leicht, was vor allem für Einsteiger praktisch ist, da sie weniger anfällig für Beschädigung ist.
     \item \textbf{API:} Bitcraze stellt eine Open-Source-Python-Schnittstelle zur Verfügung, die eine direkte Programmierung der Drohne ermöglicht und damit zentral für diese Arbeit ist (siehe \hTeLi{sub:cflib}{Kapitel~CFLib}).
-    \item \textbf{Modularitär:} Es existieren über 15 optionale Erweiterungs-Decks, die den Anwendungsbereich der Crazyflie gezielt erweitern.
+    \item \textbf{Modularität:} Es existieren über 15 optionale Erweiterungs-Decks, die den Anwendungsbereich der Crazyflie gezielt erweitern.
 \end{itemize}
 
 Im Rahmen dieser Arbeit wird ausschliesslich das in \hTeLi{sub:v2}{Kapitel~\ref{sub:v2}} beschriebene \techWord{Flow-Deck V2} als Erweiterung verwendet.
 
-Inziwschen ist mit \techWord{Crazyflie 2.1\texttt{+}} eine neue Version der erschienen.
+Inzwischen ist mit \techWord{Crazyflie 2.1\texttt{+}} eine neue Version der erschienen.
 Diese wurde mit einer längeren Flugzeit und verbesserten Flugleistung. 
 
 Beide Versionen der Crazyflie sind mit folgenden Funktionen ausgestattet:
 
 \begin{itemize}
-    \item Unterstützung der Steuerung über Apple- und Anroid-Smartphones via BLE (Bluetooth Low Energy) sowie über Computer mit angeschlossenem \hTeLi{sec:crpa}{Crazyradio~PA}.
+    \item Unterstützung der Steuerung über Apple- und Android-Smartphones via BLE (Bluetooth Low Energy) sowie über Computer mit angeschlossenem \hTeLi{sec:crpa}{Crazyradio~PA}.
     \item Einem dreiachsigen Gyrosensor.\footnotemark
     \item Einem dreiachsigen Beschleunigungssensor.\footnotemark[\value{footnote}]
     \item Einem dreiachsigen Magnetometer.\footnotemark[\value{footnote}]
-    \item Einem Hochpräzision-Drucksensor.
+    \item Einem Hochpräzisions-Drucksensor.
 \end{itemize}
 
 \footnotetext{Bestandteil des \techWord{MPU-9250}-Bauteils.}
@@ -354,25 +354,25 @@ Beide Versionen der Crazyflie sind mit folgenden Funktionen ausgestattet:
         \begin{subfigure}[b]{0.3\textwidth}
             \centering
             \includegraphics[width=\textwidth]{cf.pdf}
-            \caption{Crazyflie \bodyCode{2.0} \cite{bc:cf20}}
+            \caption{Crazyflie~\bodyCode{2.0}~\cite{bc:cf20}}
             \label{pic:cf20}
         \end{subfigure}
         \hfill
         \begin{subfigure}[b]{0.3\textwidth}
             \centering
             \includegraphics[width=\textwidth]{crpa.pdf}
-            \caption{Crazyradio PA \cite{bc:crpa}}
+            \caption{Crazyradio~PA~\cite{bc:crpa}}
             \label{pic:crpa}
         \end{subfigure}
         \hfill
         \begin{subfigure}[b]{0.3\textwidth}
             \centering
             \includegraphics[width=\textwidth]{fdv2.pdf}
-            \caption{Flow-Deck V2 \cite{bc:fdv2}}
+            \caption{Flow-Deck~V2~\cite{bc:fdv2}}
             \label{pic:fdv2}
         \end{subfigure}
     \end{imgbox}
-    \caption{Physische Komponenten}
+    \caption{Physische~Komponenten}
         \label{fig:drohne_und_radio}
 \end{figure}
 
@@ -404,7 +404,7 @@ CFLib steht für \enquote{Crazyflie Python Library}.
 Das Softwarepaket stellt die Programmierschnittstelle (\textit{API}) zur Steuerung der Drohne bereit. 
 Einzelne API-Funktionen werden in \hTeLi{sec:cf_co}{Kapitel~\ref{sec:cf_co}} detaillierter erläutert.
 
-Das Modul ist in 8 Submodule unterteilt.
+Das Modul ist in acht Submodule unterteilt.
 Im Gegensatz zu OpenCV benötigt man die Submodule von CFLib meist alle, auch wenn manche nur im Hintergrund laufen.
 Im folgenden Teil sind die Submodule und ihre Aufgaben aufgeführt:
 
@@ -427,27 +427,27 @@ Die Datenübertragung erfolgt bidirektional:
 Befehle werden über das \techWord{Crazy RealTime Protocol (CRTP)} von der Steuerkonsole über das Crazyradio an die Drohne gesendet, während Telemetriedaten in umgekehrter Richtung übertragen werden.
 Zu den typischen Telemetriedaten zählen die vom Flow-Deck gemessene Höhe, die aktuelle Ausrichtung des Gyroskops sowie der Batteriestatus.
 Der Funk arbeitet im lizenzfreien \SI{2.4}{\giga\hertz}-ISM-Band (Industrial, Scientific and Medical).
-Dieses Frequenzband wird auch von zahlreichen anderen Geräten genutzt. Dazu gehören etwa WLAN-Router, Bluetooth-Geräte und drahtlose Eingabegeräte, die das Signal zwischen Crazyradio und Crazyflie stören können. Dieses Problem lässt sich jedoch durch das Wählen andere Kanäle umgehen. \cite{bc:crpa_conf}
+Dieses Frequenzband wird auch von zahlreichen anderen Geräten genutzt. Dazu gehören etwa WLAN-Router, Bluetooth-Geräte und drahtlose Eingabegeräte, die das Signal zwischen Crazyradio und Crazyflie stören können. Dieses Problem lässt sich jedoch durch das Wählen anderer Kanäle umgehen~\cite{bc:crpa_conf}.
 
 \subsection{Funkverbindung}
-Um eine Verbindung zwschen dem Crazyradio und einer Crazyflie aufzubauen braucht man einen sogenannten URI (Uniform Resource Identifier), die Verbindungsadresse:
+Um eine Verbindung zwischen dem Crazyradio und einer Crazyflie aufzubauen, braucht man einen sogenannten URI (Uniform Resource Identifier), die Verbindungsadresse:
 
 \begin{description}
     \item \text{\textbf{Allgemeine Form eines URIs:}} \bodyCode{radio://<interface>/<channel>/<datarate>/<address>}
     \item \text{\textbf{Beispiel eines funktionierenden URIs:}} \bodyCode{radio://0/80/2M/E7E7E7E7E7}
 \end{description}
 
-Die Zeichenabfolge beinhaltet vier Variabeln, die mit \bodyCode{<>} markiert sind. Diese Variabeln sorgen für eine eindeutige Definition des Kommunikationsweges. Die \hTeLi{tab:uri}{folgende Tabelle} erklärt, wie die einzelnen Felder gewählt werden sollten. Dabei steht \inlinemath{m} für die Anzahl angeschlossener Crazyradio-Dongles.
+Die Zeichenabfolge beinhaltet vier Variablen, die mit \bodyCode{<>} markiert sind. Diese Variablen sorgen für eine eindeutige Definition des Kommunikationsweges. Die \hTeLi{tab:uri}{folgende Tabelle} erklärt, wie die einzelnen Felder gewählt werden sollten. Dabei steht \inlinemath{m} für die Anzahl angeschlossener Crazyradio-Dongles.
 
 \begin{table}[H]
     \centering
-    \caption{Variabeln eines URIs}
+    \caption{Variablen eines URIs}
         \label{tab:uri}
     \begin{tabularx}{\textwidth}{l X X >{\hsize=0.37\hsize}X}
         \toprule
         \textbf{Variabel} & \textbf{Beschreibung} & \textbf{Zweck} & \textbf{Optionen} \\
         \midrule
-        \bodyCode{<interface>} & Index des angeschlossenen Dongles & Zwischen mehrerer angeschlossener Funkadaptern & \bodyCode{0} bis \inlinemath{m-1} \\
+        \bodyCode{<interface>} & Index des angeschlossenen Dongles & Zwischen mehreren Funkadaptern unterscheiden & \bodyCode{0} bis \inlinemath{m-1} \\
         \addlinespace[3pt]
         \bodyCode{<channel>} & Funkkanal im \SI{2.4}{\giga\hertz}-Bereich & Wahl des Kanals zur Vermeidung von Störungen & \bodyCode{0 - 125} \\
         \addlinespace[3pt]

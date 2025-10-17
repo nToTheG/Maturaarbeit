@@ -21,16 +21,16 @@ So lassen sich Stärken und Schwächen der einzelnen Systemteile gezielt analysi
 \subsection{Gestenerkennung}
 \label{sub:geRec}
 
-Um die Leistung der Gestenerkennung zu testen, wurde eine Funktion in das Skript implementiert, die die Ecken der erkannten Marker auf dem angezeigten Videobild rot darstellt (siehe !!TODO!!).
+Um die Leistung der Gestenerkennung zu testen, wurde eine Funktion in das Skript implementiert, die die Ecken der erkannten Marker auf dem angezeigten Videobild rot darstellt.
 So kann visuell bestimmt werden, ob ein Marker im jetzigen Moment erkannt wird.
 Es ist festzuhalten, dass die Bildaufnahmegeschwindigkeit Einfluss auf die folgenden Resultate hat.\footnotemark{}
 \footnotetext{Es wurden \textbf{nicht} mehrere Kameras ausprobiert.}
 
 Zunächst wurde die Detektion von bis zu 35 Markern gleichzeitig mit der eines einzelnen Markers verglichen.
-So viele Marker auf einmal zu erkennen ist für das Skript grundsätzlich kein Problem, findet jedoch Bewegung statt, so nimmt die Genauigkeit um bis zu \SI{25}{\percent} ab.
-Man merkt auch einen Unterschied, wenn man vier anstatt einem Marker zu erkennen hat.
+So viele Marker auf einmal zu erkennen, ist für das Skript grundsätzlich kein Problem, findet jedoch Bewegung statt, so nimmt die Genauigkeit um bis zu \SI{25}{\percent} ab.
+Man merkt auch einen Unterschied, wenn man vier anstatt einen Marker zu erkennen hat.
 Da alle vier Marker mehrmals gleichzeitig pro Sekunde erkannt werden, genügt die Genauigkeit für die Drohnensteuerung.
-Für diesen Test wurden nicht die ArUco-Tags natürlich aus Platzgründen nicht auf die Hand geklebt.
+Für diesen Test wurden die ArUco-Tags aus Platzgründen nicht auf die Hand geklebt.
 
 Im nächsten Schritt wurden die tatsächlichen Anordnungen der Marker der jeweiligen Methode verwendet.
 Anordnung~1 steht dabei für die Anordnung der Methode~1, Anordnung~2 entsprechend für die Anordnung der Methode~2.
@@ -49,7 +49,7 @@ Zum Schluss wurden noch die Lichtverhältnisse analysiert.
 Die Marker-Erkennung kann grundsätzlich ohne Umgebungslicht durchgeführt werden, weil das vom Bildschirm ausgestrahlte Licht ausreicht.
 Tatsächlich funktioniert der Prozess am besten, wenn es dunkler ist.
 Befinden sich Lichtquellen im Raum, dürfen sie nicht direkt in die Kameralinse strahlen.
-Wird dies nicht beachtet, ist eine Überbelichtung des erfassten Bildes und somit nur schlechte bis gar keine Marker-Erkennung möglich.
+Wird dies nicht beachtet, ist eine Überbelichtung des erfassten Bildes und somit nur eine schlechte bis gar keine Marker-Erkennung möglich.
 
 \subsection{Drohnensteuerung}
 \label{sec:drco}
@@ -92,7 +92,7 @@ Nach drei weiteren Runden pro Methode lassen sich die durchschnittlichen Rennzei
 \end{itemize}
 
 Zum Schluss wurde das Feedback der vier Testpersonen ausgewertet.
-Als Anwortmöglichkeiten wurde \enquote{intuitiv}, \enquote{eher intuitiv} und \enquote{nicht intuitiv} vorgegeben.
+Als Antwortmöglichkeiten wurde \enquote{intuitiv}, \enquote{eher intuitiv} und \enquote{nicht intuitiv} vorgegeben.
 In folgender Tabelle sind die Antworten aufgeführt:
 
 \begin{table}[H]

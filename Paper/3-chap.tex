@@ -7,11 +7,11 @@
 
 In diesem Kapitel wird beschrieben, wie die in \hTeLi{cha:chapter2}{Kapitel~\ref{cha:chapter2}} vorgestellten theoretischen Grundlagen praktisch umgesetzt werden.
 Ziel ist es, eine Gestensteuerung der Crazyflie 2.0 mithilfe von ArUco-Markern zu realisieren.
-Um dieses Ziel zu erreichen, wurde eine zwei Methoden entwickelt, die sowohl die Erkennung und Analyse von Handbewegungen als auch die Steuerung der Drohne umfasst.
+Um dieses Ziel zu erreichen, wurden zwei Methoden entwickelt, die sowohl die Erkennung und Analyse von Handbewegungen als auch die Steuerung der Drohne umfassen.
 
 \section{Vorgehensweise}
 
-Beide Methoden umfassen die selben Prozessschritte, die von der Erfassung visueller Daten über deren mathematische Verarbeitung bis hin zur Umsetzung in Steuerbefehle für die Drohne reichen.
+Beide Methoden umfassen dieselben Prozessschritte, die von der Erfassung visueller Daten über deren mathematische Verarbeitung bis hin zur Umsetzung in Steuerbefehle für die Drohne reichen.
 Der ausschlaggebende Unterschied ist dabei die Platzierung der Marker auf der Hand (mehr dazu in \hTeLi{sec:diff_meth}{Kapitel~\ref{sec:diff_meth}}).
 Innerhalb beider Methoden werden folgende Schritte durchgeführt:
 
@@ -44,7 +44,7 @@ Beide Methoden verwenden genau vier Marker, welche die IDs 1 bis 4 darstellen.
 
 \subsection{Methode 1}
 In Methode~1 werden die Marker in einem Rechteck platziert.
-Als Referenzpunkte dienen dazu die Fingergrundgelenke (\textit{FFG}) und das Handgelenk (\textit{HG}) der Hand:
+Als Referenzpunkte dienen dazu die Fingergrundgelenke (\textit{FGG}) und das Handgelenk (\textit{HG}) der Hand:
 
 \begin{itemize}
     \item Marker \bodyCode{ID=1} wird auf das \textit{FGG} des kleinen Fingers geklebt.
@@ -58,9 +58,9 @@ Die Höhe ist mit der Entfernung der Mittelpunkte zwischen Marker \bodyCode{ID=1
 
 \subsection{Methode 2}
 Im Gegensatz zur Methode~1 werden bei Methode~2 die Finger als Teil der Hand mitverwendet.
-Markern mit \bodyCode{ID=1} soll auf der Spitze des kleinen Fingers befestigt werden.
-Gegenüberliegend davon ist auf der Daumenspitze der Marker mit der ID 3 anzubringen
-Die übrigen Marker werden auf die Spitze des Mittelfingers (\bodyCode{ID=2}) und zentriert auf das HG (\bodyCode{ID=4}) geklebt.
+Der Marker mit \bodyCode{ID=1} soll auf der Spitze des kleinen Fingers befestigt werden.
+Gegenüberliegend davon ist auf der Daumenspitze der Marker mit der ID 3 anzubringen.
+Die übrigen Marker werden auf die Spitze des Mittelfingers (\bodyCode{ID=2}) und zentriert auf das \textit{HG} (\bodyCode{ID=4}) geklebt.
 Die Tags bilden somit ein Viereck in Form einer Raute.
 
 Auch bei dieser Version muss die Breite und die Höhe des von Markern umschlossenen Bereichs bestimmt werden.
@@ -80,9 +80,9 @@ Um sicherzustellen, dass tatsächlich Bildinformationen empfangen werden, muss i
 Diese gibt zwei Werte zurück:
 
 \begin{itemize}
-    \item Der erste Wert gibt an, ob ein Bild erfolgreich empfangen wurde\footnotemark{}.
+    \item Der erste Wert gibt an, ob ein Bild erfolgreich empfangen wurde.\footnotemark{}
     \footnotetext{Im \hTeLi{sni:det}{Codeausschnitt} als \bodyCode{success} ersichtlich.}
-    \item Der zweite Wert enthält das aktuelle Kamerabild in Form eines NumPy-Arrays\footnotemark{}.
+    \item Der zweite Wert enthält das aktuelle Kamerabild in Form eines NumPy-Arrays.\footnotemark{}
     \footnotetext{Im \hTeLi{sni:det}{Codeausschnitt} als \bodyCode{frame} ersichtlich.}
 \end{itemize}
 
@@ -127,8 +127,8 @@ Dies träfe insbesondere dann zu, wenn die Framerate der Kamera zu niedrig oder 
 
 \section{Datenverarbeitung und Interpretation}
 Innerhalb der Datenverarbeitung unterscheidet man zwischen zwei verschiedenen Funktionen.
-Der erste beinhaltet die Kalibrierung der Referenzdaten.
-ist diese einmal fertig, wird sie icht mehr verwendet.
+Die erste Funktion beinhaltet die Kalibrierung der Referenzdaten.
+Ist diese einmal fertig, wird sie nicht mehr verwendet.
 
 \subsection{Kalibrieren der Marker}
 Der Zweck der Kalibrierung ist es, Referenzdaten für die spätere Bestimmung der Ausrichtung zu haben.\footnotemark{}
@@ -137,7 +137,7 @@ Die gespeicherten Daten bestehen aus der Höhe und der Breite des erkannten Mark
 Die Kalibrierung verläuft folgendermassen:
 
 \begin{enumerate}
-    \item Hand muss mittig auf dem Kamerbild platziert werden.
+    \item Die Hand muss mittig auf dem Kamerbild platziert werden.
     \item Ein Knopfdruck startet die Kalibrierung.
     \item Mittelpunkte der Marker, die für die Berechnung der Höhe und Breite benötigt sind, werden berechnet.
     \item Mit Vektorsubtraktion und dem Satz des Pythagoras kann die Distanz zwischen den Referenzpunkten berechnet werden.
@@ -148,7 +148,7 @@ Die Kalibrierung verläuft folgendermassen:
 
 \subsection{Richtungsbestimmung}
 In dieser Arbeit werden Ausschlussverfahren für die Richtungsbestimmung verwendet.
-Es soll eingangs die Horizontale und Vertikale des erkannten Markerbereichs berechnet und anschliessend mit den gespeicherten \textit{Snapshots} veglichen werden.
+Es soll eingangs die Horizontale und Vertikale des erkannten Markerbereichs berechnet und anschliessend mit den gespeicherten \textit{Snapshots} verglichen werden.
 Dafür werden wiederum die Mittelpunkte ausschlaggebender Tags bestimmt.
 
 Weil die Marker in \textbf{beiden} Versionen nicht quadratisch exakt angeordnet sind, müssen die Verhältnisse miteinander verglichen werden.
@@ -159,7 +159,7 @@ Ist die Fläche der rechtsliegenden Marker kleiner als die korrespondierende Fl�
 Somit wurde die Anwinkelung der Hand interpretiert.
 Sie beschreibt jedoch keine seitliche Verschiebung, sondern eine Drehung um die vertikale Achse (Yaw-Bewegung) oder eine Vorwärts- oder Rückwärtsbewegung.
 
-Damit auch die vertikale Position der Hand im Bild erfasst werden kann, wiederum die \inlinemath{y}-Koordinate des Markerbereichs berechnet.
+Damit auch die vertikale Position der Hand im Bild erfasst werden kann, wird wiederum die \inlinemath{y}-Koordinate des Markerbereichs berechnet.
 Anschliessend vergleicht man diesen Wert mit dem \textit{Snapshot} der Handmitte.
 Liegt der Mittelpunkt deutlich oberhalb des \textit{Snapshots}, so wird die Hand als \enquote{oben} interpretiert; liegt er deutlich darunter, als \enquote{unten}.
 
@@ -168,7 +168,7 @@ Für die Drehung um die \inlinemath{x}- oder \inlinemath{y}-Achse bedeutet das, 
 
 \section{Steuerung der Crazyflie}
 \label{sec:cf_co}
-Um eine Crazyflie zu steuern, müssen mehrere Module der \bodyCode{CFlib}-Bibliothek importiert werden:
+Um eine Crazyflie zu steuern, müssen mehrere Module der \bodyCode{CFLib}-Bibliothek importiert werden:
 
 \begin{itemize}
     \item Die \bodyCode{Crazyflie}-Klasse stellt die grundlegende Kommunikationsschnittstelle zur Drohne bereit.
@@ -182,13 +182,13 @@ Innerhalb dieses Kontexts kann eine \bodyCode{MotionCommander}-Instanz\footnotem
 Anschliessend können, basierend auf der aus den ArUco-Markern interpretierten Handbewegung, Steuerbefehle an die Crazyflie gesendet werden.
 \footnotetext{Teilweise als \bodyCode{mc} ersichtlicht.}
 
-Die mögliche Befehle sind in Tabelle~\TeLi{tab:cf_cmds} dargestellt.
+Die möglichen Befehle sind in Tabelle~\TeLi{tab:cf_cmds} dargestellt.
 Die Parameter \bodyCode{V\_YAW}, \bodyCode{V\_ALT} und \bodyCode{V\_HOR} definieren dabei die jeweiligen Geschwindigkeiten der Bewegungen:
 
 \begin{itemize}
     \item \bodyCode{V\_YAW} beschreibt die Drehgeschwindigkeit um die vertikale Achse (Yaw), angegeben in \si{\meter\per\second}.
     \item \bodyCode{V\_ALT} bezeichnet die vertikale Steig- oder Sinkgeschwindigkeit in \si{\meter\per\second}.
-    \item \bodyCode{V\_HOR} steht für die horizontale Fluggeschwindigkeit (Vorwärts oder Rückwärts) in \si{\meter\per\second}.
+    \item \bodyCode{V\_HOR} steht für die horizontale Fluggeschwindigkeit (vorwärts oder rückwärts) in \si{\meter\per\second}.
 \end{itemize}
 
 Die Werte dieser Konstanten werden so gewählt, dass die Bewegungen der Crazyflie sanft und kontrollierbar bleiben.
@@ -219,8 +219,8 @@ Ein solcher leerer Befehl teilt der Crazyflie mit, dass sie ihre aktuelle Positi
 \end{center}
 
 \subsection{Sicherheitsmechanismen}
-Als Sicherheitsmechanismus wurde eine Klasse implementiert, die eine Art Stopuhr-Funktion erfüllt.
-Jedes Mal, wenn alle vier Marker auf der Hand erkannt werden, wird diese Stopuhr auf \inlinemath{t=0} zurückgesetzt.
+Als Sicherheitsmechanismus wurde eine Klasse implementiert, die eine Art Stoppuhr-Funktion erfüllt.
+Jedes Mal, wenn alle vier Marker auf der Hand erkannt werden, wird diese Stoppuhr auf \inlinemath{t=0} zurückgesetzt.
 Sie zählt kontinuierlich weiter und sobald sie \inlinemath{t=5} erreicht, wird die Crazyflie automatisch gelandet.
 Damit ist der Landungsprozess abgesichert, und in einer Notsituation, beispielsweise bei einem Ausfall der Kamera, wird das Risiko einer Beschädigung der Drohne deutlich reduziert.
 
