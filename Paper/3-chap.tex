@@ -122,9 +122,6 @@ Starke Reflexionen, Schatten oder ungleichmässige Beleuchtung könnten dazu fü
 Dies würde sich insbesondere auf die Kantenerkennung und damit auf die Validierung der Marker auswirken.
 
 Auch die Grösse der Marker sowie der Abstand zur Kamera könnten eine Rolle spielen.
-Befinden sich die Marker zu weit entfernt oder werden sie in zu kleiner Auflösung aufgenommen, wären die schwarzen und weissen Bereiche nicht mehr klar voneinander unterscheidbar, was die Erkennung erschweren könnte.
-Ebenso wäre es denkbar, dass eine teilweise Verdeckung oder eine starke Neigung der Hand dazu führt, dass Marker nicht erkannt oder falsch identifiziert würden.
-
 Darüber hinaus könnte Bewegung während der Aufnahme zu unscharfen Bildern führen.
 Dies träfe insbesondere dann zu, wenn die Framerate der Kamera zu niedrig oder die Bewegung der Hand zu schnell wäre.
 
@@ -136,35 +133,38 @@ ist diese einmal fertig, wird sie icht mehr verwendet.
 \subsection{Kalibrieren der Marker}
 Der Zweck der Kalibrierung ist es, Referenzdaten für die spätere Bestimmung der Ausrichtung zu haben.\footnotemark{}
 \footnotetext{Diese Momentaufnahmen werden von nun an als \textit{Snapshots} bezeichnet}
-Die gespeicherten Daten bestehen zum einen aus der Höhe und der Breite des erkannten Markerbereiches.
-Dafür muss zunächst die Hand mittig auf dem Kamerabild platziert werden.
-Ein Knopfdruck startet die Kalibrierung. 
-Nun müssen zunächst die Mittelpunkte derjenigen Marker bestimmt, die für die Berechnung der Höhe und Breite benötigt sind.
-Anschliessend kann mit Vektorsubtraktion und dem Satz des Pythagoras die Distanz zwischen den Referenzpunkte berechnet werden.
+Die gespeicherten Daten bestehen aus der Höhe und der Breite des erkannten Markerbereiches, der Fläche aller Marker und der Mitte zwischen den oberen und den unteren Tags.
+Die Kalibrierung verläuft folgendermassen:
 
-Zusätzlich müssen noch die Fläche der Marker gespeichert werden.
-Die Shoelace-Formel ist hierfür der genau richtige Ansatz.
+\begin{enumerate}
+    \item Hand muss mittig auf dem Kamerbild platziert werden.
+    \item Ein Knopfdruck startet die Kalibrierung.
+    \item Mittelpunkte der Marker, die für die Berechnung der Höhe und Breite benötigt sind, werden berechnet.
+    \item Mit Vektorsubtraktion und dem Satz des Pythagoras kann die Distanz zwischen den Referenzpunkten berechnet werden.
+    \item Mit der Shoelace-Formel werden die Flächen berechnet.
+    \item Zum Schluss wird der \inlinemath{y}-Wert der Handmitte berechnet.
+    \item Distanzen, Flächen und Handmitte werden gespeichert.
+\end{enumerate}
 
 \subsection{Richtungsbestimmung}
-In dieser Arbeit wird ein Ausschlussverfahren für die Richtungsbestimmung verwendet.
+In dieser Arbeit werden Ausschlussverfahren für die Richtungsbestimmung verwendet.
 Es soll eingangs die Horizontale und Vertikale des erkannten Markerbereichs berechnet und anschliessend mit den gespeicherten \textit{Snapshots} veglichen werden.
 Dafür werden wiederum die Mittelpunkte ausschlaggebender Tags bestimmt.
 
 Weil die Marker in \textbf{beiden} Versionen nicht quadratisch exakt angeordnet sind, müssen die Verhältnisse miteinander verglichen werden.
 Ist der Quotient aus dem \textit{Snapshot} der Breite und der aktuellen Breite grösser als der der Höhe, so ist eine Drehung um die \inlinemath{x}-Achse ausgeschlossen.
-In diesem Fall würde es sich also um eine Drehung and der \inlinemath{y}-Achse handeln.
+In diesem Fall würde es sich also um eine Drehung an der \inlinemath{y}-Achse handeln.
 Ob es sich um eine Drehung nach links oder rechts handelt, wird durch einen weiteren Vergleich mit den gespeicherten \textit{Snapshots} ermittelt.
 Ist die Fläche der rechtsliegenden Marker kleiner als die korrespondierende Fläche im \textit{Snapshot} und die Fläche der linken Marker grösser als die der rechten, so ist eine Linksdrehung vorhanden.
 Somit wurde die Anwinkelung der Hand interpretiert.
 Sie beschreibt jedoch keine seitliche Verschiebung, sondern eine Drehung um die vertikale Achse (Yaw-Bewegung) oder eine Vorwärts- oder Rückwärtsbewegung.
 
-Damit auch die vertikale Position der Hand im Bild erfasst werden kann, wird die \inlinemath{y}-Koordinate des Markerbereichs berechnet.
-Der Mittelpunkt des Markerbereichs ist gleich dem Mittelpunkt des Vierecks, dass die Mittelpunkte der marker als Eckpunkte hat.
-Anschliessend vergleicht man diesen Wert mit der Hälfte der Bildhöhe.
-Liegt der Mittelpunkt deutlich oberhalb dieser Bildmitte, so wird die Hand als \enquote{oben} interpretiert; liegt er deutlich darunter, als \enquote{unten}.
+Damit auch die vertikale Position der Hand im Bild erfasst werden kann, wiederum die \inlinemath{y}-Koordinate des Markerbereichs berechnet.
+Anschliessend vergleicht man diesen Wert mit dem \textit{Snapshot} der Handmitte.
+Liegt der Mittelpunkt deutlich oberhalb des \textit{Snapshots}, so wird die Hand als \enquote{oben} interpretiert; liegt er deutlich darunter, als \enquote{unten}.
 
 Um zufällige oder geringe Schwankungen der Hand nicht mit einem Bewegungsbefehl zu verwechseln, werden sogenannte \textit{Deadzones} definiert.
-Für Drehung um die \inlinemath{x}- oder \inlinemath{y}-Achse bedeutet das, dass der Quotient der einen Distanz und des dazugehörigen \textit{Snapshot}-Werts grösser als die Summe aus dem Quotient der anderen Distanzwerte und einem gewissen \textit{Deadzone}-Werts sein muss.
+Für die Drehung um die \inlinemath{x}- oder \inlinemath{y}-Achse bedeutet das, dass der Quotient der einen Distanz und des dazugehörigen \textit{Snapshot}-Werts grösser als die Summe aus dem Quotient der anderen Distanzwerte und einem gewissen \textit{Deadzone}-Werts sein muss.
 
 \section{Steuerung der Crazyflie}
 \label{sec:cf_co}
@@ -196,8 +196,6 @@ Zu hohe Geschwindigkeiten würden das präzise Steuern über Gesten erschweren.
 
 \begin{table}[H]
     \centering
-    \caption{Steuerbefehle des \bodyCode{MotionCommander}}
-        \label{tab:cf_cmds}
     \begin{tabular}{l|l}
         \textbf{Richtung} & \textbf{MotionCommander-Befehl} \\ \hline
         Rechtsdrehung & \bodyCode{mc.start\_turn\_right(V\_YAW)} \\
@@ -206,12 +204,15 @@ Zu hohe Geschwindigkeiten würden das präzise Steuern über Gesten erschweren.
         Steigen & \bodyCode{mc.start\_up(V\_ALT)} \\
         Rückwärts & \bodyCode{mc.start\_back(V\_HOR)} \\
         Vorwärts & \bodyCode{mc.start\_forward(V\_HOR)} \\
+        \hline
     \end{tabular}
+    \caption{Steuerbefehle des \bodyCode{MotionCommander}}
+        \label{tab:cf_cmds}
 \end{table}
 
 Die Klasse \bodyCode{MotionCommander} sendet kontinuierlich Bewegungsanweisungen an die Crazyflie.
 Werden keine neuen Befehle übermittelt, beginnt sie automatisch mit der Landung.
-Um dies zu verhindern, werden \textit{leere} Befehle an die Drohne gesendet, sofern keine Anweisungen aus der ArUco-Erkennung vorliegen.
+Um dies zu verhindern, werden \enquote{leere} Befehle an die Drohne gesendet, sofern keine Anweisungen aus der ArUco-Erkennung vorliegen.
 Ein solcher leerer Befehl lautet:
 \begin{center}
     \bodyCode{mc.start\_linear\_motion(0, 0, 0, rate\_yaw=0.0)}
