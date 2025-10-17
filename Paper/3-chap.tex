@@ -147,7 +147,7 @@ Die Shoelace-Formel ist hierfür der genau richtige Ansatz.
 
 \subsection{Richtungsbestimmung}
 In dieser Arbeit wird ein Ausschlussverfahren für die Richtungsbestimmung verwendet.
-Es soll eingangs die Horizontale und Vertikale des erkannten Markerbereichs berechnet und anschliessend mit den gespeicherten \textit{Snapshot}s veglichen werden.
+Es soll eingangs die Horizontale und Vertikale des erkannten Markerbereichs berechnet und anschliessend mit den gespeicherten \textit{Snapshots} veglichen werden.
 Dafür werden wiederum die Mittelpunkte ausschlaggebender Tags bestimmt.
 
 Weil die Marker in \textbf{beiden} Versionen nicht quadratisch exakt angeordnet sind, müssen die Verhältnisse miteinander verglichen werden.
@@ -186,9 +186,9 @@ Die mögliche Befehle sind in Tabelle~\TeLi{tab:cf_cmds} dargestellt.
 Die Parameter \bodyCode{V\_YAW}, \bodyCode{V\_ALT} und \bodyCode{V\_HOR} definieren dabei die jeweiligen Geschwindigkeiten der Bewegungen:
 
 \begin{itemize}
-    \item \bodyCode{V\_YAW} beschreibt die Drehgeschwindigkeit um die vertikale Achse (Yaw), angegeben in m/s.
-    \item \bodyCode{V\_ALT} bezeichnet die vertikale Steig- oder Sinkgeschwindigkeit in m/s.
-    \item \bodyCode{V\_HOR} steht für die horizontale Fluggeschwindigkeit (Vorwärts oder Rückwärts) in m/s.
+    \item \bodyCode{V\_YAW} beschreibt die Drehgeschwindigkeit um die vertikale Achse (Yaw), angegeben in \si{\meter\per\second}.
+    \item \bodyCode{V\_ALT} bezeichnet die vertikale Steig- oder Sinkgeschwindigkeit in \si{\meter\per\second}.
+    \item \bodyCode{V\_HOR} steht für die horizontale Fluggeschwindigkeit (Vorwärts oder Rückwärts) in \si{\meter\per\second}.
 \end{itemize}
 
 Die Werte dieser Konstanten werden so gewählt, dass die Bewegungen der Crazyflie sanft und kontrollierbar bleiben.
