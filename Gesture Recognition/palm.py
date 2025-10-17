@@ -4,6 +4,8 @@ Date: 13.10.2025
 Autor: Nelio Gautschi
 
 Purpose:
+    - Gesture-based control of the crazyflie 2.0 with the flow-deck v2 attached
+    - uses only the palm for gesture-input
 
 """
 
