@@ -6,9 +6,11 @@ The project demonstrates gesture-based control of a Crazyflie 2.0 drone using Op
 ---
 
 **Deutscher Titel**
+
 Autonom durch die Lüfte: Die Integration von Gestenerkennung in die Navigation eines Mini-Hubschraubers
 
 **English Title**
+
 Autonomous Through the Air: Integrating Gesture Recognition into the Navigation of a Mini Helicopter
 
 ---
@@ -44,6 +46,8 @@ Autonomous Through the Air: Integrating Gesture Recognition into the Navigation 
 ## Usage
 
 Before running the main scripts, make sure you have successfully executed `install.py` and activated the virtual environment (venv).
+
+The key "q" can be pressed at all times to savely quit the code.
 
 ---
 
