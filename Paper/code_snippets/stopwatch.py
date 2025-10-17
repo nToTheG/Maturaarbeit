@@ -7,7 +7,7 @@ class Stopwatch:
         self.start_time = time.perf_counter()
         self.timeout = 5
 
-    def reset(self): # Setze die Stopuhr zurück
+    def reset(self): # Setze die Stoppuhr zurück
         self.start_time = time.perf_counter()
 
     def safety_check(self, mc): # Überprüfe, ob t=5 erreicht wurde
