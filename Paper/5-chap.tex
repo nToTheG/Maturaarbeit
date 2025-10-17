@@ -6,11 +6,21 @@
 \fontsize{12pt}{14pt}\selectfont
 
 \section{Fazit}
+Wie im vorherigen Kapitel beschrieben, bestehen deutliche Effizienzunterschiede zwischen den beiden Ansätzen.
+Es ist ebenfalls erkennbar, dass eine Platzierung mit grösseren Abständen zwischen den Markern sich positiv auf die Genauigkeit und Zuverlässigkeit einer gestenbasierten Steuerung auswirkt.
+Es darf jedoch nicht vergessen werden, dass Methode~1 teilweise so schlecht abgeschnitten hat, weil die Handoberfläche schlichtwegs nicht eben ist.
+Hätten bei Methode~1 die Marker ebenfalls die Form einer Raute gebildet, wäre kein Marker direkt auf dem Thenarmuskel gelegen und es wäre ein grösserer Erkennungsbereich-Winkel verfügbar gewesen.
+Insofern werden die Ergebnisse dieser Arbeit etwas verfälscht.
+Aber auch wenn die Marker anders auf der Handfläche ausgelegt worden wären, so wäre die Sensibilität immernoch höher als bei Methode~2 und somit für die meisten unangenehmer zu benutzen.
+
+Das Ziel der Arbeit wurde erreicht.
+Es konnte eine Steuerungsalternative entwickelt werden, die die Erkennung von Handpositionen erfolgreich implementiert.
+Auch die Konzepte der Gestenerkennung sowie deren Einsatzmöglichkeiten zur Steuerung virtueller Systeme konnten veranschaulicht werden.
 
 \section{Rückblick}
 
 Rückblickend zeigte sich, dass die gewählte Lösung mit ArUco-Markern zwar eine robuste und vergleichsweise einfache Möglichkeit zur Gestenerkennung ist, jedoch auch einige Einschränkungen aufweist.
-Die Marker müssen klar sichtbar und gut beleuchtet sein, was die praktische Anwendbarkeit reduziert.
+Die Marker müssen klar sichtbar und korrekt beleuchtet sein, was die praktische Anwendbarkeit reduziert.
 Zudem wirkt die Interaktion durch die sichtbaren Markierungen weniger natürlich.
 
 Ein alternativer Ansatz wäre die Verwendung einer echten Handerkennung gewesen, beispielsweise mit der Python-Bibliothek MediaPipe in Kombination mit OpenCV.
@@ -25,9 +35,7 @@ Die Kombination aus MediaPipe und OpenCV bietet dafür eine geeignete Grundlage,
 Durch diese Erweiterung könnte die Steuerung deutlich natürlicher und intuitiver werden, da keine sichtbaren Marker mehr benötigt würden.
 
 Das Ziel ist es, diesen Ansatz in einem nächsten Schritt praktisch umzusetzen und zu evaluieren, wie zuverlässig und reaktionsschnell die Drohne auf reine Handbewegungen reagiert.
-Dabei steht insbesondere die Stabilität der Erkennung und die Latenz der Steuerung im Vordergrund.
-
-\section{Selbstreflexion}
+Dabei steht insbesondere die Stabilität der Erkennung im Vordergrund.
 
 % End font-size
 \endgroup
