@@ -5,7 +5,122 @@
 \begingroup
 \fontsize{12pt}{14pt}\selectfont
 
+In diesem Kapitel werden die Ergebnisse der durchgeführten Tests dargestellt.
+Untersucht wurden sowohl die Genauigkeit der Gestenerkennung als auch die Reaktionsfähigkeit und Stabilität der Drohnensteuerung.
+Die Tests wurden unter verschiedenen Bedingungen durchgeführt, um die Zuverlässigkeit und das Echtzeitverhalten des Gesamtsystems zu bewerten.
+Als Evaluationskriterien dienten unter anderem Erkennungsrate, Reaktionszeit und Genauigkeit der Steuerbefehle.
+Da Steuerungssysteme intuitiv wirken sollten, wurden vier Personen gebeten, das System auszuprobieren und Feedback zu geben.
+Intuition ist somit ebenfalls ein Kriterium.
 
+\section{Einzelergebnisse}
+
+Die im Rahmen der Arbeit erhobenen Resultate wurden in drei Kategorien unterteilt: \hTeLi{sub:geRec}{Gestenerkennung}, \hTeLi{sec:drco}{Drohnensteuerung} und \hTeLi{sec:whsy}{Gesamtsystem}.
+Diese Einteilung ermöglicht eine Trennung zwischen der Bildverarbeitung, der Steuerlogik und dem praktischen Zusammenspiel beider Komponenten.
+So lassen sich Stärken und Schwächen der einzelnen Systemteile gezielt analysieren und bewerten.
+
+\subsection{Gestenerkennung}
+\label{sub:geRec}
+
+Um die Leistung der Gestenerkennung zu testen, wurde eine Funktion in das Skript implementiert, die die Ecken der erkannten Marker auf dem angezeigten Videobild rot darstellt (siehe !!TODO!!).
+So kann visuell bestimmt werden, ob ein Marker im jetzigen Moment erkannt wird.
+Es ist festzuhalten, dass die Bildaufnahmegeschwindigkeit Einfluss auf die folgenden Resultate hat.\footnotemark{}
+\footnotetext{Es wurden \textbf{nicht} mehrere Kameras ausprobiert.}
+
+Zunächst wurde die Detektion von bis zu 35 Markern gleichzeitig mit der eines einzelnen Markers verglichen.
+So viele Marker auf einmal zu erkennen ist für das Skript grundsätzlich kein Problem, findet jedoch Bewegung statt, so nimmt die Genauigkeit um bis zu \SI{25}{\percent} ab.
+Man merkt auch einen Unterschied, wenn man vier anstatt einem Marker zu erkennen hat.
+Da alle vier Marker mehrmals gleichzeitig pro Sekunde erkannt werden, genügt die Genauigkeit für die Drohnensteuerung.
+Für diesen Test wurden nicht die ArUco-Tags natürlich aus Platzgründen nicht auf die Hand geklebt.
+
+Im nächsten Schritt wurden die tatsächlichen Anordnungen der Marker der jeweiligen Methode verwendet.
+Anordnung~1 steht dabei für die Anordnung der Methode~1, Anordnung~2 entsprechend für die Anordnung der Methode~2.
+Es wurden zwei Versuche durchgeführt, bei denen die Erkennung der Tags unter Winkeln geprüft wurde.
+Das Resultat der Anordnung~1 zeigt erstmals, dass Unterschiede in der Anwendung anzutreffen sind.
+Der sogenannte Thenarmuskel, der Muskel des Daumens, verursacht bei Tag mit ID 3 eine Untergrundswölbung, welche die Oberfläche des Markers ungewollt verzerrt.
+Das verkleinert den Erkennungswinkel-Bereich der Methode~1 erheblich.
+Anordnung~2 schneidet hierbei besser ab.
+Sie wird effizient erkannt bis zu circa 35° Anwinkelung\footnotemark{}.
+\footnotetext{\SI{45}{\degree} entsprechen einem Seitenbild der Hand, wo die Handfläche nicht mehr zu sehen ist.}
+
+Als nächstes wird der ideale Abstand zwischen der Kamera und der Hand untersucht.
+Für beide Methoden wird die beste Reliabilität der Marker-Erkennung bei einer Entfernung von \SI{20}{\centi\meter} erreicht.
+
+Zum Schluss wurden noch die Lichtverhältnisse analysiert.
+Die Marker-Erkennung kann grundsätzlich ohne Umgebungslicht durchgeführt werden, weil das vom Bildschirm ausgestrahlte Licht ausreicht.
+Tatsächlich funktioniert der Prozess am besten, wenn es dunkler ist.
+Befinden sich Lichtquellen im Raum, dürfen sie nicht direkt in die Kameralinse strahlen.
+Wird dies nicht beachtet, ist eine Überbelichtung des erfassten Bildes und somit nur schlechte bis gar keine Marker-Erkennung möglich.
+
+\subsection{Drohnensteuerung}
+\label{sec:drco}
+
+Das Hauptproblem der Crazyflie~2.0 wird ersichtlich, wenn Hindernisse überflogen werden.
+Der Höhensensor erkennt einen abrupten Wechsel in der Messung der Entfernung zum Untergrund und interpretiert dies als ungewollten Höhenverlust oder -gewinn.
+Die Drohne versucht den Höhenunterschied auszugleichen und fliegt in unvorhersehbare Richtungen.
+Aus diesem Grund wurde für diese Arbeit eine Umgebung ohne Hindernisse und mit mattem Boden gewählt.
+
+Ein weiteres Problem stellen andere Geräte dar, die Datenverkehr auf der \SI{2.4}{\giga\hertz} Frequenz betreiben.
+Erfasst die Drohne ein gewisses Mass an Paketverlust, bricht sie die Verbindung zum Crazyradio ab.
+Um das Auftreten von ungewolltem Kommunikationsabbruch zur Drohne zu minimieren und die Stabilität der Verbindung zu fördern, wird eine Datenrate von \SI{2}{\mega\bit\per\second} anstatt der Standardeinstellung \SI{250}{\kilo\bit\per\second} verwendet.
+
+Die Drohnensteuerung wurde zunächst ohne Eingabesteuerung geprüft, um die Auswirkung der markerbasierten Steuerung zu bestimmen.
+Dank des Flow-Deck~V2 werden Distanz- und Geschwindigkeitsbefehle präzise ausgeführt, mit einer Abweichung im Zentimeterbereich.
+
+Eine verzögerte Reaktionszeit konnte nicht festgestellt werden, da sie unterhalb der für diese Arbeit relevanten Zeitspanne liegt.
+
+\subsection{Gesamtsystem}
+\label{sec:whsy}
+
+Das Gesamtsystem wird mithilfe eines Zeitrennens getestet.
+Dazu wird den Wänden eines viereckigen Raumes ohne Hindernisse entlang geflogen.
+Insgesamt müssen vier \SI{90}{\degree} Linkskurven und \si{36} Meter Länge geflogen werden, um am Startpunkt, der auch das Ziel ist, wieder anzukommen.
+
+Bei Verwendung der ersten Methode fliegt die Drohne für \si{115} Sekunden, bis sie das Ziel erreicht.
+Dabei sind nicht nur Links- und Rechtsbewegungen problematisch, sondern auch die einfache Vorwärtsbewegung.
+Neben der Ungenauigkeit der Richtungsbestimmung ist bei Methode~1 auch eine höhere Sensibilität auf Handbewegungen zu spüren, obwohl sie dieselben \textit{Deadzones} verwenden.
+Diese Sensibilität ist vermutlich auf die Distanz zwischen den Markern zurückzuführen.
+Die grössere Spannweite der Marker in Methode~2 ermöglicht präzisere Richtungsänderungen.
+
+Beim Gebrauch der zweiten Methode endet der Flug bereits nach \si{90} Sekunden. 
+Bei der gewählten Geschwindigkeit von \SI{0.5}{\meter\per\second} und ohne Beschleunigungsfunktionalität sind das \si{18} Sekunden mehr als die theoretisch mögliche Bestzeit.\footnotemark{}
+\footnotetext{Beide Methoden verwendeten dieselben Geschwindigkeitswerte.}
+Nach drei weiteren Runden pro Methode lassen sich die durchschnittlichen Rennzeiten berechnen:
+
+\begin{itemize}
+    \item \textbf{Methode~1:} \si{117} Sekunden
+    \item \textbf{Methode~2:} \si{73} Sekunden
+\end{itemize}
+
+Zum Schluss wurde das Feedback der vier Testpersonen ausgewertet.
+Als Anwortmöglichkeiten wurde \enquote{intuitiv}, \enquote{eher intuitiv} und \enquote{nicht intuitiv} vorgegeben.
+In folgender Tabelle sind die Antworten aufgeführt:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{l|l}
+        \textbf{Testende Person} & \textbf{Einschätzung nach Verwendung} \\ \hline
+        Nummer 1 & eher intuitiv \\
+        Nummer 2 & nicht intuitiv \\
+        Nummer 3 & intuitiv \\
+        Nummer 4 & eher intuitiv \\
+        \hline
+    \end{tabular}
+    \caption{Feedback der Testpersonen}
+        \label{tab:fdbk}
+\end{table}
+
+\section{Zusammenfassung der Ergebnisse}
+Die durchgeführten Tests zeigen, dass das System grundsätzlich zuverlässig arbeitet und eine markerbasierte Gestensteuerung der Crazyflie 2.0 möglich ist.
+Die Gestenerkennung erwies sich als stabil, solange die Marker nicht stark geneigt oder überbelichtet waren.
+Die beste Erkennung wurde bei einer Entfernung von rund \SI{20}{\centi\meter} und schwacher Umgebungsbeleuchtung erreicht.
+Die Drohnensteuerung reagierte präzise auf übertragene Befehle, wobei durch Funkstörungen oder unebene Untergründe gelegentlich Stabilitätsprobleme auftraten.
+Eine messbare Verzögerung der Reaktionszeit lag nicht vor.
+Im kombinierten Testlauf schnitt Methode~2 deutlich besser ab.
+Sie erlaubte präzisere Richtungsänderungen und eine kürzere Gesamtlaufzeit von durchschnittlich \si{73} Sekunden gegenüber \si{117} Sekunden bei Methode~1.
+Das Feedback der Testpersonen bestätigt diesen Eindruck:
+Drei von vier Personen empfanden die Steuerung als intuitiv oder eher intuitiv.
+
+Insgesamt zeigt sich, dass die zweite Methode sowohl technisch als auch in der subjektiven Bewertung überlegen ist und sich für eine gestenbasierte Steuerung der Crazyflie besser eignet.
 
 % End font-size
 \endgroup
