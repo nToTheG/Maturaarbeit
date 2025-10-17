@@ -35,15 +35,60 @@ Dies soll eine präzise Erkennung der Handausrichtung ermöglichen, indem Fläch
 Anschliessend wird mit den in \hTeLi{sec:cf}{Kapiteln~\ref{sec:cf}} und \hTeLi{sec:crpa}{\ref{sec:crpa}} beschriebenen Hardware-Komponenten eine Drohne gesteuert.
 
 In diesem Projekt werden zwei Ansätze getestet, die sich in der Platzierung der Marker unterscheiden.
-Der erste Ansatz sieht die Marker in einem Rechteck angeordnet vor, wobei ausschliesslich die Handfläche als Bereich für die Marker dient.
-Der zweite Versuch setzt hingegen drei von vier Markern auf den Fingerspitzen vorraus.
+Der \hTeLi{pic:m1}{erste~Ansatz} sieht die Marker in einem Rechteck angeordnet vor, wobei ausschliesslich die Handfläche als Bereich für die Marker dient.
+Der \hTeLi{pic:m2}{zweite~Ansatz} setzt hingegen drei von vier Markern auf den Fingerspitzen vorraus.
 Der vierte Marker wird auf dem Handgelenk platziert und markiert für die Kamera den Referenzpunkt der Hand.
+
+\begin{figure}[H]
+    \centering
+    \begin{imgbox}
+        \hspace{0.125\textwidth}
+        \begin{subfigure}[b]{0.25\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{method1.pdf}
+            \caption{Method 1}
+                \label{pic:m1}
+        \end{subfigure}
+        \hspace{0.125\textwidth}
+        \vrule
+        \hspace{0.125\textwidth}
+        \begin{subfigure}[b]{0.25\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{method2.pdf}
+            \caption{Method 2}
+                \label{pic:m2}
+        \end{subfigure}
+        \hspace{0.125\textwidth}
+    \end{imgbox}
+    \caption{Ansätze}
+        \label{fig:methods}
+\end{figure}
 
 Die unterschiedliche Platzierung der Marker soll zeigen, inwieweit die Einbeziehung der Finger die Erkennungsgenauigkeit und Steuerung beeinflusst.
 
-\subsection{Fragestellung}
+\subsection{Prinzipielle Funktionsweise}
+Im praktischen Einsatz bewegt der Benutzer seine Hand vor der Kamera, wobei die aufgeklebten ArUco-Marker erfasst und analysiert werden.
+Welche Gesten dabei verwendet werden können und wie ihr Steuerbefehl lautet, ist im Folgenden aufgelistet:
+
+\begin{itemize}
+    \item \textbf{Neutral:} Die Handflächeist Richtung Kamera und die Fingerspitzen noch oben ausgerichtet.
+    \item \textbf{Vorwärts:} Handfläche ist maximal \SI{45}{\degree} mit der Handlfäche in Richtung Kamera gebeugt.
+    \item \textbf{Rückwärts:} Handfläche ist maximal \SI{45}{\degree} mit dem Handrücken in die entgegengesetzte Richtung der Kamera gebeugt.
+    \item \textbf{Drehung nach rechts:} Neutrale Geste aber nach rechts gedreht.
+    \item \textbf{Drehung nach links:} Neutrale Geste aber nach links gedreht.
+    \item \textbf{Hoch:} Die Handfläche ist innerhalb des von der Kamera aufgenommenen Bildes eher oben.
+    \item \textbf{Runter:} Die Handfläche ist innerhalb des von der Kamera aufgenommenen Bildes eher unten.
+\end{itemize}
+
+Aus den erkannten Positionen und Orientierungen werden Steuerbefehle abgeleitet, die über Funk an die Drohne gesendet werden.
+Dadurch entsteht eine intuitive, gestenbasierte Steuerung, bei der die Ausrichtung der Hand unmittelbar die Flugbewegung der Drohne bestimmt.
+
+\section{Forschungsgegenstand}
+\subsection{Fragestellung, Hypothese}
 Wie beeinflusst die Platzierung von ArUco-Markern auf der Hand die Genauigkeit und Zuverlässigkeit einer gestenbasierten Steuerung einer Nano-Drohne?  
 Lässt sich durch die Einbeziehung der Finger in die Markeranordnung eine präzisere Erkennung der Handausrichtung und damit eine stabilere Steuerung erreichen?
+
+Eine Markeranordnung, welche auch die Finger einbezieht, ermöglicht eine präzisere Bestimmung der Handausrichtung und führt somit zu einer zuverlässigeren und stabileren Steuerung der Drohne als eine ausschliesslich auf der Handfläche platzierte Markeranordnung.
 
 \subsection{Abgrenzung (ausgeschlossene Faktoren)}
 Im Rahmen dieses Projekts werden einige externe Einflussfaktoren bewusst ausgeklammert beziehungsweise nicht im Detail untersucht.
@@ -53,10 +98,7 @@ Dazu gehören insbesondere:
   \item \textbf{Komplexe Handgesten:} Es wird davon ausgegangen, dass die ArUco-Tags jederzeit für die Kamera sichtbar bleiben.
   \item \textbf{Hindernisse und unebene Böden:} Die Testumgebung wird ein Raum ohne potenzielle Hindernisse und mit matten, ebenen Böden sein.\footnotemark{}
 \end{itemize}
-\footnotetext{Der Grund dafür wir in \hTeLi{{sec:drcotext}}{Kapitel~\ref{sec:drco}} erklärt.}
-
-\subsection{Hypothese}
-Eine Markeranordnung, welche auch die Finger einbezieht, ermöglicht eine präzisere Bestimmung der Handausrichtung und führt somit zu einer zuverlässigeren und stabileren Steuerung der Drohne als eine ausschliesslich auf der Handfläche platzierte Markeranordnung.
+\footnotetext{Der Grund dafür wir in \hTeLi{{sec:drco}}{Kapitel~\ref{sec:drco}} erklärt.}
 
 % End font-size
 \endgroup

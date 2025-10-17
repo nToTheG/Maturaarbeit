@@ -213,11 +213,10 @@ Zu hohe Geschwindigkeiten würden das präzise Steuern über Gesten erschweren.
 Die Klasse \bodyCode{MotionCommander} sendet kontinuierlich Bewegungsanweisungen an die Crazyflie.
 Werden keine neuen Befehle übermittelt, beginnt sie automatisch mit der Landung.
 Um dies zu verhindern, werden \enquote{leere} Befehle an die Drohne gesendet, sofern keine Anweisungen aus der ArUco-Erkennung vorliegen.
-Ein solcher leerer Befehl lautet:
+Ein solcher leerer Befehl teilt der Crazyflie mit, dass sie ihre aktuelle Position und Orientierung beibehalten soll und lautet wie folgt:
 \begin{center}
     \bodyCode{mc.start\_linear\_motion(0, 0, 0, rate\_yaw=0.0)}
 \end{center}
-Dieser Befehl teilt der Crazyflie mit, dass sie ihre aktuelle Position und Orientierung beibehalten soll.
 
 \subsection{Sicherheitsmechanismen}
 Als Sicherheitsmechanismus wurde eine Klasse implementiert, die eine Art Stopuhr-Funktion erfüllt.
