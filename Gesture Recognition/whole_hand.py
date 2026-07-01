@@ -138,7 +138,9 @@ class TagEvaluater:
             self.area_snapshot = dict(zip(self.ids, areas))
 
             assigned_tags = dict(zip(self.ids, self.tags))
-            self.y_middle = (assigned_tags[2] + assigned_tags[4]) / 2
+            y_middle_top = self._get_middle(assigned_tags[2])[1]
+            y_middle_bottom = self._get_middle(assigned_tags[4])[1]
+            self.y_middle = (y_middle_top + y_middle_bottom) / 2
 
             reference_marker = self.tags[self.ids.index(4)]
             tl = reference_marker[0]
